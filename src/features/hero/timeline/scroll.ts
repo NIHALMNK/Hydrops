@@ -4,18 +4,18 @@ import { mapScrollToFrame } from '../utils/frameMath';
 import { frameRenderer } from '../canvas/FrameRenderer';
 import { sceneManager } from './SceneManager';
 import { heroStateMachine } from '../utils/stateMachine';
-import { createTypographyTimeline } from './sceneTimeline';
+
 
 gsap.registerPlugin(ScrollTrigger);
 
 export const createHeroScroll = (
   container: HTMLElement, 
   videoContainer: HTMLElement, 
-  typographyContainer: HTMLElement,
+  logoContainer: HTMLElement,
   totalFrames: number
 ) => {
   
-  const typographyTl = createTypographyTimeline(typographyContainer, totalFrames);
+  let isLogoRevealed = false;
   
   const scrollTl = gsap.timeline({
     scrollTrigger: {
@@ -30,18 +30,35 @@ export const createHeroScroll = (
         frameRenderer.renderFrame(frame);
         sceneManager.updateFromFrame(frame);
         
-        if (typographyTl) {
-          typographyTl.progress(self.progress);
-        }
-        
         // Final transition logic
         if (self.progress >= 0.99) {
           heroStateMachine.setState('FINAL_SCENE');
-          // Scale up the canvas for the final glow effect
-          gsap.to(videoContainer, { scale: 1.02, duration: 0.5, ease: 'power2.out', overwrite: 'auto' });
+          
+          if (!isLogoRevealed) {
+            isLogoRevealed = true;
+            gsap.to(logoContainer, { 
+              opacity: 1, 
+              scale: 1, 
+              filter: 'blur(0px)',
+              duration: 1, 
+              ease: 'power2.out',
+              delay: 0.3
+            });
+          }
         } else {
           heroStateMachine.setState('PLAYING');
-          gsap.to(videoContainer, { scale: 1, duration: 0.5, ease: 'power2.out', overwrite: 'auto' });
+          
+          if (isLogoRevealed) {
+            isLogoRevealed = false;
+            gsap.to(logoContainer, { 
+              opacity: 0, 
+              scale: 0.92,
+              filter: 'blur(8px)',
+              duration: 0.4, 
+              ease: 'power2.inOut',
+              overwrite: 'auto'
+            });
+          }
         }
       },
       onLeave: () => {

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { LoadingScreen } from './LoadingScreen';
 import { FrameCanvas } from './FrameCanvas';
-import { HeroTypography } from './HeroTypography';
+import { HeroLogo } from './HeroLogo';
 import { HeroDebuggerUI } from './HeroDebuggerUI';
 import { createHeroScroll } from '../timeline/scroll';
 import { HERO_CONSTANTS } from '../utils/constants';
@@ -11,7 +11,7 @@ import gsap from 'gsap';
 export const HeroScene = () => {
   const containerRef = useRef<HTMLElement>(null);
   const videoContainerRef = useRef<HTMLDivElement>(null);
-  const typographyRef = useRef<HTMLDivElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
 
   const totalFrames = FRAME_MANIFEST.length;
   // Fallback to 3vh per frame if undefined
@@ -19,11 +19,11 @@ export const HeroScene = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      if (containerRef.current && videoContainerRef.current && typographyRef.current) {
+      if (containerRef.current && videoContainerRef.current && logoRef.current) {
         createHeroScroll(
           containerRef.current,
           videoContainerRef.current,
-          typographyRef.current,
+          logoRef.current,
           totalFrames
         );
       }
@@ -48,7 +48,7 @@ export const HeroScene = () => {
           <FrameCanvas />
           {/* Overlay gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
-          <HeroTypography ref={typographyRef} />
+          <HeroLogo ref={logoRef} />
         </div>
       </section>
     </>

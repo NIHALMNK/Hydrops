@@ -65,7 +65,7 @@ export class HomeAnimationController {
   
   private addCleanup(cleanup: unknown) {
     if (typeof cleanup === 'function') {
-      this.cleanups.push(cleanup);
+      this.cleanups.push(cleanup as () => void);
     }
   }
 
