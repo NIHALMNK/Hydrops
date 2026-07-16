@@ -28,7 +28,7 @@ export class FrameCache {
           resolve(img);
         }
       };
-      img.onerror = reject;
+      img.onerror = () => reject(new Error(`Frame could not be loaded.\nURL: ${src}`));
     });
   }
 
