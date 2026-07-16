@@ -63,7 +63,7 @@ export class HomeAnimationController {
     });
   }
   
-  private addCleanup(cleanup: any) {
+  private addCleanup(cleanup: unknown) {
     if (typeof cleanup === 'function') {
       this.cleanups.push(cleanup);
     }

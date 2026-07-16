@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect } from 'react';
-import { HomeHero } from '@/features/home/components/HomeHero';
+import { HeroScene } from '@/features/hero';
 import { Philosophy } from '@/features/home/components/Philosophy';
 import { CoconutJourney } from '@/features/home/components/CoconutJourney';
 import { ProductShowcase } from '@/features/home/components/ProductShowcase';
@@ -38,7 +38,7 @@ export default function HomePage() {
     <>
       <Navbar />
       <main ref={mainRef} className="w-full relative bg-background overflow-hidden">
-        <HomeHero />
+        <HeroScene />
         <Philosophy />
         <CoconutJourney />
         <ProductShowcase />
