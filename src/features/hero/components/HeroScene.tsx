@@ -35,7 +35,7 @@ export const HeroScene = () => {
 
   return (
     <>
-      <HeroDebuggerUI />
+      {process.env.NODE_ENV === "development" && <HeroDebuggerUI />}
       <section 
         ref={containerRef}
         className="relative w-full bg-black text-white"
