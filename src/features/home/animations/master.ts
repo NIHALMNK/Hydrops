@@ -55,11 +55,17 @@ export class HomeAnimationController {
     });
 
     let resizeTimer: NodeJS.Timeout;
-    window.addEventListener('resize', () => {
+    const onResize = () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
         ScrollTrigger.refresh();
       }, 250);
+    };
+    
+    window.addEventListener('resize', onResize);
+    this.addCleanup(() => {
+      window.removeEventListener('resize', onResize);
+      clearTimeout(resizeTimer);
     });
   }
   
@@ -73,6 +79,5 @@ export class HomeAnimationController {
     this.cleanups.forEach(fn => fn());
     this.ctx.revert();
     this.mm.revert();
-    ScrollTrigger.getAll().forEach(st => st.kill());
   }
 }

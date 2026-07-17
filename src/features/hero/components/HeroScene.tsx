@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
+import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect';
 import { LoadingScreen } from './LoadingScreen';
 import { FrameCanvas } from './FrameCanvas';
 import { HeroLogo } from './HeroLogo';
@@ -17,7 +18,7 @@ export const HeroScene = () => {
   // Fallback to 3vh per frame if undefined
   const scrollHeight = `${totalFrames * (HERO_CONSTANTS.FRAME_SCROLL_FACTOR || 3)}vh`;
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const ctx = gsap.context(() => {
       if (containerRef.current && videoContainerRef.current && logoRef.current) {
         createHeroScroll(
@@ -34,12 +35,12 @@ export const HeroScene = () => {
 
   return (
     <>
+      <HeroDebuggerUI />
       <section 
         ref={containerRef}
         className="relative w-full bg-black text-white"
         style={{ height: scrollHeight }}
       >
-        <HeroDebuggerUI />
         <div 
           ref={videoContainerRef}
           className="sticky top-0 w-full h-[100vh] overflow-hidden origin-center"

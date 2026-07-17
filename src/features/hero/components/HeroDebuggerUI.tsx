@@ -3,10 +3,15 @@ import React, { useEffect, useState } from 'react';
 import { HeroDebugger } from '../debug/HeroDebugger';
 
 export const HeroDebuggerUI = () => {
-  const [metrics, setMetrics] = useState(HeroDebugger.getMetrics());
+  const [isMounted, setIsMounted] = useState(false);
+  const [metrics, setMetrics] = useState<any>(null);
 
   useEffect(() => {
+    setIsMounted(true);
     if (process.env.NODE_ENV !== 'development') return;
+
+    // Initialize metrics only on the client
+    setMetrics(HeroDebugger.getMetrics());
 
     const interval = setInterval(() => {
       setMetrics(HeroDebugger.getMetrics());
@@ -15,7 +20,7 @@ export const HeroDebuggerUI = () => {
     return () => clearInterval(interval);
   }, []);
 
-  if (process.env.NODE_ENV !== 'development') return null;
+  if (!isMounted || process.env.NODE_ENV !== 'development' || !metrics) return null;
 
   return (
     <div className="fixed bottom-4 right-4 z-[9999] bg-black/80 text-green-400 font-mono text-xs p-4 rounded-lg shadow-2xl backdrop-blur-sm border border-green-500/30">

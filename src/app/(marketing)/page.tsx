@@ -1,6 +1,7 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
+import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect';
 import { HeroScene } from '@/features/hero';
 import { Philosophy } from '@/features/home/components/Philosophy';
 import { CoconutJourney } from '@/features/home/components/CoconutJourney';
@@ -19,7 +20,7 @@ import { Footer } from '@/components/layout/Footer';
 export default function HomePage() {
   const mainRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     // Only run on client after mount
     const controller = new HomeAnimationController(mainRef);
     
