@@ -1,25 +1,53 @@
 import gsap from 'gsap';
-import SplitType from 'split-type';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 export function initPhilosophy(scope: HTMLElement) {
-  const textElement = scope.querySelector('.philosophy-text');
-  if (!textElement) return;
+  const content = scope.querySelector('.philosophy-content');
+  const eyebrow = scope.querySelector('.philosophy-eyebrow');
+  const heading = scope.querySelector('.philosophy-heading');
+  const paragraph = scope.querySelector('.philosophy-paragraph');
 
-  const splitText = new SplitType(textElement as HTMLElement, { types: 'words' });
+  if (!content || !eyebrow || !heading || !paragraph) return;
 
-  gsap.set(textElement, { opacity: 1, y: 0 }); // reset initial state
-  gsap.set(splitText.words, { opacity: 0, y: 20 });
+  // Set initial states
+  gsap.set([eyebrow, paragraph], { opacity: 0 });
+  gsap.set(heading, { opacity: 0, y: 40 });
 
-  ScrollTrigger.create({
-    trigger: scope,
-    start: 'top 70%',
-    animation: gsap.to(splitText.words, {
-      opacity: 1,
-      y: 0,
-      duration: 1,
-      stagger: 0.05,
-      ease: 'power3.out',
-    }),
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: scope,
+      start: 'top 60%',
+      end: 'bottom bottom',
+      toggleActions: 'play none none reverse',
+    },
+  });
+
+  tl.to(eyebrow, {
+    opacity: 1,
+    duration: 1,
+    ease: 'power2.out',
+  })
+  .to(heading, {
+    opacity: 1,
+    y: 0,
+    duration: 1.2,
+    ease: 'power3.out',
+  }, '-=0.6')
+  .to(paragraph, {
+    opacity: 1,
+    duration: 1.2,
+    ease: 'power2.out',
+  }, '-=0.8');
+
+  // Parallax effect on the whole content block
+  gsap.to(content, {
+    y: -50,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: scope,
+      start: 'top bottom',
+      end: 'bottom top',
+      scrub: true,
+    },
   });
 }

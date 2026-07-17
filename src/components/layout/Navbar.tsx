@@ -82,14 +82,16 @@ export function Navbar() {
         }`}
       >
         {/* LOGO */}
-        <Link href="/" className="relative flex h-[44px] md:h-[48px] shrink-0 items-center">
+        <Link href="/" className="relative flex h-[44px] w-[128px] md:h-[48px] md:w-[140px] shrink-0 items-center">
           <Image 
             src="/images/brand/logo.png" 
             alt="Hydrops Logo" 
-            width={140} 
-            height={48} 
-            className="h-full w-auto object-contain transition-all duration-500"
-            style={{ filter: isLight ? 'invert(1) hue-rotate(180deg) brightness(0.8)' : 'none' }}
+            fill
+            sizes="(max-width: 768px) 128px, 140px"
+            className="object-contain transition-all duration-500"
+            style={{ 
+              filter: isLight ? 'invert(1) hue-rotate(180deg) brightness(0.8)' : 'none' 
+            }}
             priority
           />
         </Link>
