@@ -20,6 +20,8 @@ export function initGlobalGSAP() {
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (prefersReducedMotion) {
     gsap.globalTimeline.timeScale(0); // Instantly finish or disable
-    ScrollTrigger.config({ limitCallbacks: true });
+    ScrollTrigger.config({ limitCallbacks: true, ignoreMobileResize: true });
+  } else {
+    ScrollTrigger.config({ ignoreMobileResize: true });
   }
 }
