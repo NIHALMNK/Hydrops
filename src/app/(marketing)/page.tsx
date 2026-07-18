@@ -6,7 +6,7 @@ import { HeroScene } from '@/features/hero';
 import { Philosophy } from '@/features/home/components/Philosophy';
 import { CoconutJourney } from '@/features/home/components/CoconutJourney';
 import { ProductShowcase } from '@/features/home/components/ProductShowcase';
-import { Specifications } from '@/features/home/components/Specifications';
+import { PurityTable } from '@/features/home/components/PurityTable';
 import { WhyHydrops } from '@/features/home/components/WhyHydrops';
 import { Applications } from '@/features/home/components/Applications';
 import { QualityPromise } from '@/features/home/components/QualityPromise';
@@ -43,7 +43,7 @@ export default function HomePage() {
         <Philosophy />
         <CoconutJourney />
         <ProductShowcase />
-        <Specifications />
+        <PurityTable />
         <WhyHydrops />
         <Applications />
         <QualityPromise />

@@ -5,7 +5,7 @@ import { initHero } from './hero';
 import { initPhilosophy } from './philosophy';
 import { initJourney } from './journey';
 import { initProduct } from './product';
-import { initSpecifications } from './specifications';
+import { initPurityTable } from './purityTable';
 import { initWhyHydrops } from './whyHydrops';
 import { initApplications } from './applications';
 import { initQuality } from './quality';
@@ -33,7 +33,7 @@ export class HomeAnimationController {
       const philosophy = root.querySelector('#philosophy-section') as HTMLElement;
       const journey = root.querySelector('#journey-section') as HTMLElement;
       const product = root.querySelector('#product-showcase-section') as HTMLElement;
-      const specifications = root.querySelector('#specifications-section') as HTMLElement;
+      const purityTable = root.querySelector('#purity-table-section') as HTMLElement;
       const whyHydrops = root.querySelector('#why-hydrops-section') as HTMLElement;
       const applications = root.querySelector('#applications-section') as HTMLElement;
       const quality = root.querySelector('#quality-section') as HTMLElement;
@@ -45,7 +45,7 @@ export class HomeAnimationController {
       if (philosophy) this.addCleanup(initPhilosophy(philosophy));
       if (journey) this.addCleanup(initJourney(journey));
       if (product) this.addCleanup(initProduct(product));
-      if (specifications) this.addCleanup(initSpecifications(specifications));
+      if (purityTable) this.addCleanup(initPurityTable(purityTable));
       if (whyHydrops) this.addCleanup(initWhyHydrops(whyHydrops));
       if (applications) this.addCleanup(initApplications(applications));
       if (quality) this.addCleanup(initQuality(quality));
