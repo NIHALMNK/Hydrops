@@ -3,7 +3,7 @@ import Image from 'next/image';
 export function BottleDisplay() {
   return (
     <div className="relative pt-32 md:pt-0 md:absolute inset-0 z-10 flex items-center justify-center pointer-events-none perspective-[1000px]">
-      <div className="purity-parallax-wrapper relative w-full h-full flex items-center justify-center will-change-transform">
+      <div className="purity-parallax-wrapper relative w-full h-full flex items-center justify-center will-change-transform md:translate-x-8 lg:translate-x-12">
         <div className="purity-bottle-container relative w-[240px] md:w-[280px] lg:w-[320px] aspect-[1/2.2] will-change-transform origin-center">
           
           {/* Soft shadow */}
