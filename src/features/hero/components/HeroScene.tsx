@@ -3,7 +3,6 @@ import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect';
 import { LoadingScreen } from './LoadingScreen';
 import { FrameCanvas } from './FrameCanvas';
 import { HeroLogo } from './HeroLogo';
-import { HeroDebuggerUI } from './HeroDebuggerUI';
 import { createHeroScroll } from '../timeline/scroll';
 import { HERO_CONSTANTS } from '../utils/constants';
 import { FRAME_MANIFEST } from '../content/frameManifest';
@@ -35,7 +34,6 @@ export const HeroScene = () => {
 
   return (
     <>
-      {process.env.NODE_ENV === "development" && <HeroDebuggerUI />}
       <section 
         ref={containerRef}
         className="relative w-full bg-black text-white"
