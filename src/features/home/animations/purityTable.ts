@@ -35,106 +35,61 @@ export function initPurityTable(scope: HTMLElement) {
        gsap.set(card.querySelector('.purity-card-label'), { opacity: 0.6, color: '#888' });
     });
 
+    masterTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: scope,
+        start: 'top top',
+        end: '+=300%',
+        pin: true,
+        scrub: 1.5,
+      }
+    });
+
     const transitionDuration = 0.8;
     const pauseDuration = 3;
     const stepDuration = transitionDuration + pauseDuration;
 
-    const buildMasterTimeline = () => {
-      const tl = gsap.timeline({ repeat: -1 });
-
-      cards.forEach((card, i) => {
-         const startTime = i * stepDuration;
-         const title = card.querySelector('.purity-card-title');
-         const label = card.querySelector('.purity-card-label');
-         
-         // Activate this card
-         tl.to(card, { opacity: 1, scale: 1.15, duration: transitionDuration, ease: 'power2.inOut' }, startTime);
-         tl.to(title, { fontWeight: 600, color: '#0B0B0B', duration: transitionDuration, ease: 'power2.inOut' }, startTime);
-         tl.to(label, { opacity: 1, color: '#388e4a', duration: transitionDuration, ease: 'power2.inOut' }, startTime);
-
-         // Bottle rotation
-         tl.to(bottleContainer, {
-            rotateX: bottleAngles[i].rotateX,
-            rotateY: bottleAngles[i].rotateY,
-            duration: transitionDuration,
-            ease: 'power2.inOut'
-         }, startTime);
-
-         // Halo pulse
-         tl.to(halo, {
-            scale: 1.1, backgroundColor: 'rgba(56, 142, 74, 0.15)', duration: transitionDuration, ease: 'power2.inOut'
-         }, startTime);
-         
-         // Deactivate this card at the NEXT step's start time
-         let nextStartTime = (i + 1) * stepDuration;
-         if (i === cards.length - 1) {
-            nextStartTime = 0; // Wrap around for the last card
-         }
-         
-         tl.to(card, { opacity: 0.4, scale: 0.95, duration: transitionDuration, ease: 'power2.inOut' }, nextStartTime);
-         tl.to(title, { fontWeight: 400, color: '#888', duration: transitionDuration, ease: 'power2.inOut' }, nextStartTime);
-         tl.to(label, { opacity: 0.6, color: '#888', duration: transitionDuration, ease: 'power2.inOut' }, nextStartTime);
-         
-         tl.to(halo, {
-            scale: 1, backgroundColor: 'rgba(56, 142, 74, 0)', duration: transitionDuration, ease: 'power2.inOut'
-         }, nextStartTime);
-      });
-
-      tl.to({}, { duration: stepDuration }, (cards.length - 1) * stepDuration);
-      return tl;
-    };
-
-    masterTl = buildMasterTimeline();
-
-    // Hover interactions
     cards.forEach((card, i) => {
-      const onEnter = () => {
-        masterTl?.pause();
-        
-        // Temporarily animate bottle to face hovered card
-        gsap.to(bottleContainer, {
+       const startTime = i * stepDuration;
+       const title = card.querySelector('.purity-card-title');
+       const label = card.querySelector('.purity-card-label');
+       
+       // Activate this card
+       masterTl!.to(card, { opacity: 1, scale: 1.15, duration: transitionDuration, ease: 'power2.inOut' }, startTime);
+       masterTl!.to(title, { fontWeight: 600, color: '#0B0B0B', duration: transitionDuration, ease: 'power2.inOut' }, startTime);
+       masterTl!.to(label, { opacity: 1, color: '#388e4a', duration: transitionDuration, ease: 'power2.inOut' }, startTime);
+
+       // Bottle rotation
+       masterTl!.to(bottleContainer, {
           rotateX: bottleAngles[i].rotateX,
           rotateY: bottleAngles[i].rotateY,
-          duration: 0.5,
-          ease: 'power2.out',
-          overwrite: "auto"
-        });
-        
-        // Temporarily highlight this card
-        gsap.to(card, { opacity: 1, scale: 1.15, duration: 0.5, ease: 'power2.out', overwrite: "auto" });
-        gsap.to(card.querySelector('.purity-card-title'), { fontWeight: 600, color: '#0B0B0B', duration: 0.5, overwrite: "auto" });
-        gsap.to(card.querySelector('.purity-card-label'), { opacity: 1, color: '#388e4a', duration: 0.5, overwrite: "auto" });
-        gsap.to(halo, { scale: 1.1, backgroundColor: 'rgba(56, 142, 74, 0.2)', duration: 0.5, overwrite: "auto" });
-      };
-      
-      const onLeave = () => {
-        // Rebuild timeline to discard any overwritten tweens, and resume from current progress
-        if (masterTl) {
-          const currentTime = masterTl.time();
-          masterTl.kill();
-          masterTl = buildMasterTimeline();
-          
-          // Animate the properties back to what the timeline wants them to be at this exact moment
-          // Scrubbing to the time will instantly snap them. To smooth it, we can tween the timeline's playhead!
-          // But snapping is usually fine if they move away, since it resumes.
-          // Wait, the user said "Resume from current progress. Do NOT restart the timeline."
-          // So snapping to current progress is the correct behavior for "resuming".
-          // If we want a smooth transition back, we can do a quick tween to the timeline's expected values.
-          masterTl.pause(currentTime);
-          
-          // To make the transition smooth, we can let GSAP tween the masterTl playhead for 0.5s, 
-          // but since they just unhovered, jumping back to the actual timeline state is often best.
-          // Let's just play it.
-          masterTl.play(currentTime);
-        }
-      };
-      
-      card.addEventListener('mouseenter', onEnter);
-      card.addEventListener('mouseleave', onLeave);
-      
-      (card as any)._orbitEnter = onEnter;
-      (card as any)._orbitLeave = onLeave;
+          duration: transitionDuration,
+          ease: 'power2.inOut'
+       }, startTime);
+
+       // Halo pulse
+       masterTl!.to(halo, {
+          scale: 1.1, backgroundColor: 'rgba(56, 142, 74, 0.15)', duration: transitionDuration, ease: 'power2.inOut'
+       }, startTime);
+       
+       // Deactivate this card at the NEXT step's start time
+       let nextStartTime = (i + 1) * stepDuration;
+       if (i === cards.length - 1) {
+          nextStartTime = 0; // Wrap around for the last card
+       }
+       
+       masterTl!.to(card, { opacity: 0.4, scale: 0.95, duration: transitionDuration, ease: 'power2.inOut' }, nextStartTime);
+       masterTl!.to(title, { fontWeight: 400, color: '#888', duration: transitionDuration, ease: 'power2.inOut' }, nextStartTime);
+       masterTl!.to(label, { opacity: 0.6, color: '#888', duration: transitionDuration, ease: 'power2.inOut' }, nextStartTime);
+       
+       // Halo fades out slightly before pulsing again
+       masterTl!.to(halo, {
+          scale: 1, backgroundColor: 'rgba(56, 142, 74, 0)', duration: transitionDuration, ease: 'power2.inOut'
+       }, nextStartTime);
     });
+
+    // Ensure the timeline duration is exactly 6 * stepDuration
+    masterTl.to({}, { duration: stepDuration }, (cards.length - 1) * stepDuration);
 
     // Mouse parallax effect
     const handleMouseMove = (e: MouseEvent) => {
@@ -162,23 +117,8 @@ export function initPurityTable(scope: HTMLElement) {
 
     window.addEventListener('mousemove', handleMouseMove);
 
-    // Pause orbit when out of view
-    ScrollTrigger.create({
-      trigger: scope,
-      start: "top bottom",
-      end: "bottom top",
-      onEnter: () => masterTl?.play(),
-      onLeave: () => masterTl?.pause(),
-      onEnterBack: () => masterTl?.play(),
-      onLeaveBack: () => masterTl?.pause(),
-    });
-
     return () => {
       masterTl?.kill();
-      cards.forEach(card => {
-        if ((card as any)._orbitEnter) card.removeEventListener('mouseenter', (card as any)._orbitEnter);
-        if ((card as any)._orbitLeave) card.removeEventListener('mouseleave', (card as any)._orbitLeave);
-      });
       window.removeEventListener('mousemove', handleMouseMove);
     };
   });
