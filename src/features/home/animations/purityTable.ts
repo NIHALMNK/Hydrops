@@ -124,19 +124,41 @@ export function initPurityTable(scope: HTMLElement) {
   });
 
   mm.add('(max-width: 767px)', () => {
-    // Mobile vertical stack animations
-    cards.forEach((card) => {
+    // Mobile vertical stack animations (Cards)
+    const mobileCards = gsap.utils.toArray('.mobile-purity-card') as HTMLElement[];
+    
+    // Set initial states
+    gsap.set(mobileCards, { opacity: 0, y: 24, scale: 0.98 });
+    
+    mobileCards.forEach((card) => {
       gsap.to(card, {
         scrollTrigger: {
           trigger: card,
           start: 'top 85%',
         },
         opacity: 1,
+        y: 0,
         scale: 1,
         duration: 0.8,
         ease: 'power2.out',
       });
     });
+
+    // Mobile Bottle floating animation
+    const mobileBottle = scope.querySelector('.mobile-bottle');
+    if (mobileBottle) {
+      gsap.fromTo(mobileBottle, 
+        { y: -4, rotation: -1 },
+        { 
+          y: 4, 
+          rotation: 1, 
+          duration: 3.5, 
+          ease: 'sine.inOut', 
+          yoyo: true, 
+          repeat: -1 
+        }
+      );
+    }
   });
 
   return () => {
