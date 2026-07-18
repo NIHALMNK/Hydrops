@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/Button';
 
 export function ContactCTA() {
   return (
-    <Scene height="h-[100vh]" id="cta-section" className="bg-primary text-primary-foreground items-center justify-center overflow-hidden relative">
+    <Scene height="h-[100vh]" id="cta-section" className="bg-[#0F5A32] text-white items-center justify-center overflow-hidden relative">
       {/* Floating Particles Placeholder */}
       <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
       

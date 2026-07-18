@@ -15,8 +15,10 @@ const CARDS = [
 
 export function WhyHydrops() {
   return (
-    <section id="why-hydrops-section" className="why-hydrops relative w-full bg-background z-10">
-      <div className="why-pin-wrapper relative h-screen w-full overflow-hidden bg-background flex flex-col items-center justify-center">
+    <section id="why-hydrops-section" className="why-hydrops relative w-full bg-[#FBF8F2] z-10">
+      <div className="why-pin-wrapper relative h-screen w-full overflow-hidden flex flex-col items-center justify-center">
+        {/* Warm cream soft premium lighting */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/70 via-[#FBF8F2]/40 to-transparent pointer-events-none" />
         <h2 className="text-4xl md:text-6xl font-light mb-12 relative z-50 text-center">Why Hydrops</h2>
         
         <div className="why-stack relative w-[90vw] max-w-4xl h-[60vh] perspective-[1200px]">

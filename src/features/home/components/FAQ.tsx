@@ -32,8 +32,10 @@ export function FAQ() {
   };
 
   return (
-    <Scene height="py-32" id="faq-section" className="bg-background items-center justify-center">
-      <div className="container mx-auto px-6 max-w-3xl">
+    <Scene height="py-32" id="faq-section" className="bg-[#F4F7F2] text-[#1a1a1a] items-center justify-center relative">
+      {/* Very light sage, minimal distractions */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#eef2eb]/50 via-[#F4F7F2]/20 to-transparent pointer-events-none" />
+      <div className="container mx-auto px-6 max-w-3xl relative z-10">
         <h2 className="text-4xl font-light mb-12 text-center faq-title opacity-0 translate-y-8 will-change-transform">Frequently Asked Questions</h2>
         
         <div className="space-y-4 faq-list opacity-0 translate-y-8 will-change-transform">

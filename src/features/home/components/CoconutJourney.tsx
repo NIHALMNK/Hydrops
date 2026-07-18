@@ -37,7 +37,9 @@ const JOURNEY_STAGES = [
 export function CoconutJourney() {
   return (
     <div className="w-full">
-      <section id="journey-section" className="relative w-full h-screen bg-[#f7faf7] text-[#1a1a1a] overflow-hidden">
+      <section id="journey-section" className="relative w-full h-screen bg-[#EEF5EC] text-[#1a1a1a] overflow-hidden">
+        {/* Natural green tint, very subtle botanical feeling */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#e1efe0]/60 via-[#EEF5EC]/30 to-transparent pointer-events-none" />
         <div className="journey-track flex h-full w-[600vw] will-change-transform">
           {JOURNEY_STAGES.map((stage, i) => (
             <div key={i} className="journey-chapter w-screen h-screen flex-shrink-0 flex flex-col md:flex-row items-center justify-center p-8 md:p-24 gap-12 md:gap-32 relative">

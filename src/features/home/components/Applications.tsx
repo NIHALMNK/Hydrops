@@ -10,8 +10,10 @@ const APPS = [
 
 export function Applications() {
   return (
-    <Scene height="h-[120vh]" id="applications-section" className="bg-secondary/30 items-center justify-center">
-      <div className="container mx-auto px-6 w-full max-w-5xl">
+    <Scene height="h-[120vh]" id="applications-section" className="bg-[#F1F7EE] relative items-center justify-center">
+      {/* Fresh green atmosphere, healthy living */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#e3f0de]/70 via-[#F1F7EE]/40 to-transparent pointer-events-none" />
+      <div className="container mx-auto px-6 w-full max-w-5xl relative z-10">
         <h2 className="text-4xl md:text-5xl font-light mb-12 text-center app-title opacity-0 translate-y-8 will-change-transform">
           Versatility in Every Drop
         </h2>
