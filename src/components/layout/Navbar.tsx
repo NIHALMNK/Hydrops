@@ -190,7 +190,7 @@ export function Navbar() {
         aria-label="Primary navigation"
         className="fixed top-0 left-0 right-0 z-50 pointer-events-none"
       >
-        <div className="flex items-center justify-between px-6 md:px-12 lg:px-16 pt-4 md:pt-6 pointer-events-auto">
+        <div className="flex items-center justify-between px-6 md:px-12 lg:px-16 pt-6 md:pt-8 pointer-events-auto">
 
           {/* ── LOGO ────────────────────────────────────────────────── */}
           {/*
@@ -206,13 +206,13 @@ export function Navbar() {
             aria-label="Hydrops — Home"
             className="relative shrink-0 block rounded-lg"
             style={{
-              width: 190,
-              height: 62,
+              width: 140,
+              height: 46,
               // Landing pad — environment adapts, logo does not
               backgroundColor: logoPadBg,
               backdropFilter: logoPadBlur,
               WebkitBackdropFilter: logoPadBlur,
-              padding: logoNeedsSurface ? "6px 12px" : "0",
+              padding: logoNeedsSurface ? "4px 8px" : "0",
               transition: "background-color 0.7s ease, backdrop-filter 0.7s ease, padding 0.5s ease",
             }}
           >
@@ -220,8 +220,14 @@ export function Navbar() {
               src="/images/brand/logo.png"
               alt="Hydrops"
               fill
-              sizes="190px"
+              sizes="140px"
               className="object-contain"
+              style={{
+                // Scale the image up inside the container because the original 
+                // PNG has a lot of baked-in transparent padding. This makes the 
+                // logo bigger without inflating the frosted container.
+                transform: "scale(1.4)",
+              }}
               priority
               // ── The logo image receives NO CSS filter, NO inversion,
               //    NO recolouring. It is always displayed as supplied. ──
