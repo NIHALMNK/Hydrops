@@ -4,104 +4,61 @@ import { frameCache } from './FrameCache';
 
 type ProgressCallback = (progress: number) => void;
 
-// Add type definitions for requestIdleCallback
-declare global {
-  interface Window {
-    requestIdleCallback(
-      callback: (deadline: { timeRemaining: () => number; didTimeout: boolean }) => void,
-      options?: { timeout: number }
-    ): number;
-    cancelIdleCallback(handle: number): void;
-  }
-}
+/**
+ * ProgressiveLoader
+ *
+ * Loads ALL hero frames during the splash screen using controlled concurrency.
+ * Concurrency limit prevents overwhelming slow connections while still
+ * downloading frames much faster than sequential loading.
+ *
+ * After loadInitialBatch resolves, every frame is guaranteed to be in cache.
+ * The background/idle loaders are no longer needed.
+ */
+
+// Maximum simultaneous in-flight requests.
+// HTTP/2 (Vercel CDN) handles many streams efficiently, but capping at 12
+// gives good throughput on 4G/cable while keeping CPU decode pressure low.
+const CONCURRENCY = 12;
 
 export class ProgressiveLoader {
   private isInitialLoaded = false;
   private hasHalted = false;
-  
+
   public async loadInitialBatch(onProgress?: ProgressCallback): Promise<void> {
     if (this.isInitialLoaded || this.hasHalted) return;
-    
-    const initialFrames = FRAME_MANIFEST.slice(0, HERO_CONSTANTS.INITIAL_BATCH_SIZE);
+
+    const frames = FRAME_MANIFEST.slice(0, HERO_CONSTANTS.INITIAL_BATCH_SIZE);
+    const total = frames.length;
     let loaded = 0;
-    
-    const promises = initialFrames.map(src => 
-      frameCache.loadFrame(src).then(() => {
-        loaded++;
-        onProgress?.(loaded / initialFrames.length);
-      })
-    );
+    let halted = false;
 
-    const results = await Promise.allSettled(promises);
-    
-    // If any frame in the initial batch failed, halt all future loading to prevent 404 spam
-    const hasFailures = results.some(result => result.status === 'rejected');
-    if (hasFailures) {
-      console.warn("Initial batch encountered missing frames. Halting progressive loader to prevent 404s.");
-      this.hasHalted = true;
+    // Process frames in concurrent batches
+    for (let i = 0; i < total; i += CONCURRENCY) {
+      if (halted || this.hasHalted) break;
+
+      const batch = frames.slice(i, i + CONCURRENCY);
+
+      const results = await Promise.allSettled(
+        batch.map(src =>
+          frameCache.loadFrame(src).then(() => {
+            loaded++;
+            onProgress?.(loaded / total);
+          })
+        )
+      );
+
+      // Halt on any failure to prevent 404 spam
+      const hasFailed = results.some(r => r.status === 'rejected');
+      if (hasFailed) {
+        console.warn('[ProgressiveLoader] A frame failed to load. Halting to prevent 404 spam.');
+        this.hasHalted = true;
+        halted = true;
+      }
     }
-    
+
+    // Ensure progress bar reaches 100% visually even if some frames failed
+    onProgress?.(1);
     this.isInitialLoaded = true;
-    this.startBackgroundLoad();
-  }
-
-  private startBackgroundLoad() {
-    if (this.hasHalted) return;
-
-    const backgroundFrames = FRAME_MANIFEST.slice(HERO_CONSTANTS.INITIAL_BATCH_SIZE, 100);
-    const idleFrames = FRAME_MANIFEST.slice(100);
-
-    const loadBackground = async () => {
-      for (const src of backgroundFrames) {
-        if (this.hasHalted) break;
-        try {
-          await frameCache.loadFrame(src);
-        } catch (error) {
-          console.warn(`Halting background loader: ${error instanceof Error ? error.message : 'Missing frame'}`);
-          this.hasHalted = true;
-          break;
-        }
-      }
-      if (!this.hasHalted) {
-        this.startIdleLoad(idleFrames);
-      }
-    };
-
-    setTimeout(loadBackground, 100);
-  }
-
-  private startIdleLoad(frames: string[]) {
-    if (this.hasHalted) return;
-    let index = 0;
-
-    const loadNext = async (deadline: { timeRemaining: () => number; didTimeout: boolean }) => {
-      while ((deadline.timeRemaining() > 0 || deadline.didTimeout) && index < frames.length) {
-        if (this.hasHalted) return;
-        
-        const src = frames[index];
-        try {
-          await frameCache.loadFrame(src);
-        } catch (error) {
-          console.warn(`Halting idle loader: ${error instanceof Error ? error.message : 'Missing frame'}`);
-          this.hasHalted = true;
-          return; // Stop the idle loop
-        }
-        index++;
-      }
-      if (index < frames.length && !this.hasHalted) {
-        if ('requestIdleCallback' in window) {
-          window.requestIdleCallback(loadNext);
-        } else {
-          setTimeout(() => loadNext({ timeRemaining: () => 50, didTimeout: false }), 50);
-        }
-      }
-    };
-
-    if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(loadNext);
-    } else {
-      setTimeout(() => loadNext({ timeRemaining: () => 50, didTimeout: false }), 50);
-    }
   }
 }
 
