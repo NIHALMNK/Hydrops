@@ -222,12 +222,6 @@ export function Navbar() {
               fill
               sizes="140px"
               className="object-contain"
-              style={{
-                // Scale the image up inside the container because the original 
-                // PNG has a lot of baked-in transparent padding. This makes the 
-                // logo bigger without inflating the frosted container.
-                transform: "scale(1.4)",
-              }}
               priority
               // ── The logo image receives NO CSS filter, NO inversion,
               //    NO recolouring. It is always displayed as supplied. ──
