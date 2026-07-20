@@ -190,7 +190,7 @@ export function Navbar() {
         aria-label="Primary navigation"
         className="fixed top-0 left-0 right-0 z-50 pointer-events-none"
       >
-        <div className="flex items-center justify-between px-6 md:px-12 lg:px-16 pt-6 md:pt-8 pointer-events-auto">
+        <div className="flex items-center justify-between px-6 md:px-12 lg:px-16 pt-4 md:pt-6 pointer-events-auto">
 
           {/* ── LOGO ────────────────────────────────────────────────── */}
           {/*
@@ -208,10 +208,6 @@ export function Navbar() {
             style={{
               width: 190,
               height: 62,
-              // Offset the height increase so the navbar's overall vertical footprint 
-              // remains exactly the same as when the logo was 46px tall.
-              marginTop: -8,
-              marginBottom: -8,
               // Landing pad — environment adapts, logo does not
               backgroundColor: logoPadBg,
               backdropFilter: logoPadBlur,
