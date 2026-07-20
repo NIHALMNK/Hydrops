@@ -206,13 +206,17 @@ export function Navbar() {
             aria-label="Hydrops — Home"
             className="relative shrink-0 block rounded-lg"
             style={{
-              width: 140,
-              height: 46,
+              width: 190,
+              height: 62,
+              // Offset the height increase so the navbar's overall vertical footprint 
+              // remains exactly the same as when the logo was 46px tall.
+              marginTop: -8,
+              marginBottom: -8,
               // Landing pad — environment adapts, logo does not
               backgroundColor: logoPadBg,
               backdropFilter: logoPadBlur,
               WebkitBackdropFilter: logoPadBlur,
-              padding: logoNeedsSurface ? "4px 8px" : "0",
+              padding: logoNeedsSurface ? "6px 12px" : "0",
               transition: "background-color 0.7s ease, backdrop-filter 0.7s ease, padding 0.5s ease",
             }}
           >
@@ -220,7 +224,7 @@ export function Navbar() {
               src="/images/brand/logo.png"
               alt="Hydrops"
               fill
-              sizes="140px"
+              sizes="190px"
               className="object-contain"
               priority
               // ── The logo image receives NO CSS filter, NO inversion,
