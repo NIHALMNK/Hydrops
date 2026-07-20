@@ -67,7 +67,7 @@ export const HeroScene = () => {
           start: 'top top',
           end: 'bottom bottom',
           pin: pinnedRef.current,
-          scrub: 0.5,
+          scrub: 1.2,   // Higher value = fewer onUpdate calls per second; less main-thread pressure
           onUpdate: (self) => {
             const frame = mapScrollToFrame(self.progress, totalFrames);
             frameRenderer.renderFrame(frame);

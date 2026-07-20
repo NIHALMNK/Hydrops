@@ -15,7 +15,9 @@ export class CanvasManager {
 
   public resize() {
     if (!this.canvas) return;
-    const dpr = window.devicePixelRatio || 1;
+    // Cap at 1.5: full dpr on HiDPI draws a 2×+ canvas every scroll tick.
+    // The difference is imperceptible during motion and halves GPU cost on Retina screens.
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     const rect = this.canvas.parentElement?.getBoundingClientRect();
     if (!rect) return;
 

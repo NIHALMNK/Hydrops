@@ -3,7 +3,25 @@ import { frameCache } from '../loader/FrameCache';
 import { FRAME_MANIFEST } from '../content/frameManifest';
 
 export class FrameRenderer {
-  public async renderFrame(frameIndex: number) {
+  // rAF guard: only one paint per browser frame, no matter how fast GSAP scrub fires
+  private rafId: number | null = null;
+  private pendingFrame: number | null = null;
+
+  public renderFrame(frameIndex: number) {
+    this.pendingFrame = frameIndex;
+
+    // If a paint is already scheduled this frame, just update the target frame
+    if (this.rafId !== null) return;
+
+    this.rafId = requestAnimationFrame(() => {
+      this.rafId = null;
+      const target = this.pendingFrame;
+      this.pendingFrame = null;
+      if (target !== null) this._paint(target);
+    });
+  }
+
+  private _paint(frameIndex: number) {
     const ctx = canvasManager.getContext();
     const canvas = canvasManager.getCanvas();
     if (!ctx || !canvas) return;
@@ -13,18 +31,18 @@ export class FrameRenderer {
 
     const image = frameCache.get(src);
     if (!image) {
-      // If not cached, trigger a load but don't block
+      // Not cached yet — load it, then repaint
       frameCache.loadFrame(src).then(() => this.renderFrame(frameIndex));
       return;
     }
 
     const rect = canvas.parentElement?.getBoundingClientRect();
     if (!rect) return;
-    
+
     // Draw using object-fit: cover logic
     const imgRatio = image.width / image.height;
     const canvasRatio = rect.width / rect.height;
-    
+
     let renderWidth, renderHeight, xOffset, yOffset;
 
     if (canvasRatio > imgRatio) {
