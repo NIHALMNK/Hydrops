@@ -2,25 +2,34 @@
 import React, { useEffect, useState } from 'react';
 import { HeroDebugger } from '../debug/HeroDebugger';
 
+interface HeroMetrics {
+  state: string;
+  activeScene: number | string;
+  fps: number;
+  droppedFrames: number;
+  loadedFrames: number;
+  cacheSize: number;
+  peakCache: number;
+}
+
 export const HeroDebuggerUI = () => {
-  const [isMounted, setIsMounted] = useState(false);
-  const [metrics, setMetrics] = useState<any>(null);
+  const [metrics, setMetrics] = useState<HeroMetrics | null>(null);
 
   useEffect(() => {
-    setIsMounted(true);
+    // Only run in development, only on the client
     if (process.env.NODE_ENV !== 'development') return;
 
-    // Initialize metrics only on the client
-    setMetrics(HeroDebugger.getMetrics());
-
+    // Poll metrics via interval — metrics starts null; first tick populates it.
+    // When metrics becomes non-null, the component becomes visible.
     const interval = setInterval(() => {
-      setMetrics(HeroDebugger.getMetrics());
+      setMetrics(HeroDebugger.getMetrics() as HeroMetrics);
     }, 500);
 
     return () => clearInterval(interval);
   }, []);
 
-  if (!isMounted || process.env.NODE_ENV !== 'development' || !metrics) return null;
+  // Hidden until metrics are available (also acts as the SSR / mount guard)
+  if (process.env.NODE_ENV !== 'development' || !metrics) return null;
 
   return (
     <div className="fixed bottom-4 right-4 z-[9999] bg-black/80 text-green-400 font-mono text-xs p-4 rounded-lg shadow-2xl backdrop-blur-sm border border-green-500/30">
@@ -35,7 +44,7 @@ export const HeroDebuggerUI = () => {
           <span>Active Scene:</span> <span>{metrics.activeScene}</span>
         </div>
         <div className="flex justify-between gap-4">
-          <span>FPS:</span> 
+          <span>FPS:</span>
           <span className={metrics.fps < 50 ? 'text-red-400' : ''}>{metrics.fps}</span>
         </div>
         <div className="flex justify-between gap-4">
