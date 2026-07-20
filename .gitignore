@@ -45,4 +45,4 @@ next-env.d.ts
 /dist/
 /.turbo/
 /.vscode/settings.json
-/more/
+/design-assets/

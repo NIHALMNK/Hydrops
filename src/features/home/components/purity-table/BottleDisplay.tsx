@@ -10,7 +10,7 @@ export function BottleDisplay() {
           <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[60%] h-[20px] bg-black/10 blur-xl rounded-[100%] scale-x-[1.5] bottle-shadow"></div>
 
           <Image 
-            src="/images/products/Hydrops_coconutOil.png"
+            src="/images/products/hydrops-coconut-oil.png"
             alt="Hydrops Coconut Oil Bottle"
             fill
             className="object-contain drop-shadow-2xl z-10 bottle-image"

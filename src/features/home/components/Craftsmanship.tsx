@@ -12,7 +12,7 @@ const PROCESS_STEPS = [
     title: 'Inspection',
     headline: 'Only the best\nmake it through.',
     desc: 'Every coconut is assessed by hand. Density, moisture, maturity. Nothing enters our process that doesn\'t meet our standards — no exceptions.',
-    image: '/images/quality/craft_inspect.png',
+    image: '/images/quality/craft-inspect.png',
     imageAlt: 'Hand inspecting a fresh coconut in morning light',
   },
   {
@@ -20,7 +20,7 @@ const PROCESS_STEPS = [
     title: 'Filtration',
     headline: 'Clarity is not\nan accident.',
     desc: 'Two separate filtration stages. First, gross impurities. Then, microscopic particles. What remains is oil so clear, you can see straight through it.',
-    image: '/images/quality/craft_filter.png',
+    image: '/images/quality/craft-filter.png',
     imageAlt: 'Crystal-clear oil filtering in warm light',
   },
   {
@@ -28,7 +28,7 @@ const PROCESS_STEPS = [
     title: 'Preservation',
     headline: 'Purity sealed\nat its peak.',
     desc: 'The moment the oil reaches its ideal clarity, it is sealed. No delays. No exposure. The bottle captures the oil exactly as it was when it emerged from filtration.',
-    image: '/images/quality/craft_bottle.png',
+    image: '/images/quality/craft-bottle.png',
     imageAlt: 'Premium bottle with crystal-clear oil on dark surface',
   },
   {
@@ -36,7 +36,7 @@ const PROCESS_STEPS = [
     title: 'Integrity',
     headline: 'Our promise\nin every seal.',
     desc: 'The final seal is a guarantee. What you open is exactly what was intended — uncompromised, untouched, unaltered. This is what we call the Hydrops Promise.',
-    image: '/images/quality/craft_seal.png',
+    image: '/images/quality/craft-seal.png',
     imageAlt: 'Hands carefully sealing a premium bottle',
   },
 ];

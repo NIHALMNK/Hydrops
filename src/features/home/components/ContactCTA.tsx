@@ -24,7 +24,7 @@ export function ContactCTA() {
       {/* Background bottle — large, ghostly, beautiful */}
       <div className="absolute right-[-5%] top-1/2 -translate-y-1/2 w-[45vw] max-w-[480px] h-[85vh] opacity-[0.12] pointer-events-none cta-bg-bottle">
         <Image
-          src="/images/products/Hydrops_coconutOil.png"
+          src="/images/products/hydrops-coconut-oil.png"
           alt=""
           fill
           className="object-contain"

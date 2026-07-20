@@ -34,7 +34,7 @@ export function PurityTable() {
         {/* Hero Bottle (Floating) */}
         <div className="mobile-bottle relative w-[200px] h-[220px] mb-8 will-change-transform">
           <Image 
-            src="/images/products/Hydrops_coconutOil.png"
+            src="/images/products/hydrops-coconut-oil.png"
             alt="Hydrops Coconut Oil Bottle"
             fill
             className="object-contain drop-shadow-2xl z-10"

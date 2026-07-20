@@ -41,7 +41,7 @@ export function ProductBottle() {
 
           {/* Hydrops Bottle */}
           <Image 
-            src="/images/products/Hydrops_coconutOil.png"
+            src="/images/products/hydrops-coconut-oil.png"
             alt="Hydrops Coconut Oil Bottle"
             fill
             className="object-contain z-20"
@@ -62,7 +62,7 @@ export function ProductBottle() {
         }}
         transition={{ duration: 15, ease: "easeInOut", repeat: Infinity }}
       >
-        <Image src="/images/assets/premium_floating_coconut.png" alt="" fill sizes="(max-width: 768px) 100px, 150px" className="object-contain drop-shadow-2xl" />
+        <Image src="/images/assets/premium-floating-coconut.png" alt="" fill sizes="(max-width: 768px) 100px, 150px" className="object-contain drop-shadow-2xl" />
       </motion.div>
 
       {/* Layer 5: Crystal Oil Droplets (CSS Based for perfect clarity) */}
