@@ -75,19 +75,19 @@ export function Navbar() {
       className="fixed top-4 left-1/2 z-50 w-[calc(100%-48px)] max-w-[1120px] -translate-x-1/2"
     >
       <header 
-        className={`relative flex h-[64px] w-full items-center justify-between rounded-full border px-8 py-1 shadow-lg backdrop-blur-[24px] transition-all duration-500 ease-out ${
+        className={`relative flex h-[64px] w-full items-center justify-between rounded-full border px-8 shadow-lg backdrop-blur-[24px] transition-all duration-500 ease-out ${
           isLight 
             ? "bg-black/[0.04] border-black/[0.08] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_4px_30px_rgba(0,0,0,0.03)]" 
             : "bg-white/[0.08] border-white/15 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_4px_30px_rgba(0,0,0,0.1)]"
         }`}
       >
         {/* LOGO */}
-        <Link href="/" className="relative flex h-[52px] w-[150px] md:h-[56px] md:w-[164px] shrink-0 items-center">
+        <Link href="/" className="relative flex h-[58px] w-[172px] md:h-[60px] md:w-[188px] shrink-0 items-center">
           <Image 
             src="/images/brand/logo.png" 
             alt="Hydrops Logo" 
             fill
-            sizes="(max-width: 768px) 150px, 164px"
+            sizes="(max-width: 768px) 172px, 188px"
             className="object-contain transition-all duration-500"
             style={{ 
               filter: isLight ? 'invert(1) hue-rotate(180deg) brightness(0.8)' : 'none' 

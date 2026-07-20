@@ -1,17 +1,33 @@
 :root {
-  --background: #ffffff;
-  --foreground: #333333;
-  --primary: #1A4D2E;
-  --primary-foreground: #ffffff;
-  --secondary: #E8F5E9;
-  --secondary-foreground: #1A4D2E;
-  --accent: #4CAF50;
-  --accent-foreground: #ffffff;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --border: #e2e8f0;
-  --ring: #1A4D2E;
+  /* Singular Luxury Canvas */
+  --background: #F8F6F1;
+  --foreground: #1A1A1A;
   
+  /* Accents */
+  --primary: #205C3B; /* Brand Green - used strictly as accent */
+  --primary-foreground: #F8F6F1;
+  --secondary: #F3EEE4; /* Act II Tonal Shift (if ever needed for surfaces) */
+  --secondary-foreground: #1A1A1A;
+  --accent: #C8A96A; /* Luxury Gold */
+  --accent-foreground: #1A1A1A;
+  --muted: #E8E5DF;
+  --muted-foreground: #737373;
+  --border: #E8E5DF;
+  --ring: #C8A96A;
+  
+  /* Fluid Typography Scale (using clamp) */
+  --text-label: clamp(0.7rem, 1vw, 0.75rem); /* 12px */
+  --text-cta: clamp(0.875rem, 1.2vw, 1rem); /* 16px */
+  --text-body: clamp(1.125rem, 1.5vw, 1.25rem); /* 20px */
+  --text-headline: clamp(3rem, 6vw, 4.5rem); /* 72px */
+  
+  /* Strict Editorial Spacing Rhythm */
+  --spacing-title: 6rem; /* 96px */
+  --spacing-headline: 3rem; /* 48px */
+  --spacing-content: 4rem; /* 64px */
+  --spacing-cta: 7.5rem; /* 120px */
+
+  /* Radii */
   --radius-sm: 0.25rem;
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
