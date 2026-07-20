@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect';
 import gsap from 'gsap';
 import { FRAME_MANIFEST } from '../hero/content/frameManifest';
@@ -8,6 +8,8 @@ import { canvasManager } from '../hero/canvas/CanvasManager';
 import { frameRenderer } from '../hero/canvas/FrameRenderer';
 import { mapScrollToFrame } from '../hero/utils/frameMath';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useHeroLoader } from '../hero/hooks/useHeroLoader';
+import { SplashScreen } from './SplashScreen';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -36,25 +38,36 @@ export const HeroScene = () => {
   const typographyRef = useRef<HTMLDivElement>(null);
   const lightingRef = useRef<HTMLDivElement>(null);
 
+  // true once the splash exit animation has fully completed
+  const [splashDone, setSplashDone] = useState(false);
+
   const totalFrames = FRAME_MANIFEST.length;
   const scrollHeight = '300vh';
 
+  // Load initial frame batch — drives the splash progress bar
+  const { progress, isReady } = useHeroLoader();
+
+  // Called by SplashScreen after its fade-out transition ends
+  const handleSplashDone = useCallback(() => {
+    setSplashDone(true);
+    // Render frame 1 immediately so the canvas isn't blank on reveal
+    frameRenderer.renderFrame(1);
+  }, []);
+
+  // ── Initialise canvas (always, independent of splash state) ────────────────
   useIsomorphicLayoutEffect(() => {
     if (!canvasRef.current) return;
     canvasManager.init(canvasRef.current);
-
-    // Attempt to render first frame
-    const tryRender = () => { frameRenderer.renderFrame(1); };
-    const interval = setInterval(() => {
-      if (canvasManager.getContext()) { tryRender(); clearInterval(interval); }
-    }, 50);
-    setTimeout(() => clearInterval(interval), 2000);
-
-    return () => { clearInterval(interval); canvasManager.destroy(); };
+    return () => { canvasManager.destroy(); };
   }, []);
 
+  // ── GSAP ScrollTrigger — only after splash exits ────────────────────────────
   useIsomorphicLayoutEffect(() => {
+    if (!splashDone) return;
     if (!containerRef.current || !pinnedRef.current || !typographyRef.current || !lightingRef.current) return;
+
+    // Refresh ScrollTrigger so it recalculates positions after the splash is gone
+    ScrollTrigger.refresh();
 
     const ctx = gsap.context(() => {
       const chapters = typographyRef.current!.querySelectorAll('.hc-chapter');
@@ -133,73 +146,85 @@ export const HeroScene = () => {
     }, containerRef);
 
     return () => ctx.revert();
-  }, [totalFrames]);
+  }, [splashDone, totalFrames]);
 
   return (
-    <section
-      ref={containerRef}
-      className="relative w-full bg-[#050505]"
-      style={{ height: scrollHeight }}
-    >
-      <div
-        ref={pinnedRef}
-        className="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center"
-      >
-        {/* Lighting layer */}
-        <div ref={lightingRef} className="absolute inset-0 pointer-events-none z-10 mix-blend-overlay">
-          {LIGHTING_MOODS.map((mood, i) => (
-            <div
-              key={i}
-              className="hc-light absolute inset-0"
-              style={{ background: `radial-gradient(ellipse at 50% 50%, ${mood.bg} 0%, transparent 70%)`, opacity: 0, filter: 'blur(60px)' }}
-            />
-          ))}
-        </div>
-
-        {/* Frame canvas */}
-        <canvas
-          ref={canvasRef}
-          className="absolute top-0 left-0 w-full h-full z-0"
-          aria-hidden="true"
+    <>
+      {/* ── Splash — shown until initial frame batch is cached ────────── */}
+      {!splashDone && (
+        <SplashScreen
+          progress={progress}
+          isReady={isReady}
+          onDone={handleSplashDone}
         />
+      )}
 
-        {/* Bottom overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent pointer-events-none z-10" />
+      {/* ── Hero section ─────────────────────────────────────────────── */}
+      <section
+        ref={containerRef}
+        className="relative w-full bg-[#050505]"
+        style={{ height: scrollHeight }}
+      >
+        <div
+          ref={pinnedRef}
+          className="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center"
+        >
+          {/* Lighting layer */}
+          <div ref={lightingRef} className="absolute inset-0 pointer-events-none z-10 mix-blend-overlay">
+            {LIGHTING_MOODS.map((mood, i) => (
+              <div
+                key={i}
+                className="hc-light absolute inset-0"
+                style={{ background: `radial-gradient(ellipse at 50% 50%, ${mood.bg} 0%, transparent 70%)`, opacity: 0, filter: 'blur(60px)' }}
+              />
+            ))}
+          </div>
 
-        {/* Typography layer */}
-        <div ref={typographyRef} className="absolute inset-0 pointer-events-none z-20 flex items-center justify-center">
-          {CHAPTERS.map((chapter, i) => (
-            <div
-              key={chapter.id}
-              className="hc-chapter absolute inset-0 flex flex-col items-center justify-center text-center px-6"
-              style={{ opacity: 0 }}
-            >
-              {chapter.title && (
-                <h2
-                  className={`font-light text-white tracking-tight leading-[0.95] ${i === 0 ? 'text-[clamp(1.2rem,2.5vw,2rem)] tracking-[0.4em] uppercase' : 'text-[clamp(3rem,7vw,7rem)]'}`}
-                >
-                  {chapter.title}
-                </h2>
-              )}
-              {chapter.subtitle && (
-                <p className="mt-4 text-[clamp(1.2rem,3vw,2.5rem)] font-light text-white/60">
-                  {chapter.subtitle}
-                </p>
-              )}
+          {/* Frame canvas */}
+          <canvas
+            ref={canvasRef}
+            className="absolute top-0 left-0 w-full h-full z-0"
+            aria-hidden="true"
+          />
+
+          {/* Bottom overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent pointer-events-none z-10" />
+
+          {/* Typography layer */}
+          <div ref={typographyRef} className="absolute inset-0 pointer-events-none z-20 flex items-center justify-center">
+            {CHAPTERS.map((chapter, i) => (
+              <div
+                key={chapter.id}
+                className="hc-chapter absolute inset-0 flex flex-col items-center justify-center text-center px-6"
+                style={{ opacity: 0 }}
+              >
+                {chapter.title && (
+                  <h2
+                    className={`font-light text-white tracking-tight leading-[0.95] ${i === 0 ? 'text-[clamp(1.2rem,2.5vw,2rem)] tracking-[0.4em] uppercase' : 'text-[clamp(3rem,7vw,7rem)]'}`}
+                  >
+                    {chapter.title}
+                  </h2>
+                )}
+                {chapter.subtitle && (
+                  <p className="mt-4 text-[clamp(1.2rem,3vw,2.5rem)] font-light text-white/60">
+                    {chapter.subtitle}
+                  </p>
+                )}
+              </div>
+            ))}
+
+            {/* Scene 5 CTA */}
+            <div className="hc-cta absolute bottom-[15%] left-1/2 -translate-x-1/2 pointer-events-auto" style={{ opacity: 0 }}>
+              <a
+                href="#product-showcase"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-full text-sm font-medium tracking-[0.15em] uppercase hover:bg-white/20 transition-colors"
+              >
+                Explore Product
+              </a>
             </div>
-          ))}
-
-          {/* Scene 5 CTA */}
-          <div className="hc-cta absolute bottom-[15%] left-1/2 -translate-x-1/2 pointer-events-auto" style={{ opacity: 0 }}>
-            <a
-              href="#product-showcase"
-              className="inline-flex items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-full text-sm font-medium tracking-[0.15em] uppercase hover:bg-white/20 transition-colors"
-            >
-              Explore Product
-            </a>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
