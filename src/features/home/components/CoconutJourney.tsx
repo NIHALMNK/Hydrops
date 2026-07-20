@@ -1,79 +1,108 @@
-import { Scene } from './Scene';
 import Image from 'next/image';
+import { SectionRipple } from './SectionRipple';
 
+/**
+ * The human story behind every bottle of Hydrops.
+ * Not manufacturing steps — emotional chapters.
+ */
 const JOURNEY_STAGES = [
   { 
-    title: 'Morning in Kerala', 
-    desc: 'The day begins in Kerala.',
-    image: '/images/journey/1_morning.png'
+    chapter: '01',
+    title: 'Morning.', 
+    desc: 'Before sunrise, the coconut groves of Kerala awaken. The air carries salt and earth. The day begins not in a factory, but in a grove that has fed families for centuries.',
+    image: '/images/journey/1_morning.png',
+    mood: 'Dawn light finds the treetops.',
   },
   { 
-    title: 'Coconut Tree', 
-    desc: 'Carefully selected palms.',
-    image: '/images/journey/2_tree.png'
+    chapter: '02',
+    title: 'Harvest.', 
+    desc: 'Only the coconuts that have ripened completely are chosen. Not by machine — by hand, and by experience passed down through generations.',
+    image: '/images/journey/3_harvest.png',
+    mood: 'Patience is the first ingredient.',
   },
   { 
-    title: 'Harvest', 
-    desc: 'Hand-picked at peak maturity.',
-    image: '/images/journey/3_harvest.png'
+    chapter: '03',
+    title: 'Patience.', 
+    desc: 'The finest oil cannot be rushed. Our extraction process honours the natural pace of the coconut, preserving everything the tree intended to give.',
+    image: '/images/journey/4_selection.png',
+    mood: 'Nothing valuable was ever made in a hurry.',
   },
   { 
-    title: 'Selection', 
-    desc: 'Only the finest coconuts.',
-    image: '/images/journey/4_selection.png'
-  },
-  { 
-    title: 'Double Filtration', 
-    desc: 'Purified with care.',
-    image: '/images/journey/5_filtration.png'
-  },
-  { 
-    title: 'Hydrops', 
-    desc: 'Crystal-clear coconut oil.',
-    image: '/images/journey/6_hydrops.png'
+    chapter: '04',
+    title: 'Purity.', 
+    desc: 'Double filtered. Crystal clear. What remains is the purest expression of the coconut — without compromise, without residue, without anything unnecessary.',
+    image: '/images/journey/6_hydrops.png',
+    mood: 'This is Hydrops.',
   },
 ];
 
 export function CoconutJourney() {
   return (
     <div className="w-full">
-      <section id="journey-section" className="relative w-full h-screen bg-[#EEF5EC] text-[#1a1a1a] overflow-hidden">
-        {/* Natural green tint, very subtle botanical feeling */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#e1efe0]/60 via-[#EEF5EC]/30 to-transparent pointer-events-none" />
-        <div className="journey-track flex h-full w-[600vw] will-change-transform">
+      <section id="journey-section" className="relative w-full h-screen bg-[#F5F2EC] text-[#1E1E1E] overflow-hidden">
+        
+        {/* Subtle warm ambient light */}
+        <div className="absolute inset-0 pointer-events-none z-0"
+          style={{ background: 'radial-gradient(ellipse at 20% 50%, rgba(200,169,106,0.05) 0%, transparent 60%)' }}
+        />
+
+        {/* Horizontal scroll track */}
+        <div className="journey-track flex h-full will-change-transform" style={{ width: `${JOURNEY_STAGES.length * 100}vw` }}>
           {JOURNEY_STAGES.map((stage, i) => (
-            <div key={i} className="journey-chapter w-screen h-screen flex-shrink-0 flex flex-col md:flex-row items-center justify-center p-8 md:p-24 gap-12 md:gap-32 relative">
-              
+            <div
+              key={i}
+              className="journey-chapter flex-shrink-0 w-screen h-screen flex flex-col md:flex-row items-center justify-center px-8 md:px-24 gap-12 md:gap-20 relative"
+            >
               {/* Text Content */}
-              <div className="journey-text flex-1 flex flex-col justify-center max-w-lg z-10 opacity-0 translate-y-12 will-change-transform">
-                <span className="text-[#388e4a] text-sm md:text-base font-semibold tracking-[0.2em] uppercase mb-4 block">
-                  Chapter 0{i + 1}
+              <div className="journey-text flex-1 flex flex-col justify-center max-w-md z-10 opacity-0 translate-y-10 will-change-transform">
+                <span className="text-[#C8A96A] text-[11px] font-medium tracking-[0.35em] uppercase mb-6 block">
+                  Chapter {stage.chapter}
                 </span>
-                <h3 className="text-4xl md:text-5xl lg:text-6xl font-light mb-6 leading-tight">
+                <h3 className="text-[clamp(3rem,5vw,4.5rem)] font-light mb-6 leading-[0.95] tracking-tight text-[#1E1E1E]">
                   {stage.title}
                 </h3>
-                <p className="text-lg md:text-xl text-black/60 font-light leading-relaxed">
+                <p className="text-[clamp(1rem,1.5vw,1.15rem)] text-[#1E1E1E]/60 font-light leading-relaxed mb-8 max-w-sm">
                   {stage.desc}
+                </p>
+                {/* Mood line — the signature emotional note for each chapter */}
+                <p className="text-[11px] tracking-[0.3em] uppercase text-[#205C3B] font-medium">
+                  {stage.mood}
                 </p>
               </div>
 
               {/* Visual */}
-              <div className="journey-visual flex-1 w-full max-w-[500px] aspect-[4/5] md:aspect-square relative rounded-3xl overflow-hidden shadow-[0_32px_80px_-20px_rgba(56,142,74,0.15)] will-change-transform opacity-0 scale-95 bg-[#eef3ee]">
-                 <div className="journey-image-inner absolute inset-0 will-change-transform scale-110">
-                    <Image 
-                      src={stage.image} 
-                      alt={stage.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 500px"
-                      className="object-cover"
-                      loading={i === 0 ? "eager" : "lazy"}
-                    />
-                 </div>
+              <div className="journey-visual flex-1 w-full max-w-[480px] aspect-[4/5] md:aspect-[3/4] relative rounded-[2rem] overflow-hidden will-change-transform opacity-0 scale-[0.96] bg-[#E8E4DC]"
+                style={{ boxShadow: '0 40px 80px -20px rgba(30,30,30,0.12)' }}
+              >
+                <div className="journey-image-inner absolute inset-0 will-change-transform scale-[1.08]">
+                  <Image 
+                    src={stage.image} 
+                    alt={stage.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 480px"
+                    className="object-cover"
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                  />
+                </div>
+                {/* Vignette */}
+                <div className="absolute inset-0 rounded-[2rem]"
+                  style={{ background: 'linear-gradient(to bottom, transparent 60%, rgba(30,30,30,0.15))' }}
+                />
               </div>
-              
+
+              {/* Chapter progress indicator */}
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                {JOURNEY_STAGES.map((_, j) => (
+                  <div key={j}
+                    className={`h-px transition-all duration-500 ${j === i ? 'w-8 bg-[#C8A96A]' : 'w-3 bg-[#1E1E1E]/20'}`}
+                  />
+                ))}
+              </div>
             </div>
           ))}
         </div>
+
+        <SectionRipple />
       </section>
     </div>
   );

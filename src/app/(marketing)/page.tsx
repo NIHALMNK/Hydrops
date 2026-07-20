@@ -2,16 +2,14 @@
 
 import { useRef } from 'react';
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect';
-import { HeroScene } from '@/features/hero';
+import { HeroScene } from '@/features/hero-cinematic';
+import { SoulStatement } from '@/features/home/components/SoulStatement';
 import { Philosophy } from '@/features/home/components/Philosophy';
 import { CoconutJourney } from '@/features/home/components/CoconutJourney';
 import { ProductShowcase } from '@/features/home/components/ProductShowcase';
-import { PurityTable } from '@/features/home/components/PurityTable';
-import { WhyHydrops } from '@/features/home/components/WhyHydrops';
-import { Applications } from '@/features/home/components/Applications';
-import { QualityPromise } from '@/features/home/components/QualityPromise';
-import { WhyCrystalClear } from '@/features/home/components/WhyCrystalClear';
-import { FAQ } from '@/features/home/components/FAQ';
+import { PurityStatement } from '@/features/home/components/PurityStatement';
+import { Craftsmanship } from '@/features/home/components/Craftsmanship';
+import { Everyday } from '@/features/home/components/Everyday';
 import { ContactCTA } from '@/features/home/components/ContactCTA';
 import { HomeAnimationController } from '@/features/home/animations/master';
 import { Navbar } from '@/components/layout/Navbar';
@@ -21,10 +19,8 @@ export default function HomePage() {
   const mainRef = useRef<HTMLDivElement>(null);
 
   useIsomorphicLayoutEffect(() => {
-    // Only run on client after mount
     const controller = new HomeAnimationController(mainRef);
     
-    // We defer initialization slightly to ensure all child components and refs are painted
     const timer = setTimeout(() => {
       controller.init();
     }, 100);
@@ -38,17 +34,32 @@ export default function HomePage() {
   return (
     <>
       <Navbar />
-      <main ref={mainRef} className="w-full relative bg-background overflow-hidden">
+      <main ref={mainRef} className="w-full relative overflow-hidden" style={{ backgroundColor: '#F5F2EC' }}>
+        {/* 01 · Cinematic Hero */}
         <HeroScene />
+
+        {/* 02 · Breathing moment — the brand soul emerges from darkness */}
+        <SoulStatement />
+
+        {/* 03 · Philosophy — Every drop begins with purity */}
         <Philosophy />
+
+        {/* 04 · Origin — The human story behind every bottle */}
         <CoconutJourney />
+
+        {/* 05 · Product — The bottle as hero */}
         <ProductShowcase />
-        <PurityTable />
-        <WhyHydrops />
-        <Applications />
-        <QualityPromise />
-        <WhyCrystalClear />
-        <FAQ />
+
+        {/* 06 · Purity Statement — The dark contrast beat */}
+        <PurityStatement />
+
+        {/* 07 · Craftsmanship — Documentary process story */}
+        <Craftsmanship />
+
+        {/* 08 · Everyday — Life with Hydrops */}
+        <Everyday />
+
+        {/* 09 · Closing — The brand arrives */}
         <ContactCTA />
       </main>
       <Footer />

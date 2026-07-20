@@ -1,17 +1,12 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initGlobalGSAP } from './global';
-import { initHero } from './hero';
 import { initPhilosophy } from './philosophy';
 import { initJourney } from './journey';
 import { initProduct } from './product';
-import { initPurityTable } from './purityTable';
-import { initWhyHydrops } from './whyHydrops';
-import { initApplications } from './applications';
-import { initQuality } from './quality';
-import { initWhyCrystalClear } from './whyCrystalClear';
-import { initFAQ } from './faq';
 import { initCTA } from './cta';
+import { initCraftsmanship } from './craftsmanship';
+import { initEveryday } from './everyday';
 
 export class HomeAnimationController {
   private ctx: gsap.Context;
@@ -29,28 +24,18 @@ export class HomeAnimationController {
       const root = this.scope.current;
       if (!root) return;
 
-      const hero = root.querySelector('#hero-section') as HTMLElement;
       const philosophy = root.querySelector('#philosophy-section') as HTMLElement;
       const journey = root.querySelector('#journey-section') as HTMLElement;
       const product = root.querySelector('#product-showcase-section') as HTMLElement;
-      const purityTable = root.querySelector('#purity-table-section') as HTMLElement;
-      const whyHydrops = root.querySelector('#why-hydrops-section') as HTMLElement;
-      const applications = root.querySelector('#applications-section') as HTMLElement;
-      const quality = root.querySelector('#quality-section') as HTMLElement;
-      const whyCrystalClear = root.querySelector('#why-crystal-clear-section') as HTMLElement;
-      const faq = root.querySelector('#faq-section') as HTMLElement;
+      const craftsmanship = root.querySelector('#craftsmanship-section') as HTMLElement;
+      const everyday = root.querySelector('#everyday-section') as HTMLElement;
       const cta = root.querySelector('#cta-section') as HTMLElement;
 
-      if (hero) this.addCleanup(initHero(hero));
       if (philosophy) this.addCleanup(initPhilosophy(philosophy));
       if (journey) this.addCleanup(initJourney(journey));
       if (product) this.addCleanup(initProduct(product));
-      if (purityTable) this.addCleanup(initPurityTable(purityTable));
-      if (whyHydrops) this.addCleanup(initWhyHydrops(whyHydrops));
-      if (applications) this.addCleanup(initApplications(applications));
-      if (quality) this.addCleanup(initQuality(quality));
-      if (whyCrystalClear) this.addCleanup(initWhyCrystalClear(whyCrystalClear));
-      if (faq) this.addCleanup(initFAQ(faq));
+      if (craftsmanship) this.addCleanup(initCraftsmanship(craftsmanship));
+      if (everyday) this.addCleanup(initEveryday(everyday));
       if (cta) this.addCleanup(initCTA(cta));
     });
 

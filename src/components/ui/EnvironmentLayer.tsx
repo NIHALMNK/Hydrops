@@ -26,7 +26,7 @@ export function EnvironmentLayer({
     transition: {
       duration: 8,
       repeat: Infinity,
-      ease: "easeInOut"
+      ease: "easeInOut" as const
     }
   } : {};
 
@@ -36,7 +36,7 @@ export function EnvironmentLayer({
     transition: {
       duration: 15,
       repeat: Infinity,
-      ease: "linear"
+      ease: "linear" as const
     }
   } : {};
 

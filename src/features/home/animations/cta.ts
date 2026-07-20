@@ -1,9 +1,14 @@
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export function initCTA(scope: HTMLElement) {
+  const label = scope.querySelector('.cta-label');
   const title = scope.querySelector('.cta-title');
   const desc = scope.querySelector('.cta-desc');
   const buttons = scope.querySelector('.cta-buttons');
+  const tagline = scope.querySelector('.cta-tagline');
   const bottle = scope.querySelector('.cta-bg-bottle');
 
   const tl = gsap.timeline({
@@ -14,33 +19,22 @@ export function initCTA(scope: HTMLElement) {
     }
   });
 
-  tl.to(bottle, {
-    opacity: 1,
-    scale: 1,
-    duration: 1.5,
-    ease: 'power2.out',
-  })
-  .to([title, desc], {
-    opacity: 1,
-    y: 0,
-    duration: 0.8,
-    stagger: 0.2,
-    ease: 'power3.out',
-  }, '-=1')
-  .to(buttons, {
-    opacity: 1,
-    scale: 1,
-    duration: 0.6,
-    ease: 'back.out(1.5)',
-  }, '-=0.4');
+  if (bottle) {
+    tl.fromTo(bottle,
+      { opacity: 0, x: 40 },
+      { opacity: 0.12, x: 0, duration: 2.0, ease: 'power2.out' }, 0
+    );
+  }
 
-  // Float animation for background bottle
-  gsap.to(bottle, {
-    y: 30,
-    rotation: 15,
-    duration: 4,
-    repeat: -1,
-    yoyo: true,
-    ease: 'sine.inOut',
-  });
+  const elements = [label, title, desc, buttons, tagline].filter(Boolean);
+  tl.fromTo(elements,
+    { opacity: 0, y: 30 },
+    { opacity: 1, y: 0, duration: 0.8, stagger: 0.15, ease: 'power3.out' },
+    '-=1.5'
+  );
+
+  // tagline stays at reduced opacity
+  if (tagline) {
+    tl.set(tagline, { opacity: 0.5 });
+  }
 }
