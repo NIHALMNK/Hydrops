@@ -8,143 +8,215 @@ import { useGSAP } from "@gsap/react";
 import { Menu, X } from "lucide-react";
 
 const navItems = [
-  { label: "HOME", href: "#" },
-  { label: "ABOUT US", href: "#" },
-  { label: "OUR PRODUCT", href: "#" },
-  { label: "CONTACT US", href: "#" },
+  { label: "Home", href: "#" },
+  { label: "About", href: "#" },
+  { label: "Product", href: "#product-showcase" },
+  { label: "Contact", href: "#cta-section" },
 ];
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLight, setIsLight] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [isDark, setIsDark] = useState(true); // start dark (over Hero)
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Entrance animation
   useGSAP(() => {
     gsap.from(containerRef.current, {
-      y: -20,
+      y: -16,
       opacity: 0,
-      scale: 0.97,
-      filter: "blur(10px)",
-      duration: 0.8,
+      duration: 1.0,
       ease: "power3.out",
+      delay: 0.2,
     });
   }, { scope: containerRef });
 
+  // Scroll detection — context awareness
   useEffect(() => {
     const handleScroll = () => {
-      // Find the element at the center of the navbar
-      const elements = document.elementsFromPoint(window.innerWidth / 2, 56);
-      let foundLight = false;
+      const y = window.scrollY;
+      setScrolled(y > 40);
+
+      // Detect background context at nav center
+      const elements = document.elementsFromPoint(window.innerWidth / 2, 40);
+      let dark = true;
 
       for (const el of elements) {
-        // Skip navbar itself and its children
-        if (el.tagName === 'NAV' || el.tagName === 'HEADER' || el.closest('header') || el.closest('nav')) continue;
-        
-        const bgColor = window.getComputedStyle(el).backgroundColor;
-        const match = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-        
+        if (el.closest('[data-navbar]')) continue;
+        const bg = window.getComputedStyle(el).backgroundColor;
+        const match = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
         if (match) {
           const r = parseInt(match[1]);
           const g = parseInt(match[2]);
           const b = parseInt(match[3]);
-          const a = match[4] ? parseFloat(match[4]) : 1;
-          
-          if (a > 0.1) {
-            // Calculate relative luminance
-            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-            if (luminance > 0.6) {
-               foundLight = true;
-            }
-            break;
-          }
+          const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+          // Warm canvas (#F5F2EC) has luminance ~0.96
+          dark = luminance < 0.55;
+          break;
         }
       }
-      setIsLight(foundLight);
+      setIsDark(dark);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    // Initial check after a slight delay to ensure render
-    setTimeout(handleScroll, 100);
-    
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    setTimeout(handleScroll, 150);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const textColor = isDark ? "text-white/80" : "text-[#1E1E1E]/70";
+  const textHover = isDark ? "hover:text-white" : "hover:text-[#1E1E1E]";
+  const logoFilter = isDark ? "brightness(0) invert(1)" : "none";
+
   return (
-    <div 
+    <div
       ref={containerRef}
-      className="fixed top-4 left-1/2 z-50 w-[calc(100%-48px)] max-w-[1120px] -translate-x-1/2"
+      data-navbar
+      className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-5 px-5 md:px-8"
     >
-      <header 
-        className={`relative flex h-[64px] w-full items-center justify-between rounded-full border px-8 shadow-lg backdrop-blur-[24px] transition-all duration-500 ease-out ${
-          isLight 
-            ? "bg-black/[0.04] border-black/[0.08] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_4px_30px_rgba(0,0,0,0.03)]" 
-            : "bg-white/[0.08] border-white/15 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_4px_30px_rgba(0,0,0,0.1)]"
-        }`}
+      {/* The pill */}
+      <div
+        className={`
+          relative flex h-[56px] w-full max-w-[1100px] items-center justify-between
+          rounded-full border px-5 md:px-7
+          transition-all duration-700 ease-out
+          ${scrolled
+            ? isDark
+              ? "bg-white/[0.06] border-white/[0.12] shadow-[0_8px_32px_rgba(0,0,0,0.18)] backdrop-blur-[28px]"
+              : "bg-[#F5F2EC]/80 border-[#1E1E1E]/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.06)] backdrop-blur-[28px]"
+            : "bg-transparent border-transparent shadow-none backdrop-blur-[0px]"
+          }
+        `}
       >
         {/* LOGO */}
-        <Link href="/" className="relative flex h-[58px] w-[172px] md:h-[60px] md:w-[188px] shrink-0 items-center">
-          <Image 
-            src="/images/brand/logo.png" 
-            alt="Hydrops Logo" 
+        <Link href="/" className="relative shrink-0 flex items-center" style={{ width: 140, height: 48 }}>
+          <Image
+            src="/images/brand/logo.png"
+            alt="Hydrops"
             fill
-            sizes="(max-width: 768px) 172px, 188px"
+            sizes="140px"
             className="object-contain transition-all duration-500"
-            style={{ 
-              filter: isLight ? 'invert(1) hue-rotate(180deg) brightness(0.8)' : 'none' 
-            }}
+            style={{ filter: logoFilter }}
             priority
           />
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden absolute left-1/2 -translate-x-1/2 md:flex items-center gap-12 lg:gap-14">
+        {/* Desktop nav — centered absolutely */}
+        <nav
+          className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-10"
+          aria-label="Primary navigation"
+        >
           {navItems.map((item) => (
-            <Link 
-              key={item.label} 
+            <Link
+              key={item.label}
               href={item.href}
-              className="group relative text-[15px] font-semibold tracking-wide transition-all duration-250 hover:-translate-y-[1px] text-[#388e4a] hover:text-black"
+              className={`
+                group relative text-[13px] font-medium tracking-[0.12em] uppercase
+                transition-all duration-300
+                ${textColor} ${textHover}
+              `}
             >
               {item.label}
-              <span 
-                className={`absolute -bottom-1.5 left-1/2 h-[2px] w-0 -translate-x-1/2 rounded-full opacity-0 transition-all duration-[250ms] ease-out group-hover:w-full group-hover:opacity-100 ${
-                  isLight ? "bg-[#388e4a]" : "bg-[#388e4a] shadow-[0_0_8px_rgba(56,142,74,0.4)]"
-                }`} 
+              {/* Signature gold underline on hover */}
+              <span
+                className="absolute -bottom-1 left-0 h-px w-0 group-hover:w-full transition-all duration-300 ease-out"
+                style={{ background: "rgba(200,169,106,0.7)" }}
               />
             </Link>
           ))}
         </nav>
 
-        {/* Mobile Menu Button */}
-        <button 
-          className={`md:hidden flex h-10 w-10 shrink-0 items-center justify-center rounded-full border backdrop-blur-md transition-colors text-[#388e4a] ${
-            isLight ? "border-black/10 bg-black/5 hover:bg-black/10" : "border-white/10 bg-white/5 hover:bg-white/10"
-          }`}
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle Navigation"
+        {/* CTA — desktop */}
+        <a
+          href="#cta-section"
+          className={`
+            hidden md:flex items-center gap-2 shrink-0
+            text-[12px] font-medium tracking-[0.12em] uppercase
+            px-5 py-2 rounded-full border transition-all duration-300
+            ${isDark
+              ? "border-white/20 text-white/70 hover:border-white/40 hover:text-white hover:bg-white/[0.06]"
+              : "border-[#205C3B]/30 text-[#205C3B] hover:border-[#205C3B]/60 hover:bg-[#205C3B]/[0.04]"
+            }
+          `}
         >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
-      </header>
+          Get in Touch
+        </a>
 
-      {/* Mobile Menu Panel */}
-      <div 
-        className={`absolute left-0 top-[80px] w-full overflow-hidden rounded-[24px] border shadow-2xl backdrop-blur-[32px] transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] origin-top ${
-          isOpen ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-95 pointer-events-none"
-        } ${
-          isLight ? "bg-white/80 border-black/10 shadow-[0_16px_40px_rgba(0,0,0,0.05)]" : "bg-black/40 border-white/15 shadow-[0_16px_40px_rgba(0,0,0,0.2)]"
-        }`}
+        {/* Mobile toggle */}
+        <button
+          className={`
+            md:hidden flex h-9 w-9 shrink-0 items-center justify-center rounded-full border
+            transition-all duration-300
+            ${isDark
+              ? "border-white/15 text-white/70 hover:border-white/30 hover:bg-white/[0.06]"
+              : "border-[#1E1E1E]/10 text-[#1E1E1E]/60 hover:bg-[#1E1E1E]/[0.04]"
+            }
+          `}
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label={isOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isOpen}
+        >
+          {isOpen
+            ? <X size={16} strokeWidth={1.5} />
+            : <Menu size={16} strokeWidth={1.5} />
+          }
+        </button>
+      </div>
+
+      {/* Mobile drawer */}
+      <div
+        className={`
+          absolute top-[72px] left-5 right-5 overflow-hidden
+          rounded-[20px] border
+          transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] origin-top
+          ${isOpen ? "opacity-100 scale-y-100 pointer-events-auto" : "opacity-0 scale-y-95 pointer-events-none"}
+          ${isDark
+            ? "bg-[#111]/80 border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-[32px]"
+            : "bg-[#F5F2EC]/90 border-[#1E1E1E]/[0.07] shadow-[0_20px_60px_rgba(0,0,0,0.08)] backdrop-blur-[32px]"
+          }
+        `}
+        aria-hidden={!isOpen}
       >
-        <div className="flex flex-col gap-6 p-8 items-center justify-center">
-          {navItems.map((item) => (
+        {/* Gold top line — signature ripple */}
+        <div
+          className="w-full h-px"
+          style={{ background: "linear-gradient(90deg, transparent, rgba(200,169,106,0.5), transparent)" }}
+        />
+
+        <div className="flex flex-col px-8 py-8 gap-1">
+          {navItems.map((item, i) => (
             <Link
               key={item.label}
               href={item.href}
               onClick={() => setIsOpen(false)}
-              className="text-xl font-medium tracking-wide transition-colors active:scale-[0.98] text-[#388e4a] hover:text-black"
+              className={`
+                flex items-center justify-between py-4 border-b
+                text-[15px] font-light tracking-wide
+                transition-colors duration-200
+                ${isDark
+                  ? "border-white/[0.06] text-white/70 hover:text-white"
+                  : "border-[#1E1E1E]/[0.06] text-[#1E1E1E]/60 hover:text-[#1E1E1E]"
+                }
+                ${i === navItems.length - 1 ? "border-b-0" : ""}
+              `}
             >
-              {item.label}
+              <span>{item.label}</span>
+              <span
+                className="text-[11px] tracking-[0.2em] uppercase"
+                style={{ color: "rgba(200,169,106,0.6)" }}
+              >
+                0{i + 1}
+              </span>
             </Link>
           ))}
+
+          {/* Mobile CTA */}
+          <a
+            href="#cta-section"
+            onClick={() => setIsOpen(false)}
+            className="mt-6 w-full flex items-center justify-center py-3.5 rounded-full text-[13px] font-medium tracking-[0.15em] uppercase bg-[#205C3B] text-white hover:bg-[#1a4c30] transition-colors"
+          >
+            Get in Touch
+          </a>
         </div>
       </div>
     </div>
