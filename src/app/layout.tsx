@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { inter } from "@/lib/fonts";
+import { cormorant, dmSans } from "@/lib/fonts";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import "./globals.css";
 
@@ -36,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="en" className={`${cormorant.variable} ${dmSans.variable}`} suppressHydrationWarning>
       <body className="antialiased min-h-screen flex flex-col" suppressHydrationWarning>
         <ThemeProvider>
           {children}

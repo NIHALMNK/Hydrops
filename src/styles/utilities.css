@@ -5,3 +5,123 @@
     text-wrap: balance;
   }
 }
+
+/* ── Semantic heading defaults ─────────────────────────────────────────────
+   Apply Cormorant Garamond automatically to editorial heading levels.
+   Components that already write <h1>–<h3> get the premium serif immediately
+   without any source changes.  H4–H6 remain DM Sans (UI context headings).
+   All components that override font-family inline or via Tailwind still win.
+───────────────────────────────────────────────────────────────────────────── */
+h1, h2, h3 {
+  font-family: var(--font-cormorant), Georgia, serif;
+}
+
+/* ── Typography utility classes ────────────────────────────────────────────
+   Consume the type scale tokens defined in tokens.css.
+   Use class="type-display", "type-h1", "type-body", etc. on any element.
+───────────────────────────────────────────────────────────────────────────── */
+.type-display {
+  font-family:    var(--type-display-font);
+  font-size:      var(--type-display-size);
+  font-weight:    var(--type-display-weight);
+  line-height:    var(--type-display-leading);
+  letter-spacing: var(--type-display-tracking);
+}
+
+.type-h1 {
+  font-family:    var(--type-h1-font);
+  font-size:      var(--type-h1-size);
+  font-weight:    var(--type-h1-weight);
+  line-height:    var(--type-h1-leading);
+  letter-spacing: var(--type-h1-tracking);
+}
+
+.type-h2 {
+  font-family:    var(--type-h2-font);
+  font-size:      var(--type-h2-size);
+  font-weight:    var(--type-h2-weight);
+  line-height:    var(--type-h2-leading);
+  letter-spacing: var(--type-h2-tracking);
+}
+
+.type-h3 {
+  font-family:    var(--type-h3-font);
+  font-size:      var(--type-h3-size);
+  font-weight:    var(--type-h3-weight);
+  line-height:    var(--type-h3-leading);
+  letter-spacing: var(--type-h3-tracking);
+}
+
+.type-h4 {
+  font-family:    var(--type-h4-font);
+  font-size:      var(--type-h4-size);
+  font-weight:    var(--type-h4-weight);
+  line-height:    var(--type-h4-leading);
+  letter-spacing: var(--type-h4-tracking);
+}
+
+.type-body-lg {
+  font-family:    var(--type-body-lg-font);
+  font-size:      var(--type-body-lg-size);
+  font-weight:    var(--type-body-lg-weight);
+  line-height:    var(--type-body-lg-leading);
+  letter-spacing: var(--type-body-lg-tracking);
+}
+
+.type-body {
+  font-family:    var(--type-body-font);
+  font-size:      var(--type-body-size);
+  font-weight:    var(--type-body-weight);
+  line-height:    var(--type-body-leading);
+  letter-spacing: var(--type-body-tracking);
+}
+
+.type-small {
+  font-family:    var(--type-small-font);
+  font-size:      var(--type-small-size);
+  font-weight:    var(--type-small-weight);
+  line-height:    var(--type-small-leading);
+  letter-spacing: var(--type-small-tracking);
+}
+
+.type-caption {
+  font-family:    var(--type-caption-font);
+  font-size:      var(--type-caption-size);
+  font-weight:    var(--type-caption-weight);
+  line-height:    var(--type-caption-leading);
+  letter-spacing: var(--type-caption-tracking);
+  text-transform: uppercase;
+}
+
+.type-nav {
+  font-family:    var(--type-nav-font);
+  font-size:      var(--type-nav-size);
+  font-weight:    var(--type-nav-weight);
+  line-height:    var(--type-nav-leading);
+  letter-spacing: var(--type-nav-tracking);
+  text-transform: uppercase;
+}
+
+.type-btn {
+  font-family:    var(--type-btn-font);
+  font-size:      var(--type-btn-size);
+  font-weight:    var(--type-btn-weight);
+  line-height:    var(--type-btn-leading);
+  letter-spacing: var(--type-btn-tracking);
+  text-transform: uppercase;
+}
+
+.type-label {
+  font-family:    var(--type-label-font);
+  font-size:      var(--type-label-size);
+  font-weight:    var(--type-label-weight);
+  line-height:    var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+}
+
+/* ── Display font helper — apply Cormorant to any element ─────────────────── */
+.font-display {
+  font-family: var(--font-cormorant), Georgia, serif;
+}
+

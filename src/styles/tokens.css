@@ -1,34 +1,158 @@
 :root {
+  /* ──────────────────────────────────────────────────────────────────── */
+  /* COLOUR PALETTE                                                       */
+  /* ──────────────────────────────────────────────────────────────────── */
+
   /* Singular Luxury Canvas */
   --background: #F8F6F1;
   --foreground: #1A1A1A;
-  
+
   /* Accents */
-  --primary: #205C3B; /* Brand Green - used strictly as accent */
+  --primary: #205C3B;               /* Brand Green – used strictly as accent */
   --primary-foreground: #F8F6F1;
-  --secondary: #F3EEE4; /* Act II Tonal Shift (if ever needed for surfaces) */
+  --secondary: #F3EEE4;             /* Tonal shift for surfaces */
   --secondary-foreground: #1A1A1A;
-  --accent: #C8A96A; /* Luxury Gold */
+  --accent: #C8A96A;                /* Luxury Gold */
   --accent-foreground: #1A1A1A;
   --muted: #E8E5DF;
   --muted-foreground: #737373;
   --border: #E8E5DF;
   --ring: #C8A96A;
-  
-  /* Fluid Typography Scale (using clamp) */
-  --text-label: clamp(0.7rem, 1vw, 0.75rem); /* 12px */
-  --text-cta: clamp(0.875rem, 1.2vw, 1rem); /* 16px */
-  --text-body: clamp(1.125rem, 1.5vw, 1.25rem); /* 20px */
-  --text-headline: clamp(3rem, 6vw, 4.5rem); /* 72px */
-  
-  /* Strict Editorial Spacing Rhythm */
-  --spacing-title: 6rem; /* 96px */
-  --spacing-headline: 3rem; /* 48px */
-  --spacing-content: 4rem; /* 64px */
-  --spacing-cta: 7.5rem; /* 120px */
 
-  /* Radii */
+  /* ──────────────────────────────────────────────────────────────────── */
+  /* TYPOGRAPHY — FONT FAMILIES                                           */
+  /* These are injected as CSS variables by next/font via the html class. */
+  /* ──────────────────────────────────────────────────────────────────── */
+
+  /* --font-cormorant  →  Cormorant Garamond  (display / editorial)     */
+  /* --font-dm-sans    →  DM Sans             (UI / body / navigation)  */
+
+  /* ──────────────────────────────────────────────────────────────────── */
+  /* TYPOGRAPHY — SCALE                                                   */
+  /*                                                                      */
+  /* Naming: --type-{level}                                               */
+  /* All sizes use clamp(min, preferred, max) for fluid responsive type. */
+  /* ──────────────────────────────────────────────────────────────────── */
+
+  /* Display — hero frames, large editorial statements                   */
+  --type-display-size:        clamp(3.5rem,  9vw,  9rem);   /* 56–144px */
+  --type-display-font:        var(--font-cormorant), Georgia, serif;
+  --type-display-weight:      300;
+  --type-display-leading:     0.95;
+  --type-display-tracking:    -0.02em;
+
+  /* H1 — section hero titles                                            */
+  --type-h1-size:             clamp(2.5rem,  6vw,  6rem);   /* 40–96px  */
+  --type-h1-font:             var(--font-cormorant), Georgia, serif;
+  --type-h1-weight:           300;
+  --type-h1-leading:          1.0;
+  --type-h1-tracking:         -0.015em;
+
+  /* H2 — section headings, editorial sub-heads                         */
+  --type-h2-size:             clamp(2rem,    4.5vw, 4.5rem); /* 32–72px */
+  --type-h2-font:             var(--font-cormorant), Georgia, serif;
+  --type-h2-weight:           300;
+  --type-h2-leading:          1.05;
+  --type-h2-tracking:         -0.01em;
+
+  /* H3 — card titles, feature headings                                  */
+  --type-h3-size:             clamp(1.5rem,  3vw,  3rem);   /* 24–48px  */
+  --type-h3-font:             var(--font-cormorant), Georgia, serif;
+  --type-h3-weight:           400;
+  --type-h3-leading:          1.1;
+  --type-h3-tracking:         -0.005em;
+
+  /* H4 — sub-card headings, prominent UI labels                        */
+  --type-h4-size:             clamp(1.125rem, 2vw, 1.75rem); /* 18–28px */
+  --type-h4-font:             var(--font-dm-sans), system-ui, sans-serif;
+  --type-h4-weight:           500;
+  --type-h4-leading:          1.2;
+  --type-h4-tracking:         0em;
+
+  /* H5 — small section titles                                           */
+  --type-h5-size:             clamp(0.9375rem, 1.4vw, 1.125rem); /* 15–18px */
+  --type-h5-font:             var(--font-dm-sans), system-ui, sans-serif;
+  --type-h5-weight:           500;
+  --type-h5-leading:          1.3;
+  --type-h5-tracking:         0.01em;
+
+  /* H6 — the smallest heading level                                     */
+  --type-h6-size:             0.875rem;                       /* 14px   */
+  --type-h6-font:             var(--font-dm-sans), system-ui, sans-serif;
+  --type-h6-weight:           600;
+  --type-h6-leading:          1.4;
+  --type-h6-tracking:         0.02em;
+
+  /* Body Large — introductory paragraphs, lead text                    */
+  --type-body-lg-size:        clamp(1.0625rem, 1.5vw, 1.25rem); /* 17–20px */
+  --type-body-lg-font:        var(--font-dm-sans), system-ui, sans-serif;
+  --type-body-lg-weight:      300;
+  --type-body-lg-leading:     1.7;
+  --type-body-lg-tracking:    0.005em;
+
+  /* Body — main paragraph text                                          */
+  --type-body-size:           clamp(0.9375rem, 1.2vw, 1.0625rem); /* 15–17px */
+  --type-body-font:           var(--font-dm-sans), system-ui, sans-serif;
+  --type-body-weight:         300;
+  --type-body-leading:        1.7;
+  --type-body-tracking:       0.005em;
+
+  /* Small Text — footnotes, supplementary info                         */
+  --type-small-size:          clamp(0.8125rem, 1vw, 0.875rem);   /* 13–14px */
+  --type-small-font:          var(--font-dm-sans), system-ui, sans-serif;
+  --type-small-weight:        400;
+  --type-small-leading:       1.6;
+  --type-small-tracking:      0.01em;
+
+  /* Caption — image captions, metadata labels                          */
+  --type-caption-size:        clamp(0.6875rem, 0.9vw, 0.75rem);  /* 11–12px */
+  --type-caption-font:        var(--font-dm-sans), system-ui, sans-serif;
+  --type-caption-weight:      400;
+  --type-caption-leading:     1.5;
+  --type-caption-tracking:    0.06em;
+
+  /* Navigation — top nav links (existing: 12px / tracking-[0.18em])    */
+  --type-nav-size:            0.75rem;                        /* 12px   */
+  --type-nav-font:            var(--font-dm-sans), system-ui, sans-serif;
+  --type-nav-weight:          400;
+  --type-nav-leading:         1;
+  --type-nav-tracking:        0.18em;
+
+  /* Button — CTA buttons, interactive labels                           */
+  --type-btn-size:            0.75rem;                        /* 12px   */
+  --type-btn-font:            var(--font-dm-sans), system-ui, sans-serif;
+  --type-btn-weight:          500;
+  --type-btn-leading:         1;
+  --type-btn-tracking:        0.15em;
+
+  /* Labels — eyebrow text, category tags, section identifiers          */
+  --type-label-size:          clamp(0.6875rem, 1vw, 0.75rem);   /* 11–12px */
+  --type-label-font:          var(--font-dm-sans), system-ui, sans-serif;
+  --type-label-weight:        500;
+  --type-label-leading:       1;
+  --type-label-tracking:      0.35em;
+
+  /* ──────────────────────────────────────────────────────────────────── */
+  /* LEGACY FLUID SCALE (preserved for backward compatibility)           */
+  /* ──────────────────────────────────────────────────────────────────── */
+  --text-label:     var(--type-label-size);
+  --text-cta:       clamp(0.875rem, 1.2vw, 1rem);
+  --text-body:      var(--type-body-lg-size);
+  --text-headline:  var(--type-h1-size);
+
+  /* ──────────────────────────────────────────────────────────────────── */
+  /* SPACING RHYTHM                                                       */
+  /* ──────────────────────────────────────────────────────────────────── */
+  --spacing-title:    6rem;    /* 96px  */
+  --spacing-headline: 3rem;    /* 48px  */
+  --spacing-content:  4rem;    /* 64px  */
+  --spacing-cta:      7.5rem;  /* 120px */
+
+  /* ──────────────────────────────────────────────────────────────────── */
+  /* BORDER RADII                                                         */
+  /* ──────────────────────────────────────────────────────────────────── */
   --radius-sm: 0.25rem;
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
 }
+

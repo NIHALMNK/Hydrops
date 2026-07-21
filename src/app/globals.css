@@ -5,7 +5,13 @@
 @import "../styles/animations.css";
 
 @theme {
-  --font-sans: var(--font-inter);
+  /* ── Font families ─────────────────────────────────────────────────── */
+  /* DM Sans: UI, body, navigation, labels, captions, buttons           */
+  --font-sans: var(--font-dm-sans);
+  /* Cormorant Garamond: display headings, editorial copy, pull quotes  */
+  --font-display: var(--font-cormorant);
+
+  /* ── Design token bridge ───────────────────────────────────────────── */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
@@ -26,5 +32,8 @@
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans);
+  /* DM Sans as the default body/UI typeface */
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-optical-sizing: auto;
 }
+
