@@ -3,14 +3,17 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { MAIN_NAVIGATION } from "@/constants/navigation";
+import type { NavItem } from "@/types/navigation";
 
-const NAV_LINKS = [
-  { label: "Story",   href: "#philosophy-section" },
-  { label: "Product", href: "#product-showcase-section" },
-  { label: "Contact", href: "#cta-section" },
-];
+// ─────────────────────────────────────────────
+// Derived lists from the single data source
+// ─────────────────────────────────────────────
+const NAV_LINKS: NavItem[] = MAIN_NAVIGATION.filter((item) => !item.isCta);
+const CTA_ITEM: NavItem | undefined = MAIN_NAVIGATION.find((item) => item.isCta);
 
 // ─────────────────────────────────────────────
 // Hook: continuously reads the visual context
@@ -20,8 +23,10 @@ const NAV_LINKS = [
 //   2. Logo position (far left) — may differ
 // ─────────────────────────────────────────────
 function useNavContext() {
-  const [isDark, setIsDark] = useState(true);      // background context for links/CTA
-  const [logoNeedsSurface, setLogoNeedsSurface] = useState(false); // logo on dark bg → needs no surface
+  // Default false: the page starts on the light-cream hero area (#F5F2EC).
+  // The probe updates this within ~100 ms; starting false prevents the
+  // white-on-cream flash that occurred with the previous true default.
+  const [isDark, setIsDark] = useState(false);     // background context for links/CTA
   const [scrollProgress, setScrollProgress] = useState(0);
   const [scrolled, setScrolled] = useState(false);
 
@@ -35,35 +40,60 @@ function useNavContext() {
       setScrollProgress(maxScroll > 0 ? Math.min(y / maxScroll, 1) : 0);
       setScrolled(y > 60);
 
-      // ── Probe center (for links)
-      const centerEls = document.elementsFromPoint(window.innerWidth / 2, 36);
+      // ── Probe center for link text colour adaptation ──────────────
+      // elementsFromPoint returns elements front-to-back.  We walk the
+      // stack looking for the first opaque/painted surface.
+      //
+      // Crucially, when a <canvas> is in the stack we sample its ACTUAL
+      // rendered pixels via getImageData rather than its CSS background.
+      // This is necessary because the hero section has bg-[#050505] but
+      // the canvas paints bright warm frames on top — without pixel
+      // sampling the probe would always report "dark" and links would
+      // be white on a cream canvas frame.
+      const probeX = window.innerWidth / 2;
+      const probeY = 36;
+      const centerEls = document.elementsFromPoint(probeX, probeY);
+      let detected = false;
       for (const el of centerEls) {
         if (el.closest("[data-navbar]")) continue;
+
+        // ── Canvas: sample the actual rendered pixel ──────────────────
+        if (el instanceof HTMLCanvasElement && el.width > 0 && el.height > 0) {
+          try {
+            const rect = el.getBoundingClientRect();
+            const cx = Math.round((probeX - rect.left) * (el.width  / rect.width));
+            const cy = Math.round((probeY - rect.top)  * (el.height / rect.height));
+            const ctx2d = el.getContext('2d');
+            const px = ctx2d?.getImageData(cx, cy, 1, 1).data;
+            if (px && px[3] > 20) { // only trust opaque-enough pixels
+              const lum = (0.299 * px[0] + 0.587 * px[1] + 0.114 * px[2]) / 255;
+              setIsDark(lum < 0.5);
+              detected = true;
+              break;
+            }
+          } catch {
+            // getImageData blocked (cross-origin taint) — fall through
+          }
+        }
+
+        // ── CSS background: skip near-transparent elements ────────────
+        // (e.g. wrapper divs with rgba(0,0,0,0) — they'd report lum=0
+        //  even though the visual surface behind them is light)
         const bg = window.getComputedStyle(el).backgroundColor;
-        const m = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        const m = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/);
         if (m) {
+          const alpha = m[4] !== undefined ? parseFloat(m[4]) : 1;
+          if (alpha < 0.06) continue; // near-transparent — keep walking
           const lum = (0.299 * +m[1] + 0.587 * +m[2] + 0.114 * +m[3]) / 255;
           setIsDark(lum < 0.5);
+          detected = true;
           break;
         }
       }
+      // If nothing opaque was found, leave isDark unchanged
+      void detected;
 
-      // ── Probe logo zone (far left, ~80px from edge)
-      const logoEls = document.elementsFromPoint(80, 36);
-      for (const el of logoEls) {
-        if (el.closest("[data-navbar]")) continue;
-        const bg = window.getComputedStyle(el).backgroundColor;
-        const m = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-        if (m) {
-          const lum = (0.299 * +m[1] + 0.587 * +m[2] + 0.114 * +m[3]) / 255;
-          // Logo needs a surface only when it sits over a LIGHT background
-          // (light bg = logo with dark artwork becomes hard to see)
-          // The logo is authentic — we never alter it.
-          // Instead, we give it a barely-visible frosted landing pad.
-          setLogoNeedsSurface(lum > 0.5);
-          break;
-        }
-      }
+      // Logo probe kept for future use; frosted pad is now always-on (see below).
 
       ticking = false;
     };
@@ -86,7 +116,16 @@ function useNavContext() {
     };
   }, []);
 
-  return { isDark, logoNeedsSurface, scrollProgress, scrolled };
+  return { isDark, scrollProgress, scrolled };
+}
+
+// ─────────────────────────────────────────────
+// Helper: is the given href the current route?
+// Exact match for "/" to avoid false positives.
+// ─────────────────────────────────────────────
+function isActive(pathname: string, href: string): boolean {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(href + "/");
 }
 
 export function Navbar() {
@@ -95,7 +134,8 @@ export function Navbar() {
   const overlayRef = useRef<HTMLDivElement>(null);
   const overlayLinksRef = useRef<HTMLDivElement>(null);
 
-  const { isDark, logoNeedsSurface, scrollProgress, scrolled } = useNavContext();
+  const pathname = usePathname();
+  const { isDark, scrollProgress, scrolled } = useNavContext();
 
   // ── Entrance animation ─────────────────────
   useGSAP(() => {
@@ -148,26 +188,50 @@ export function Navbar() {
     return () => window.removeEventListener("keydown", onKey);
   }, [menuOpen, closeMenu]);
 
-  // ── Design tokens — CSS transitions handle the interpolation ──
-  // Links
-  const linkCol   = isDark ? "rgba(255,255,255,0.72)" : "rgba(30,30,30,0.62)";
-  const linkHov   = isDark ? "#FFFFFF" : "#1E1E1E";
-  // CTA ("Enquire")
-  const ctaCol    = isDark ? "rgba(200,169,106,0.88)" : "rgb(32,92,59)";
-  const ctaHov    = isDark ? "rgba(200,169,106,1)"    : "rgb(15,70,40)";
-  const dotCol    = isDark ? "rgba(200,169,106,0.80)" : "rgb(32,92,59)";
-  // Menu trigger lines
-  const lineCol   = isDark ? "rgba(255,255,255,0.58)" : "rgba(30,30,30,0.52)";
+  // Close overlay on route change (e.g. back-button or programmatic navigation)
+  useEffect(() => {
+    if (menuOpen) closeMenu();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
-  // ── Logo landing pad ───────────────────────
-  // Never alters the logo artwork.
-  // When the logo sits over a LIGHT background it may need a transparent surface
-  // for contrast. We add a barely-visible frosted micro-surface behind the logo container.
-  // This is purely an environment adaptation — the logo image is unmodified.
-  const logoPadBg = logoNeedsSurface
-    ? "rgba(20,20,20,0.10)"   // very subtle dark wash on warm canvas
-    : "transparent";
-  const logoPadBlur = logoNeedsSurface ? "blur(8px)" : "none";
+  // ── Design tokens — CSS transitions handle the interpolation ──
+  // Links — boosted to 0.88 on dark (was 0.72) so text is legible on
+  // the darkest cinematic frames.  On light backgrounds a hairline
+  // text-shadow provides contrast without altering the letterforms.
+  const linkCol    = isDark ? "rgba(255,255,255,0.88)" : "rgba(20,20,20,0.72)";
+  const linkHov    = isDark ? "#FFFFFF" : "#111111";
+  const linkActive = isDark ? "rgba(255,255,255,1)"    : "rgba(10,10,10,1)";
+  // Subtle text-shadow used only on light backgrounds to sharpen dark
+  // letters against mid-luminance canvas frames during the brief probe
+  // window.  On dark backgrounds no shadow is needed.
+  const linkShadow = isDark
+    ? "none"
+    : "0 0px 8px rgba(245,242,236,0.9)";
+  // CTA ("Enquire")
+  const ctaCol    = isDark ? "rgba(200,169,106,0.92)" : "rgb(32,92,59)";
+  const ctaHov    = isDark ? "rgba(200,169,106,1)"    : "rgb(15,70,40)";
+  const dotCol    = isDark ? "rgba(200,169,106,0.85)" : "rgb(32,92,59)";
+  // Menu trigger lines
+  const lineCol   = isDark ? "rgba(255,255,255,0.65)" : "rgba(20,20,20,0.55)";
+
+  // ── Logo frosted pill — always-on ─────────
+  // A permanent, minimal frosted-glass surface sits behind the logo at all
+  // times.  It is deliberately faint so it disappears on dark hero frames
+  // yet provides just enough contrast on light/warm frames.
+  // The logo image itself is never altered (no filter, no inversion).
+  //
+  // Tokens:
+  //   background  — near-neutral, works on both dark and warm-cream heroes
+  //   blur        — 10px: subtle enough to feel natural, enough to lift text
+  //   border      — hairline warm-white, adds definition without weight
+  const LOGO_PAD_BG     = "rgba(255,255,255,0.08)";
+  const LOGO_PAD_BLUR   = "blur(10px)";
+  const LOGO_PAD_BORDER = "1px solid rgba(255,255,255,0.10)";
+
+  // All overlay items: regular links + CTA (if defined)
+  const overlayItems: NavItem[] = CTA_ITEM
+    ? [...NAV_LINKS, CTA_ITEM]
+    : NAV_LINKS;
 
   return (
     <>
@@ -204,16 +268,21 @@ export function Navbar() {
             href="/"
             data-logo
             aria-label="Hydrops — Home"
-            className="relative shrink-0 block rounded-lg"
+            className="relative shrink-0 block"
             style={{
               width: 140,
               height: 46,
-              // Landing pad — environment adapts, logo does not
-              backgroundColor: logoPadBg,
-              backdropFilter: logoPadBlur,
-              WebkitBackdropFilter: logoPadBlur,
-              padding: logoNeedsSurface ? "4px 8px" : "0",
-              transition: "background-color 0.7s ease, backdrop-filter 0.7s ease, padding 0.5s ease",
+              // ── Frosted pill — always present, always subtle ──
+              // Works on dark cinematic frames (nearly invisible) and
+              // light/warm frames (provides gentle contrast lift).
+              backgroundColor: LOGO_PAD_BG,
+              backdropFilter: LOGO_PAD_BLUR,
+              WebkitBackdropFilter: LOGO_PAD_BLUR,
+              border: LOGO_PAD_BORDER,
+              borderRadius: 10,
+              padding: "5px 10px",
+              // Smooth transitions for iframe/section colour changes
+              transition: "background-color 0.6s ease, border-color 0.6s ease",
             }}
           >
             <Image
@@ -229,55 +298,78 @@ export function Navbar() {
           </Link>
 
           {/* ── Desktop links ─────────────────────────────────────── */}
-          <div className="hidden md:flex items-center gap-10 lg:gap-14">
-            {NAV_LINKS.map((item) => (
+          <div className="hidden md:flex items-center gap-10 lg:gap-14" role="list">
+            {NAV_LINKS.map((item) => {
+              const active = isActive(pathname, item.href);
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  data-navlink
+                  role="listitem"
+                  aria-current={active ? "page" : undefined}
+                  className="relative group text-[12px] font-normal tracking-[0.18em] uppercase select-none"
+                  style={{
+                    color: active ? linkActive : linkCol,
+                    // Text-shadow lifts legibility on mid-luminance/light hero
+                    // frames without changing letterform or adding visual weight.
+                    textShadow: linkShadow,
+                    transition: "color 0.55s ease, text-shadow 0.55s ease",
+                  }}
+                  onMouseEnter={(e) => gsap.to(e.currentTarget, { color: linkHov, duration: 0.25 })}
+                  onMouseLeave={(e) => gsap.to(e.currentTarget, { color: active ? linkActive : linkCol, duration: 0.55 })}
+                >
+                  {item.name}
+                  {/* Gold thread — always visible on active, hover-only otherwise */}
+                  <span
+                    aria-hidden
+                    className="absolute -bottom-[5px] left-0 h-px"
+                    style={{
+                      width: active ? "100%" : "0",
+                      background: "rgba(200,169,106,0.65)",
+                      transition: "width 0.35s cubic-bezier(0.4,0,0.2,1)",
+                    }}
+                  />
+                  {/* Hover-only underline for non-active links */}
+                  {!active && (
+                    <span
+                      aria-hidden
+                      className="absolute -bottom-[5px] left-0 h-px w-0 group-hover:w-full"
+                      style={{
+                        background: "rgba(200,169,106,0.65)",
+                        transition: "width 0.35s cubic-bezier(0.4,0,0.2,1)",
+                      }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
+
+            {/* Enquire CTA ────────────────────────────────────────── */}
+            {CTA_ITEM && (
               <Link
-                key={item.label}
-                href={item.href}
+                href={CTA_ITEM.href}
                 data-navlink
-                className="relative group text-[12px] font-normal tracking-[0.18em] uppercase select-none"
+                aria-label="Enquire about Hydrops"
+                className="flex items-center gap-[7px] text-[12px] font-normal tracking-[0.18em] uppercase select-none"
                 style={{
-                  color: linkCol,
+                  color: ctaCol,
                   transition: "color 0.55s ease",
                 }}
-                onMouseEnter={e => gsap.to(e.currentTarget, { color: linkHov, duration: 0.25 })}
-                onMouseLeave={e => gsap.to(e.currentTarget, { color: linkCol, duration: 0.55 })}
+                onMouseEnter={(e) => gsap.to(e.currentTarget, { color: ctaHov, duration: 0.25 })}
+                onMouseLeave={(e) => gsap.to(e.currentTarget, { color: ctaCol, duration: 0.55 })}
               >
-                {item.label}
-                {/* Gold thread appears on hover */}
                 <span
                   aria-hidden
-                  className="absolute -bottom-[5px] left-0 h-px w-0 group-hover:w-full"
+                  className="inline-block w-[4px] h-[4px] rounded-full shrink-0"
                   style={{
-                    background: "rgba(200,169,106,0.65)",
-                    transition: "width 0.35s cubic-bezier(0.4,0,0.2,1)",
+                    background: dotCol,
+                    transition: "background 0.55s ease",
                   }}
                 />
+                {CTA_ITEM.name}
               </Link>
-            ))}
-
-            {/* Enquire — gold on dark, forest green on light ────────── */}
-            <a
-              href="#cta-section"
-              data-navlink
-              className="flex items-center gap-[7px] text-[12px] font-normal tracking-[0.18em] uppercase select-none"
-              style={{
-                color: ctaCol,
-                transition: "color 0.55s ease",
-              }}
-              onMouseEnter={e => gsap.to(e.currentTarget, { color: ctaHov, duration: 0.25 })}
-              onMouseLeave={e => gsap.to(e.currentTarget, { color: ctaCol, duration: 0.55 })}
-            >
-              <span
-                aria-hidden
-                className="inline-block w-[4px] h-[4px] rounded-full shrink-0"
-                style={{
-                  background: dotCol,
-                  transition: "background 0.55s ease",
-                }}
-              />
-              Enquire
-            </a>
+            )}
           </div>
 
           {/* ── Mobile trigger ─────────────────────────────────────── */}
@@ -285,6 +377,7 @@ export function Navbar() {
             data-menubtn
             aria-label="Open navigation"
             aria-expanded={menuOpen}
+            aria-controls="mobile-nav-overlay"
             onClick={openMenu}
             className="md:hidden flex flex-col justify-center gap-[5px] w-9 h-9 items-end group"
           >
@@ -321,6 +414,7 @@ export function Navbar() {
       {/* ── Full-screen overlay ─────────────────────────────────────── */}
       <div
         ref={overlayRef}
+        id="mobile-nav-overlay"
         aria-modal="true"
         role="dialog"
         aria-label="Navigation menu"
@@ -369,37 +463,47 @@ export function Navbar() {
         </div>
 
         {/* Large editorial links */}
-        <div
+        <nav
           ref={overlayLinksRef}
+          aria-label="Mobile navigation"
           className="flex-1 flex flex-col justify-center px-8 md:px-16"
         >
-          {[...NAV_LINKS, { label: "Enquire", href: "#cta-section" }].map((item, i) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              data-overlay-link
-              onClick={closeMenu}
-              className="group flex items-baseline justify-between py-5 md:py-7 border-b border-white/[0.05]"
-            >
-              <span
-                className="font-light tracking-tight text-white/75 group-hover:text-white"
-                style={{
-                  fontSize: "clamp(2.4rem, 7vw, 5.5rem)",
-                  lineHeight: 1,
-                  transition: "color 0.35s ease",
-                }}
+          {overlayItems.map((item, i) => {
+            const active = isActive(pathname, item.href) && !item.isCta;
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                data-overlay-link
+                aria-current={active ? "page" : undefined}
+                onClick={closeMenu}
+                className="group flex items-baseline justify-between py-5 md:py-7 border-b border-white/[0.05]"
               >
-                {item.label}
-              </span>
-              <span
-                className="text-[10px] tracking-[0.35em] uppercase self-center tabular-nums"
-                style={{ color: "rgba(200,169,106,0.45)" }}
-              >
-                0{i + 1}
-              </span>
-            </Link>
-          ))}
-        </div>
+                <span
+                  className="font-light tracking-tight group-hover:text-white"
+                  style={{
+                    fontSize: "clamp(2.4rem, 7vw, 5.5rem)",
+                    lineHeight: 1,
+                    color: item.isCta
+                      ? "rgba(200,169,106,0.88)"
+                      : active
+                        ? "rgba(255,255,255,1)"
+                        : "rgba(255,255,255,0.75)",
+                    transition: "color 0.35s ease",
+                  }}
+                >
+                  {item.name}
+                </span>
+                <span
+                  className="text-[10px] tracking-[0.35em] uppercase self-center tabular-nums"
+                  style={{ color: "rgba(200,169,106,0.45)" }}
+                >
+                  0{i + 1}
+                </span>
+              </Link>
+            );
+          })}
+        </nav>
 
         {/* Overlay footer */}
         <div className="px-8 md:px-16 pb-10 shrink-0 flex items-center justify-between">

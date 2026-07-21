@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useMemo } from 'react';
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect';
 import gsap from 'gsap';
 import { FRAME_MANIFEST } from '../hero/content/frameManifest';
@@ -42,7 +42,28 @@ export const HeroScene = () => {
   const [splashDone, setSplashDone] = useState(false);
 
   const totalFrames = FRAME_MANIFEST.length;
-  const scrollHeight = '300vh';
+
+  // ── Mobile-aware scroll configuration ──────────────────────────────────────
+  // Increasing the container height forces GSAP's ScrollTrigger to spread the
+  // same animation across more scroll distance.  Native scrolling is untouched;
+  // only the trigger's start→end span grows.  Desktop behaviour is unchanged.
+  const { scrollHeight, scrubValue } = useMemo(() => {
+    if (typeof window === 'undefined') {
+      // SSR-safe fallback — desktop defaults
+      return { scrollHeight: '300vh', scrubValue: 1.2 };
+    }
+    const w = window.innerWidth;
+    if (w <= 768) {
+      // Mobile — animation needs ~67 % more distance
+      return { scrollHeight: '500vh', scrubValue: 2.5 };
+    }
+    if (w <= 1024) {
+      // Small tablet — moderate increase
+      return { scrollHeight: '400vh', scrubValue: 2.0 };
+    }
+    // Desktop — original values, no change
+    return { scrollHeight: '300vh', scrubValue: 1.2 };
+  }, []);
 
   // Load initial frame batch — drives the splash progress bar
   const { progress, isReady } = useHeroLoader();
@@ -80,7 +101,9 @@ export const HeroScene = () => {
           start: 'top top',
           end: 'bottom bottom',
           pin: pinnedRef.current,
-          scrub: 1.2,   // Higher value = fewer onUpdate calls per second; less main-thread pressure
+          // scrubValue is device-specific: higher on mobile for smoother
+          // inter-frame interpolation and fewer sudden jumps.
+          scrub: scrubValue,
           onUpdate: (self) => {
             const frame = mapScrollToFrame(self.progress, totalFrames);
             frameRenderer.renderFrame(frame);
@@ -163,6 +186,8 @@ export const HeroScene = () => {
       <section
         ref={containerRef}
         className="relative w-full bg-[#050505]"
+        // scrollHeight is resolved once at mount — taller on mobile so the
+        // same animation spans more scroll distance without hijacking scroll.
         style={{ height: scrollHeight }}
       >
         <div

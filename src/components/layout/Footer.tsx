@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { footerData } from '@/data/footer';
 import { socialData } from '@/data/social';
