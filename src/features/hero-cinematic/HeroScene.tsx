@@ -10,6 +10,7 @@ import { mapScrollToFrame } from '../hero/utils/frameMath';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useHeroLoader } from '../hero/hooks/useHeroLoader';
 import { SplashScreen } from './SplashScreen';
+import { ScrollIndicator } from './ScrollIndicator';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -248,6 +249,9 @@ export const HeroScene = () => {
               </a>
             </div>
           </div>
+
+          {/* Scroll indicator — fades out as the user scrolls */}
+          {splashDone && <ScrollIndicator />}
         </div>
       </section>
     </>
