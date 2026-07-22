@@ -217,17 +217,6 @@ export function Navbar() {
   // ── Logo frosted pill — always-on ─────────
   // A permanent, minimal frosted-glass surface sits behind the logo at all
   // times.  It is deliberately faint so it disappears on dark hero frames
-  // yet provides just enough contrast on light/warm frames.
-  // The logo image itself is never altered (no filter, no inversion).
-  //
-  // Tokens:
-  //   background  — near-neutral, works on both dark and warm-cream heroes
-  //   blur        — 10px: subtle enough to feel natural, enough to lift text
-  //   border      — hairline warm-white, adds definition without weight
-  const LOGO_PAD_BG     = "rgba(255,255,255,0.08)";
-  const LOGO_PAD_BLUR   = "blur(10px)";
-  const LOGO_PAD_BORDER = "1px solid rgba(255,255,255,0.10)";
-
   // All overlay items: regular links + CTA (if defined)
   const overlayItems: NavItem[] = CTA_ITEM
     ? [...NAV_LINKS, CTA_ITEM]
@@ -272,17 +261,6 @@ export function Navbar() {
             style={{
               width: 140,
               height: 46,
-              // ── Frosted pill — always present, always subtle ──
-              // Works on dark cinematic frames (nearly invisible) and
-              // light/warm frames (provides gentle contrast lift).
-              backgroundColor: LOGO_PAD_BG,
-              backdropFilter: LOGO_PAD_BLUR,
-              WebkitBackdropFilter: LOGO_PAD_BLUR,
-              border: LOGO_PAD_BORDER,
-              borderRadius: 10,
-              padding: "5px 10px",
-              // Smooth transitions for iframe/section colour changes
-              transition: "background-color 0.6s ease, border-color 0.6s ease",
             }}
           >
             <Image
