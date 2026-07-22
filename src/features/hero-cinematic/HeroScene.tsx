@@ -276,7 +276,7 @@ export const HeroScene = () => {
         className="relative w-full bg-[#050505]"
         style={{ height: scrollHeight }}
       >
-        {/* Master Pinned Wrapper (Correction 2: Locks entire viewport) */}
+        {/* Master Pinned Wrapper (Locks entire viewport) */}
         <div
           ref={pinnedRef}
           className="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center"
@@ -350,7 +350,7 @@ export const HeroScene = () => {
             {splashDone && <ScrollIndicator />}
           </div>
 
-          {/* ── Layer 2: SoulStatement Overlay (Correction 1: Absolute top: 0, left: 0, z-30) ── */}
+          {/* ── Layer 2: SoulStatement Overlay (Absolute top: 0, left: 0, z-30) ── */}
           <div
             ref={soulOverlayRef}
             className="absolute inset-0 w-full h-full z-30 flex items-center justify-center bg-[#0E1110] will-change-[clip-path]"
@@ -359,13 +359,21 @@ export const HeroScene = () => {
               WebkitClipPath: 'ellipse(0% 0% at 50% 100%)',
             }}
           >
-            {/* Solid Dark Background Block with Ambient Golden Radial Glow */}
-            <div className="absolute inset-0 w-full h-full z-0 bg-[#0E1110]">
+            {/* Background Image Layer */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/backgrounds/coconuts-and-leaves-on-blue-background-free-photo.jpeg"
+              alt="Coconuts and leaves on blue background"
+              className="absolute inset-0 w-full h-full object-cover object-center z-0"
+            />
+
+            {/* Dark Readability Overlay & Ambient Glow Layer */}
+            <div className="absolute inset-0 w-full h-full z-10 bg-[#0E1110]/75 backdrop-blur-[1px]">
               <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
                   background:
-                    'radial-gradient(ellipse at 50% 60%, rgba(200,169,106,0.18) 0%, transparent 70%)',
+                    'radial-gradient(ellipse at 50% 60%, rgba(200,169,106,0.2) 0%, rgba(14,17,16,0.85) 75%)',
                 }}
               />
               {/* Signature Ripple Line */}
@@ -373,7 +381,7 @@ export const HeroScene = () => {
                 className="absolute top-0 left-1/2 -translate-x-1/2 w-[60vw] h-[1px] pointer-events-none"
                 style={{
                   background:
-                    'linear-gradient(90deg, transparent, rgba(200,169,106,0.4), transparent)',
+                    'linear-gradient(90deg, transparent, rgba(200,169,106,0.5), transparent)',
                 }}
               />
             </div>
@@ -391,7 +399,7 @@ export const HeroScene = () => {
               {/* Heading Line 1 */}
               <h2
                 ref={heading1Ref}
-                className="text-[clamp(2.2rem,6.5vw,4.5rem)] font-light text-[#F5F2EC] leading-[1.1] tracking-tight mb-2 sm:mb-4 opacity-0 will-change-[opacity,transform]"
+                className="text-[clamp(2.2rem,6.5vw,4.5rem)] font-light text-[#F5F2EC] leading-[1.1] tracking-tight mb-2 sm:mb-4 opacity-0 will-change-[opacity,transform] drop-shadow-md"
               >
                 Purity isn&apos;t a claim.
               </h2>
@@ -399,7 +407,7 @@ export const HeroScene = () => {
               {/* Heading Line 2 */}
               <h3
                 ref={heading2Ref}
-                className="text-[clamp(2.2rem,6.5vw,4.5rem)] font-light text-[#C8A96A] italic leading-[1.1] tracking-tight opacity-0 will-change-[opacity,transform]"
+                className="text-[clamp(2.2rem,6.5vw,4.5rem)] font-light text-[#C8A96A] italic leading-[1.1] tracking-tight opacity-0 will-change-[opacity,transform] drop-shadow-md"
               >
                 It&apos;s a commitment.
               </h3>
