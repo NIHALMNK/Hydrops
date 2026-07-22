@@ -3,11 +3,11 @@
 import React, { useRef, useState, useCallback, useMemo } from 'react';
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { FRAME_MANIFEST } from '../hero/content/frameManifest';
 import { canvasManager } from '../hero/canvas/CanvasManager';
 import { frameRenderer } from '../hero/canvas/FrameRenderer';
 import { mapScrollToFrame } from '../hero/utils/frameMath';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useHeroLoader } from '../hero/hooks/useHeroLoader';
 import { SplashScreen } from './SplashScreen';
 import { ScrollIndicator } from './ScrollIndicator';
@@ -39,62 +39,105 @@ export const HeroScene = () => {
   const typographyRef = useRef<HTMLDivElement>(null);
   const lightingRef = useRef<HTMLDivElement>(null);
 
+  // Soul Statement Overlay refs
+  const soulOverlayRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLParagraphElement>(null);
+  const heading1Ref = useRef<HTMLHeadingElement>(null);
+  const heading2Ref = useRef<HTMLHeadingElement>(null);
+
   // true once the splash exit animation has fully completed
   const [splashDone, setSplashDone] = useState(false);
 
   const totalFrames = FRAME_MANIFEST.length;
 
-  // ── Mobile-aware scroll configuration ──────────────────────────────────────
-  // Increasing the container height forces GSAP's ScrollTrigger to spread the
-  // same animation across more scroll distance.  Native scrolling is untouched;
-  // only the trigger's start→end span grows.  Desktop behaviour is unchanged.
+  // Responsive scroll configuration
   const { scrollHeight, scrubValue } = useMemo(() => {
     if (typeof window === 'undefined') {
-      // SSR-safe fallback — desktop defaults
-      return { scrollHeight: '300vh', scrubValue: 1.2 };
+      return { scrollHeight: '600vh', scrubValue: 1.2 };
     }
     const w = window.innerWidth;
     if (w <= 768) {
-      // Mobile — animation needs ~67 % more distance
-      return { scrollHeight: '500vh', scrubValue: 2.5 };
+      return { scrollHeight: '900vh', scrubValue: 2.5 };
     }
     if (w <= 1024) {
-      // Small tablet — moderate increase
-      return { scrollHeight: '400vh', scrubValue: 2.0 };
+      return { scrollHeight: '750vh', scrubValue: 2.0 };
     }
-    // Desktop — original values, no change
-    return { scrollHeight: '300vh', scrubValue: 1.2 };
+    return { scrollHeight: '600vh', scrubValue: 1.2 };
   }, []);
 
-  // Load initial frame batch — drives the splash progress bar
   const { progress, isReady } = useHeroLoader();
 
-  // Called by SplashScreen after its fade-out transition ends
   const handleSplashDone = useCallback(() => {
     setSplashDone(true);
-    // Render frame 1 immediately so the canvas isn't blank on reveal
     frameRenderer.renderFrame(1);
   }, []);
 
-  // ── Initialise canvas (always, independent of splash state) ────────────────
+  // Initialise canvas
   useIsomorphicLayoutEffect(() => {
     if (!canvasRef.current) return;
     canvasManager.init(canvasRef.current);
-    return () => { canvasManager.destroy(); };
+    return () => {
+      canvasManager.destroy();
+    };
   }, []);
 
-  // ── GSAP ScrollTrigger — only after splash exits ────────────────────────────
+  // GSAP Master ScrollTrigger — Pin & Scrub Timeline
   useIsomorphicLayoutEffect(() => {
     if (!splashDone) return;
-    if (!containerRef.current || !pinnedRef.current || !typographyRef.current || !lightingRef.current) return;
+    if (
+      !containerRef.current ||
+      !pinnedRef.current ||
+      !typographyRef.current ||
+      !lightingRef.current ||
+      !soulOverlayRef.current ||
+      !labelRef.current ||
+      !heading1Ref.current ||
+      !heading2Ref.current
+    )
+      return;
 
-    // Refresh ScrollTrigger so it recalculates positions after the splash is gone
     ScrollTrigger.refresh();
 
     const ctx = gsap.context(() => {
+      const prefersReducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches;
+
+      // ClipPath updater for 100% cross-browser native CSS clip-path (bottom-center 50% 100%)
+      const updateClipPath = (rx: number, ry: number) => {
+        if (!soulOverlayRef.current) return;
+        const val = `ellipse(${rx.toFixed(1)}% ${ry.toFixed(1)}% at 50% 100%)`;
+        soulOverlayRef.current.style.clipPath = val;
+        (soulOverlayRef.current.style as HTMLElement['style'] & { webkitClipPath?: string }).webkitClipPath = val;
+      };
+
+      if (prefersReducedMotion) {
+        updateClipPath(200, 200);
+        gsap.set([labelRef.current, heading1Ref.current, heading2Ref.current], {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+        });
+        return;
+      }
+
+      // Initial state
+      updateClipPath(0, 0);
+      gsap.set([labelRef.current, heading1Ref.current, heading2Ref.current], {
+        opacity: 0,
+        y: 35,
+        filter: 'blur(10px)',
+      });
+
       const chapters = typographyRef.current!.querySelectorAll('.hc-chapter');
       const cta = typographyRef.current!.querySelector('.hc-cta');
       const lightDivs = lightingRef.current!.querySelectorAll('.hc-light');
+
+      // Timeline mapping across single pinned master container:
+      // progress 0.00 -> 0.50: Hero film frame sequence 1 -> 400 plays (bottle centered at 0.50)
+      // progress 0.50 -> 0.85: Bottom-up expanding arch clip-path (0% -> 200% at 50% 100%)
+      // progress 0.60 -> 0.95: Soul Statement text fades in from 0 to 100 opacity
+      const HERO_BEAT_END = 0.50;
 
       const masterTl = gsap.timeline({
         scrollTrigger: {
@@ -102,75 +145,118 @@ export const HeroScene = () => {
           start: 'top top',
           end: 'bottom bottom',
           pin: pinnedRef.current,
-          // scrubValue is device-specific: higher on mobile for smoother
-          // inter-frame interpolation and fewer sudden jumps.
           scrub: scrubValue,
+          anticipatePin: 1,
           onUpdate: (self) => {
-            const frame = mapScrollToFrame(self.progress, totalFrames);
+            // Map scroll progress 0.0 -> 0.50 to Hero frame sequence 1 -> 400
+            const heroProgress = Math.min(1, self.progress / HERO_BEAT_END);
+            const frame = mapScrollToFrame(heroProgress, totalFrames);
             frameRenderer.renderFrame(frame);
-          }
-        }
+          },
+        },
       });
 
-      // Scale timeline to totalFrames duration
-      masterTl.to({}, { duration: totalFrames }, 0);
-
-      // Chapter typography — fade in, pause, fade out
+      // ── Phase 1: Hero Typography & Lighting (0.00 -> 0.50) ───────────────
       CHAPTERS.forEach((chapter, i) => {
         const el = chapters[i];
         if (!el) return;
-        const dur = chapter.endFrame - chapter.startFrame;
+        const dur = ((chapter.endFrame - chapter.startFrame) / totalFrames) * HERO_BEAT_END;
+        const start = (chapter.startFrame / totalFrames) * HERO_BEAT_END;
         const fadeIn = dur * 0.2;
         const fadeOut = dur * 0.18;
-        const inStart = chapter.startFrame + dur * 0.08;
+        const inStart = start + dur * 0.08;
 
-        masterTl.fromTo(el,
+        masterTl.fromTo(
+          el,
           { opacity: 0, y: 30, filter: 'blur(8px)' },
           { opacity: 1, y: 0, filter: 'blur(0px)', duration: fadeIn, ease: 'power2.out' },
           inStart
         );
 
-        // Don't fade out scene-05 (CTA scene)
         if (i < CHAPTERS.length - 1) {
-          masterTl.to(el,
+          masterTl.to(
+            el,
             { opacity: 0, y: -20, filter: 'blur(6px)', duration: fadeOut, ease: 'power2.in' },
-            chapter.endFrame - fadeOut
+            start + dur - fadeOut
           );
         }
       });
 
-      // CTA reveal in scene-05
       if (cta) {
-        const s5 = CHAPTERS[4];
-        masterTl.fromTo(cta,
+        masterTl.fromTo(
+          cta,
           { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: (s5.endFrame - s5.startFrame) * 0.3, ease: 'power2.out' },
-          s5.startFrame + (s5.endFrame - s5.startFrame) * 0.4
+          { opacity: 1, y: 0, duration: 0.10, ease: 'power2.out' },
+          0.38
         );
       }
 
-      // Lighting evolution
       LIGHTING_MOODS.forEach((mood, i) => {
         const el = lightDivs[i];
         if (!el) return;
-        const start = i === 0 ? 0 : LIGHTING_MOODS[i - 1].frame;
-        masterTl.fromTo(el,
+        const start = ((i === 0 ? 0 : LIGHTING_MOODS[i - 1].frame) / totalFrames) * HERO_BEAT_END;
+        const frameTime = (mood.frame / totalFrames) * HERO_BEAT_END;
+
+        masterTl.fromTo(
+          el,
           { opacity: 0 },
-          { opacity: mood.opacity, duration: Math.max(mood.frame - start, 10), ease: 'power1.inOut' },
+          { opacity: mood.opacity, duration: Math.max(frameTime - start, 0.02), ease: 'power1.inOut' },
           start
         );
+
         if (i < LIGHTING_MOODS.length - 1) {
-          const next = LIGHTING_MOODS[i + 1];
-          masterTl.to(el,
-            { opacity: 0, duration: (next.frame - mood.frame) * 0.8, ease: 'power1.inOut' },
-            mood.frame
+          const nextTime = (LIGHTING_MOODS[i + 1].frame / totalFrames) * HERO_BEAT_END;
+          masterTl.to(
+            el,
+            { opacity: 0, duration: (nextTime - frameTime) * 0.8, ease: 'power1.inOut' },
+            frameTime
           );
         }
       });
+
+      // ── Phase 2: Bottom-Up Arch Reveal (Correction 3: 0.50 -> 0.85) ────────
+      // Starts strictly at 0.50 over the frozen frame 400 bottle rest layout
+      const clipState = { rx: 0, ry: 0 };
+      masterTl.to(
+        clipState,
+        {
+          rx: 200,
+          ry: 200,
+          duration: 0.35,
+          ease: 'power2.inOut',
+          onUpdate: () => {
+            updateClipPath(clipState.rx, clipState.ry);
+          },
+        },
+        0.50
+      );
+
+      if (cta) {
+        masterTl.to(cta, { opacity: 0, duration: 0.05 }, 0.50);
+      }
+
+      // ── Phase 3: Soul Statement Text Opacity Fade (0.60 -> 0.95) ───────────
+      masterTl.to(
+        labelRef.current,
+        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.12, ease: 'power2.out' },
+        0.60
+      );
+
+      masterTl.to(
+        heading1Ref.current,
+        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.15, ease: 'power2.out' },
+        0.68
+      );
+
+      masterTl.to(
+        heading2Ref.current,
+        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.15, ease: 'power2.out' },
+        0.76
+      );
     }, containerRef);
 
     return () => ctx.revert();
-  }, [splashDone, totalFrames]);
+  }, [splashDone, totalFrames, scrubValue]);
 
   return (
     <>
@@ -183,75 +269,142 @@ export const HeroScene = () => {
         />
       )}
 
-      {/* ── Hero section ─────────────────────────────────────────────── */}
+      {/* ── Master Hero & Soul Master Section ─────────────────────────── */}
       <section
         ref={containerRef}
+        id="hero-scene-section"
         className="relative w-full bg-[#050505]"
-        // scrollHeight is resolved once at mount — taller on mobile so the
-        // same animation spans more scroll distance without hijacking scroll.
         style={{ height: scrollHeight }}
       >
+        {/* Master Pinned Wrapper (Correction 2: Locks entire viewport) */}
         <div
           ref={pinnedRef}
           className="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center"
         >
-          {/* Lighting layer */}
-          <div ref={lightingRef} className="absolute inset-0 pointer-events-none z-10 mix-blend-overlay">
-            {LIGHTING_MOODS.map((mood, i) => (
-              <div
-                key={i}
-                className="hc-light absolute inset-0"
-                style={{ background: `radial-gradient(ellipse at 50% 50%, ${mood.bg} 0%, transparent 70%)`, opacity: 0, filter: 'blur(60px)' }}
-              />
-            ))}
+          {/* ── Layer 1: Hero Canvas & Film Scene (z-10) ───────────────── */}
+          <div className="absolute inset-0 w-full h-full z-10 flex items-center justify-center">
+            {/* Lighting layer */}
+            <div ref={lightingRef} className="absolute inset-0 pointer-events-none z-10 mix-blend-overlay">
+              {LIGHTING_MOODS.map((mood, i) => (
+                <div
+                  key={i}
+                  className="hc-light absolute inset-0"
+                  style={{
+                    background: `radial-gradient(ellipse at 50% 50%, ${mood.bg} 0%, transparent 70%)`,
+                    opacity: 0,
+                    filter: 'blur(60px)',
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Frame canvas */}
+            <canvas
+              ref={canvasRef}
+              className="absolute top-0 left-0 w-full h-full z-0 block"
+              aria-hidden="true"
+            />
+
+            {/* Bottom overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent pointer-events-none z-10" />
+
+            {/* Typography layer */}
+            <div ref={typographyRef} className="absolute inset-0 pointer-events-none z-20 flex items-center justify-center">
+              {CHAPTERS.map((chapter, i) => (
+                <div
+                  key={chapter.id}
+                  className="hc-chapter absolute inset-0 flex flex-col items-center justify-center text-center px-6"
+                  style={{ opacity: 0 }}
+                >
+                  {chapter.title && (
+                    <h2
+                      className={`font-light text-white tracking-tight leading-[0.95] ${
+                        i === 0
+                          ? 'text-[clamp(1.2rem,2.5vw,2rem)] tracking-[0.4em] uppercase'
+                          : 'text-[clamp(3rem,7vw,7rem)]'
+                      }`}
+                    >
+                      {chapter.title}
+                    </h2>
+                  )}
+                  {chapter.subtitle && (
+                    <p className="mt-4 text-[clamp(1.2rem,3vw,2.5rem)] font-light text-white/60">
+                      {chapter.subtitle}
+                    </p>
+                  )}
+                </div>
+              ))}
+
+              {/* Scene 5 CTA */}
+              <div className="hc-cta absolute bottom-[15%] left-1/2 -translate-x-1/2 pointer-events-auto" style={{ opacity: 0 }}>
+                <a
+                  href="#product-showcase"
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-full text-sm font-medium tracking-[0.15em] uppercase hover:bg-white/20 transition-colors"
+                >
+                  Explore Product
+                </a>
+              </div>
+            </div>
+
+            {/* Scroll indicator */}
+            {splashDone && <ScrollIndicator />}
           </div>
 
-          {/* Frame canvas */}
-          <canvas
-            ref={canvasRef}
-            className="absolute top-0 left-0 w-full h-full z-0"
-            aria-hidden="true"
-          />
-
-          {/* Bottom overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent pointer-events-none z-10" />
-
-          {/* Typography layer */}
-          <div ref={typographyRef} className="absolute inset-0 pointer-events-none z-20 flex items-center justify-center">
-            {CHAPTERS.map((chapter, i) => (
+          {/* ── Layer 2: SoulStatement Overlay (Correction 1: Absolute top: 0, left: 0, z-30) ── */}
+          <div
+            ref={soulOverlayRef}
+            className="absolute inset-0 w-full h-full z-30 flex items-center justify-center bg-[#0E1110] will-change-[clip-path]"
+            style={{
+              clipPath: 'ellipse(0% 0% at 50% 100%)',
+              WebkitClipPath: 'ellipse(0% 0% at 50% 100%)',
+            }}
+          >
+            {/* Solid Dark Background Block with Ambient Golden Radial Glow */}
+            <div className="absolute inset-0 w-full h-full z-0 bg-[#0E1110]">
               <div
-                key={chapter.id}
-                className="hc-chapter absolute inset-0 flex flex-col items-center justify-center text-center px-6"
-                style={{ opacity: 0 }}
-              >
-                {chapter.title && (
-                  <h2
-                    className={`font-light text-white tracking-tight leading-[0.95] ${i === 0 ? 'text-[clamp(1.2rem,2.5vw,2rem)] tracking-[0.4em] uppercase' : 'text-[clamp(3rem,7vw,7rem)]'}`}
-                  >
-                    {chapter.title}
-                  </h2>
-                )}
-                {chapter.subtitle && (
-                  <p className="mt-4 text-[clamp(1.2rem,3vw,2.5rem)] font-light text-white/60">
-                    {chapter.subtitle}
-                  </p>
-                )}
-              </div>
-            ))}
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    'radial-gradient(ellipse at 50% 60%, rgba(200,169,106,0.18) 0%, transparent 70%)',
+                }}
+              />
+              {/* Signature Ripple Line */}
+              <div
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-[60vw] h-[1px] pointer-events-none"
+                style={{
+                  background:
+                    'linear-gradient(90deg, transparent, rgba(200,169,106,0.4), transparent)',
+                }}
+              />
+            </div>
 
-            {/* Scene 5 CTA */}
-            <div className="hc-cta absolute bottom-[15%] left-1/2 -translate-x-1/2 pointer-events-auto" style={{ opacity: 0 }}>
-              <a
-                href="#product-showcase"
-                className="inline-flex items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-full text-sm font-medium tracking-[0.15em] uppercase hover:bg-white/20 transition-colors"
+            {/* Foreground Text Content — Strictly Optimized for 1080x1920 Mobile Viewport & Desktop */}
+            <div className="relative z-20 flex flex-col items-center text-center max-w-4xl px-6 sm:px-8 py-12 select-none">
+              {/* Subhead / Label */}
+              <p
+                ref={labelRef}
+                className="font-light tracking-[0.35em] text-[#C8A96A] text-xs sm:text-sm uppercase mb-6 sm:mb-8 opacity-0 will-change-[opacity,transform]"
               >
-                Explore Product
-              </a>
+                HYDROPS
+              </p>
+
+              {/* Heading Line 1 */}
+              <h2
+                ref={heading1Ref}
+                className="text-[clamp(2.2rem,6.5vw,4.5rem)] font-light text-[#F5F2EC] leading-[1.1] tracking-tight mb-2 sm:mb-4 opacity-0 will-change-[opacity,transform]"
+              >
+                Purity isn&apos;t a claim.
+              </h2>
+
+              {/* Heading Line 2 */}
+              <h3
+                ref={heading2Ref}
+                className="text-[clamp(2.2rem,6.5vw,4.5rem)] font-light text-[#C8A96A] italic leading-[1.1] tracking-tight opacity-0 will-change-[opacity,transform]"
+              >
+                It&apos;s a commitment.
+              </h3>
             </div>
           </div>
-
-          {/* Scroll indicator — fades out as the user scrolls */}
-          {splashDone && <ScrollIndicator />}
         </div>
       </section>
     </>
