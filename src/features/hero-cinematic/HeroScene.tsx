@@ -56,6 +56,8 @@ export const HeroScene = () => {
   const ch2Ref = useRef<HTMLDivElement>(null);
   const ch3Ref = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const topRightBotanicalRef = useRef<HTMLImageElement>(null);
+  const bottomLeftBotanicalRef = useRef<HTMLImageElement>(null);
 
   // true once the splash exit animation has fully completed
   const [splashDone, setSplashDone] = useState(false);
@@ -162,6 +164,8 @@ export const HeroScene = () => {
           [dropletWrapperRef.current, persistentTextRef.current, ch1Ref.current],
           { opacity: 1, y: 0 }
         );
+        if (topRightBotanicalRef.current) gsap.set(topRightBotanicalRef.current, { opacity: 0.9, x: 0, y: 0 });
+        if (bottomLeftBotanicalRef.current) gsap.set(bottomLeftBotanicalRef.current, { opacity: 0.9, x: 0, y: 0 });
         return;
       }
 
@@ -179,6 +183,13 @@ export const HeroScene = () => {
         [dropletWrapperRef.current, persistentTextRef.current, ch1Ref.current, ch2Ref.current, ch3Ref.current, ctaRef.current],
         { opacity: 0, y: 25 }
       );
+
+      if (topRightBotanicalRef.current) {
+        gsap.set(topRightBotanicalRef.current, { opacity: 0, x: 50, y: -50 });
+      }
+      if (bottomLeftBotanicalRef.current) {
+        gsap.set(bottomLeftBotanicalRef.current, { opacity: 0, x: -50, y: 50 });
+      }
 
       const chapters = typographyRef.current!.querySelectorAll('.hc-chapter');
       const cta = typographyRef.current!.querySelector('.hc-cta');
@@ -322,6 +333,22 @@ export const HeroScene = () => {
         },
         0.58
       );
+
+      // Corner Botanical Assets Slide-In Entrance (Immediately after 100% slice reveal at 0.76)
+      if (topRightBotanicalRef.current) {
+        masterTl.to(
+          topRightBotanicalRef.current,
+          { opacity: 0.9, x: 0, y: 0, duration: 0.04, ease: 'power2.out' },
+          0.76
+        );
+      }
+      if (bottomLeftBotanicalRef.current) {
+        masterTl.to(
+          bottomLeftBotanicalRef.current,
+          { opacity: 0.9, x: 0, y: 0, duration: 0.04, ease: 'power2.out' },
+          0.76
+        );
+      }
 
       // ── Step 2: Philosophy Content Storyline (0.78 -> 1.00) ───────────────
       // STRICTLY AFTER Step 1 reveal is 100% complete at 0.76
@@ -544,19 +571,23 @@ export const HeroScene = () => {
               }}
             />
 
-            {/* Decorative Coconut Leaf Accents (Left & Right) */}
-            <div className="absolute -left-12 top-1/4 w-48 h-48 opacity-10 pointer-events-none mix-blend-multiply">
-              <div
-                className="w-full h-full bg-contain bg-no-repeat"
-                style={{ backgroundImage: 'url(/images/brand/philosophy-coconut.png)' }}
-              />
-            </div>
-            <div className="absolute -right-12 bottom-1/4 w-48 h-48 opacity-10 pointer-events-none mix-blend-multiply rotate-180">
-              <div
-                className="w-full h-full bg-contain bg-no-repeat"
-                style={{ backgroundImage: 'url(/images/brand/philosophy-coconut.png)' }}
-              />
-            </div>
+            {/* ── Top-Right Palm Fronds Asset ── */}
+            <img
+              ref={topRightBotanicalRef}
+              src="/assets/Gemini_Generated_Image_n90cohn90cohn90c.png"
+              alt="Palm fronds decoration"
+              className="absolute top-0 right-0 w-[400px] h-[400px] object-contain mix-blend-multiply opacity-90 z-0 pointer-events-none"
+              style={{ mixBlendMode: 'multiply' }}
+            />
+
+            {/* ── Bottom-Left Coconut Cluster Asset ── */}
+            <img
+              ref={bottomLeftBotanicalRef}
+              src="/assets/Gemini_Generated_Image_6ra6rf6ra6rf6ra6.png"
+              alt="Coconut cluster decoration"
+              className="absolute bottom-0 left-0 w-[400px] h-[400px] object-contain mix-blend-multiply opacity-90 z-0 pointer-events-none"
+              style={{ mixBlendMode: 'multiply' }}
+            />
 
             {/* Background Watermark */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
