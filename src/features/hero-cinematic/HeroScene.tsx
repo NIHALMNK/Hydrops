@@ -3,6 +3,7 @@
 import React, { useRef, useState, useCallback, useMemo } from 'react';
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { FRAME_MANIFEST } from '../hero/content/frameManifest';
 import { canvasManager } from '../hero/canvas/CanvasManager';
@@ -45,6 +46,17 @@ export const HeroScene = () => {
   const heading1Ref = useRef<HTMLHeadingElement>(null);
   const heading2Ref = useRef<HTMLHeadingElement>(null);
 
+  // Philosophy Overlay ref (Single unified DOM instance with polygon clip-path)
+  const philosophyOverlayRef = useRef<HTMLDivElement>(null);
+
+  // Philosophy content refs inside active layer
+  const dropletWrapperRef = useRef<HTMLDivElement>(null);
+  const persistentTextRef = useRef<HTMLHeadingElement>(null);
+  const ch1Ref = useRef<HTMLDivElement>(null);
+  const ch2Ref = useRef<HTMLDivElement>(null);
+  const ch3Ref = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+
   // true once the splash exit animation has fully completed
   const [splashDone, setSplashDone] = useState(false);
 
@@ -53,16 +65,16 @@ export const HeroScene = () => {
   // Responsive scroll configuration
   const { scrollHeight, scrubValue } = useMemo(() => {
     if (typeof window === 'undefined') {
-      return { scrollHeight: '600vh', scrubValue: 1.2 };
+      return { scrollHeight: '850vh', scrubValue: 1.2 };
     }
     const w = window.innerWidth;
     if (w <= 768) {
-      return { scrollHeight: '900vh', scrubValue: 2.5 };
+      return { scrollHeight: '1300vh', scrubValue: 2.5 };
     }
     if (w <= 1024) {
-      return { scrollHeight: '750vh', scrubValue: 2.0 };
+      return { scrollHeight: '1050vh', scrubValue: 2.0 };
     }
-    return { scrollHeight: '600vh', scrubValue: 1.2 };
+    return { scrollHeight: '850vh', scrubValue: 1.2 };
   }, []);
 
   const { progress, isReady } = useHeroLoader();
@@ -81,63 +93,104 @@ export const HeroScene = () => {
     };
   }, []);
 
-  // GSAP Master ScrollTrigger — Pin & Scrub Timeline
-  useIsomorphicLayoutEffect(() => {
-    if (!splashDone) return;
-    if (
-      !containerRef.current ||
-      !pinnedRef.current ||
-      !typographyRef.current ||
-      !lightingRef.current ||
-      !soulOverlayRef.current ||
-      !labelRef.current ||
-      !heading1Ref.current ||
-      !heading2Ref.current
-    )
-      return;
+  // GSAP Master ScrollTrigger — Managed by useGSAP for 100% automatic DOM & pin-spacer cleanup
+  useGSAP(
+    () => {
+      if (!splashDone) return;
+      if (
+        !containerRef.current ||
+        !pinnedRef.current ||
+        !typographyRef.current ||
+        !lightingRef.current ||
+        !soulOverlayRef.current ||
+        !labelRef.current ||
+        !heading1Ref.current ||
+        !heading2Ref.current ||
+        !philosophyOverlayRef.current ||
+        !dropletWrapperRef.current ||
+        !persistentTextRef.current ||
+        !ch1Ref.current ||
+        !ch2Ref.current ||
+        !ch3Ref.current ||
+        !ctaRef.current
+      )
+        return;
 
-    ScrollTrigger.refresh();
+      ScrollTrigger.refresh();
 
-    const ctx = gsap.context(() => {
       const prefersReducedMotion = window.matchMedia(
         '(prefers-reduced-motion: reduce)'
       ).matches;
 
-      // ClipPath updater for 100% cross-browser native CSS clip-path (bottom-center 50% 100%)
-      const updateClipPath = (rx: number, ry: number) => {
+      // SoulStatement clip-path updater (bottom-center 50% 100%)
+      const updateSoulClipPath = (rx: number, ry: number) => {
         if (!soulOverlayRef.current) return;
         const val = `ellipse(${rx.toFixed(1)}% ${ry.toFixed(1)}% at 50% 100%)`;
         soulOverlayRef.current.style.clipPath = val;
         (soulOverlayRef.current.style as HTMLElement['style'] & { webkitClipPath?: string }).webkitClipPath = val;
       };
 
+      // Philosophy unified 5-column polygon clip-path updater
+      // b is an array of 5 band expansion values [b0, b1, b2, b3, b4] from 0.0 -> 1.0
+      const updatePhilosophyClipPath = (b: number[]) => {
+        if (!philosophyOverlayRef.current) return;
+        const centers = [10, 30, 50, 70, 90];
+        const points: string[] = [];
+
+        for (let i = 0; i < 5; i++) {
+          const c = centers[i];
+          const halfW = b[i] * 10; // max 10% on each side = 20% total band width
+          const left = Math.max(i * 20, c - halfW).toFixed(2);
+          const right = Math.min((i + 1) * 20, c + halfW).toFixed(2);
+          points.push(`${left}% 0%`, `${left}% 100%`, `${right}% 100%`, `${right}% 0%`);
+        }
+
+        const polyStr = `polygon(${points.join(', ')})`;
+        philosophyOverlayRef.current.style.clipPath = polyStr;
+        (philosophyOverlayRef.current.style as HTMLElement['style'] & { webkitClipPath?: string }).webkitClipPath = polyStr;
+      };
+
       if (prefersReducedMotion) {
-        updateClipPath(200, 200);
+        updateSoulClipPath(150, 150);
+        updatePhilosophyClipPath([1, 1, 1, 1, 1]);
         gsap.set([labelRef.current, heading1Ref.current, heading2Ref.current], {
           opacity: 1,
           y: 0,
           filter: 'blur(0px)',
         });
+        gsap.set(
+          [dropletWrapperRef.current, persistentTextRef.current, ch1Ref.current],
+          { opacity: 1, y: 0 }
+        );
         return;
       }
 
-      // Initial state
-      updateClipPath(0, 0);
+      // Initial state setup (Wide & Flat: X-radius 150%, Y-radius 0%)
+      updateSoulClipPath(150, 0);
+      updatePhilosophyClipPath([0, 0, 0, 0, 0]);
+
       gsap.set([labelRef.current, heading1Ref.current, heading2Ref.current], {
         opacity: 0,
         y: 35,
         filter: 'blur(10px)',
       });
 
+      gsap.set(
+        [dropletWrapperRef.current, persistentTextRef.current, ch1Ref.current, ch2Ref.current, ch3Ref.current, ctaRef.current],
+        { opacity: 0, y: 25 }
+      );
+
       const chapters = typographyRef.current!.querySelectorAll('.hc-chapter');
       const cta = typographyRef.current!.querySelector('.hc-cta');
       const lightDivs = lightingRef.current!.querySelectorAll('.hc-light');
 
-      // Timeline mapping across single pinned master container:
-      // progress 0.00 -> 0.50: Hero film frame sequence 1 -> 400 plays (bottle centered at 0.50)
-      // progress 0.50 -> 0.85: Bottom-up expanding arch clip-path (0% -> 200% at 50% 100%)
-      // progress 0.60 -> 0.95: Soul Statement text fades in from 0 to 100 opacity
-      const HERO_BEAT_END = 0.50;
+      // Timeline beats mapping:
+      // 0.00 -> 0.35: Hero film 1 -> 400 frames (bottle centered at 0.35)
+      // 0.35 -> 0.58: SoulStatement expanding arch reveal (0% -> 200% at 50% 100%)
+      // 0.42 -> 0.58: SoulStatement text fade in (0 -> 1 opacity)
+      // 0.58 -> 0.76: Step 1 (Philosophy 5-column Polygon Slice Reveal 0% -> 100% visible, staggered)
+      // 0.78 -> 1.00: Step 2 (Philosophy Content Storyline: ONLY AFTER slice reveal is 100% complete)
+      const HERO_BEAT_END = 0.35;
 
       const masterTl = gsap.timeline({
         scrollTrigger: {
@@ -148,7 +201,6 @@ export const HeroScene = () => {
           scrub: scrubValue,
           anticipatePin: 1,
           onUpdate: (self) => {
-            // Map scroll progress 0.0 -> 0.50 to Hero frame sequence 1 -> 400
             const heroProgress = Math.min(1, self.progress / HERO_BEAT_END);
             const frame = mapScrollToFrame(heroProgress, totalFrames);
             frameRenderer.renderFrame(frame);
@@ -156,7 +208,7 @@ export const HeroScene = () => {
         },
       });
 
-      // ── Phase 1: Hero Typography & Lighting (0.00 -> 0.50) ───────────────
+      // ── Phase 1: Hero Typography & Lighting (0.00 -> 0.35) ───────────────
       CHAPTERS.forEach((chapter, i) => {
         const el = chapters[i];
         if (!el) return;
@@ -186,8 +238,8 @@ export const HeroScene = () => {
         masterTl.fromTo(
           cta,
           { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.10, ease: 'power2.out' },
-          0.38
+          { opacity: 1, y: 0, duration: 0.08, ease: 'power2.out' },
+          0.28
         );
       }
 
@@ -214,49 +266,109 @@ export const HeroScene = () => {
         }
       });
 
-      // ── Phase 2: Bottom-Up Arch Reveal (Correction 3: 0.50 -> 0.85) ────────
-      // Starts strictly at 0.50 over the frozen frame 400 bottle rest layout
-      const clipState = { rx: 0, ry: 0 };
+      // ── Phase 2: SoulStatement Bottom-Up Arch Reveal (0.35 -> 0.58) ────────
+      // Sweeping arch from ellipse(150% 0% at 50% 100%) to ellipse(150% 150% at 50% 100%)
+      const clipState = { rx: 150, ry: 0 };
       masterTl.to(
         clipState,
         {
-          rx: 200,
-          ry: 200,
-          duration: 0.35,
+          rx: 150,
+          ry: 150,
+          duration: 0.23,
           ease: 'power2.inOut',
           onUpdate: () => {
-            updateClipPath(clipState.rx, clipState.ry);
+            updateSoulClipPath(clipState.rx, clipState.ry);
           },
         },
-        0.50
+        0.35
       );
 
       if (cta) {
-        masterTl.to(cta, { opacity: 0, duration: 0.05 }, 0.50);
+        masterTl.to(cta, { opacity: 0, duration: 0.05 }, 0.35);
       }
 
-      // ── Phase 3: Soul Statement Text Opacity Fade (0.60 -> 0.95) ───────────
+      // Soul Statement Text Entrance (0.42 -> 0.58)
       masterTl.to(
         labelRef.current,
-        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.12, ease: 'power2.out' },
-        0.60
+        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.08, ease: 'power2.out' },
+        0.42
       );
 
       masterTl.to(
         heading1Ref.current,
-        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.15, ease: 'power2.out' },
-        0.68
+        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.09, ease: 'power2.out' },
+        0.46
       );
 
       masterTl.to(
         heading2Ref.current,
-        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.15, ease: 'power2.out' },
-        0.76
+        { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.09, ease: 'power2.out' },
+        0.50
       );
-    }, containerRef);
 
-    return () => ctx.revert();
-  }, [splashDone, totalFrames, scrubValue]);
+      // ── Step 1: Philosophy 5-Column Polygon Slice Reveal (0.58 -> 0.76) ────
+      // Single simultaneous clip-path polygon tween expanding all 5 bands together
+      const sliceState = { progress: 0 };
+      masterTl.to(
+        sliceState,
+        {
+          progress: 1,
+          duration: 0.18,
+          ease: 'power2.inOut',
+          onUpdate: () => {
+            const p = sliceState.progress;
+            updatePhilosophyClipPath([p, p, p, p, p]);
+          },
+        },
+        0.58
+      );
+
+      // ── Step 2: Philosophy Content Storyline (0.78 -> 1.00) ───────────────
+      // STRICTLY AFTER Step 1 reveal is 100% complete at 0.76
+      masterTl.fromTo(
+        [dropletWrapperRef.current, persistentTextRef.current, ch1Ref.current],
+        { opacity: 0, y: 25 },
+        { opacity: 1, y: 0, duration: 0.06, stagger: 0.02, ease: 'power2.out' },
+        0.78
+      );
+
+      // Ch1 -> Ch2
+      masterTl.to(
+        ch1Ref.current,
+        { opacity: 0, y: -25, duration: 0.04, ease: 'power2.in' },
+        0.86
+      );
+      masterTl.fromTo(
+        ch2Ref.current,
+        { opacity: 0, y: 25 },
+        { opacity: 1, y: 0, duration: 0.05, ease: 'power2.out' },
+        0.89
+      );
+
+      // Ch2 -> Ch3 & CTA
+      masterTl.to(
+        ch2Ref.current,
+        { opacity: 0, y: -25, duration: 0.04, ease: 'power2.in' },
+        0.93
+      );
+      masterTl.fromTo(
+        ch3Ref.current,
+        { opacity: 0, y: 25 },
+        { opacity: 1, y: 0, duration: 0.05, ease: 'power2.out' },
+        0.95
+      );
+      masterTl.fromTo(
+        ctaRef.current,
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.04, ease: 'power2.out' },
+        0.97
+      );
+    },
+    {
+      scope: containerRef,
+      dependencies: [splashDone, totalFrames, scrubValue],
+    }
+  );
 
   return (
     <>
@@ -269,14 +381,14 @@ export const HeroScene = () => {
         />
       )}
 
-      {/* ── Master Hero & Soul Master Section ─────────────────────────── */}
+      {/* ── Master Hero, Soul & Philosophy Pinned Section ─────────────── */}
       <section
         ref={containerRef}
         id="hero-scene-section"
         className="relative w-full bg-[#050505]"
         style={{ height: scrollHeight }}
       >
-        {/* Master Pinned Wrapper (Locks entire viewport) */}
+        {/* Master Pinned Wrapper (Locks entire viewport across all 3 chapters) */}
         <div
           ref={pinnedRef}
           className="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center"
@@ -355,8 +467,8 @@ export const HeroScene = () => {
             ref={soulOverlayRef}
             className="absolute inset-0 w-full h-full z-30 flex items-center justify-center bg-[#0E1110] will-change-[clip-path]"
             style={{
-              clipPath: 'ellipse(0% 0% at 50% 100%)',
-              WebkitClipPath: 'ellipse(0% 0% at 50% 100%)',
+              clipPath: 'ellipse(150% 0% at 50% 100%)',
+              WebkitClipPath: 'ellipse(150% 0% at 50% 100%)',
             }}
           >
             {/* Background Image Layer */}
@@ -411,6 +523,137 @@ export const HeroScene = () => {
               >
                 It&apos;s a commitment.
               </h3>
+            </div>
+          </div>
+
+          {/* ── Layer 3: Philosophy Section (Absolute top: 0, left: 0, z-40, Single Unified Instance with Polygon Clip-Path) ── */}
+          <div
+            ref={philosophyOverlayRef}
+            className="absolute inset-0 w-full h-full z-40 flex items-center justify-center bg-[#F5F2EC] text-[#1E1E1E] overflow-hidden will-change-[clip-path]"
+            style={{
+              clipPath: 'polygon(10% 0%, 10% 100%, 10% 100%, 10% 0%, 30% 0%, 30% 100%, 30% 100%, 30% 0%, 50% 0%, 50% 100%, 50% 100%, 50% 0%, 70% 0%, 70% 100%, 70% 100%, 70% 0%, 90% 0%, 90% 100%, 90% 100%, 90% 0%)',
+              WebkitClipPath: 'polygon(10% 0%, 10% 100%, 10% 100%, 10% 0%, 30% 0%, 30% 100%, 30% 100%, 30% 0%, 50% 0%, 50% 100%, 50% 100%, 50% 0%, 70% 0%, 70% 100%, 70% 100%, 70% 0%, 90% 0%, 90% 100%, 90% 100%, 90% 0%)',
+            }}
+          >
+            {/* Ambient warm radial glow */}
+            <div
+              className="absolute inset-0 z-0 pointer-events-none"
+              style={{
+                background:
+                  'radial-gradient(ellipse at 50% 60%, rgba(200,169,106,0.08) 0%, transparent 70%)',
+              }}
+            />
+
+            {/* Decorative Coconut Leaf Accents (Left & Right) */}
+            <div className="absolute -left-12 top-1/4 w-48 h-48 opacity-10 pointer-events-none mix-blend-multiply">
+              <div
+                className="w-full h-full bg-contain bg-no-repeat"
+                style={{ backgroundImage: 'url(/images/brand/philosophy-coconut.png)' }}
+              />
+            </div>
+            <div className="absolute -right-12 bottom-1/4 w-48 h-48 opacity-10 pointer-events-none mix-blend-multiply rotate-180">
+              <div
+                className="w-full h-full bg-contain bg-no-repeat"
+                style={{ backgroundImage: 'url(/images/brand/philosophy-coconut.png)' }}
+              />
+            </div>
+
+            {/* Background Watermark */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+              <span className="text-[25vw] font-bold text-[#1E1E1E] opacity-[0.018] blur-[6px] select-none whitespace-nowrap">
+                HYDROPS
+              </span>
+            </div>
+
+            {/* Single Unified Philosophy Content Engine */}
+            <div className="relative z-10 flex flex-col items-center text-center w-full max-w-[800px] px-6 select-none pointer-events-auto">
+              {/* Droplet SVG */}
+              <div ref={dropletWrapperRef} className="philosophy-droplet mb-8 opacity-0">
+                <svg
+                  width="24"
+                  height="32"
+                  viewBox="0 0 24 32"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="mx-auto"
+                >
+                  <path
+                    d="M12 0C12 0 3 12.632 3 21C3 25.9706 7.02944 30 12 30C16.9706 30 21 25.9706 21 21C21 12.632 12 0 12 0Z"
+                    stroke="#1E1E1E"
+                    strokeWidth="1.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M7 21C7 18.2386 9.23858 16 12 16"
+                    stroke="#C8A96A"
+                    strokeWidth="1.2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
+
+              {/* Typography Engine */}
+              <div className="relative w-full">
+                {/* Persistent Phrase */}
+                <h2
+                  ref={persistentTextRef}
+                  className="philosophy-persistent text-[clamp(2.8rem,6vw,5rem)] font-light tracking-tight mb-4 opacity-0 text-[#1E1E1E]"
+                >
+                  Every Drop
+                </h2>
+
+                {/* Chapters Container */}
+                <div className="relative h-[200px] md:h-[240px] w-full mt-4">
+                  {/* Chapter 1 */}
+                  <div
+                    ref={ch1Ref}
+                    className="philosophy-chapter chapter-1 absolute inset-0 w-full flex flex-col items-center justify-start opacity-0"
+                  >
+                    <h3 className="text-[clamp(2.5rem,5.5vw,4.5rem)] font-light tracking-tight text-[#1E1E1E]">
+                      Begins <br />
+                      <span className="text-[#205C3B] italic">With Purity.</span>
+                    </h3>
+                  </div>
+
+                  {/* Chapter 2 */}
+                  <div
+                    ref={ch2Ref}
+                    className="philosophy-chapter chapter-2 absolute inset-0 w-full flex flex-col items-center justify-start opacity-0"
+                  >
+                    <h3 className="text-[clamp(2rem,4.5vw,3.8rem)] font-light tracking-tight leading-tight text-[#1E1E1E]">
+                      Carefully Selected.
+                      <br />
+                      Patiently Crafted.
+                      <br />
+                      <span className="text-[#C8A96A] italic">Crystal Clear.</span>
+                    </h3>
+                  </div>
+
+                  {/* Chapter 3 */}
+                  <div
+                    ref={ch3Ref}
+                    className="philosophy-chapter chapter-3 absolute inset-0 w-full flex flex-col items-center justify-start opacity-0"
+                  >
+                    <h3 className="text-[clamp(2.5rem,5.5vw,4.5rem)] font-light tracking-tight text-[#1E1E1E]">
+                      Earns Your Trust.
+                    </h3>
+
+                    {/* Final CTA */}
+                    <div
+                      ref={ctaRef}
+                      className="philosophy-cta mt-8 opacity-0 flex justify-center w-full"
+                    >
+                      <a
+                        href="#coconut-journey"
+                        className="text-xs font-medium tracking-[0.25em] uppercase text-[#205C3B] border-b border-[#205C3B]/50 pb-1 hover:border-[#205C3B] transition-colors duration-300"
+                      >
+                        Discover The Journey
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
