@@ -39,15 +39,26 @@ const JOURNEY_STAGES = [
 export function CoconutJourney() {
   return (
     <div className="w-full">
-      <section id="journey-section" className="relative w-full h-screen bg-[#F5F2EC] text-[#1E1E1E] overflow-hidden">
+      <section id="journey-section" className="relative w-full h-screen bg-[#0E1110] text-white overflow-hidden">
         
+        {/* ── Ambient Blurred Background Image Asset ── */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/assets/trees.jpg"
+          alt="Ambient grove landscape"
+          className="absolute inset-0 w-full h-full object-cover z-0 blur-2xl scale-110 opacity-80 pointer-events-none"
+        />
+
+        {/* ── Dark Readability Overlay Layer (z-[1]) ── */}
+        <div className="absolute inset-0 bg-black/50 z-[1] pointer-events-none" />
+
         {/* Subtle warm ambient light */}
         <div className="absolute inset-0 pointer-events-none z-0"
-          style={{ background: 'radial-gradient(ellipse at 20% 50%, rgba(200,169,106,0.05) 0%, transparent 60%)' }}
+          style={{ background: 'radial-gradient(ellipse at 20% 50%, rgba(200,169,106,0.08) 0%, transparent 60%)' }}
         />
 
         {/* Horizontal scroll track */}
-        <div className="journey-track flex h-full will-change-transform" style={{ width: `${JOURNEY_STAGES.length * 100}vw` }}>
+        <div className="journey-track flex h-full will-change-transform relative z-10" style={{ width: `${JOURNEY_STAGES.length * 100}vw` }}>
           {JOURNEY_STAGES.map((stage, i) => (
             <div
               key={i}
@@ -58,21 +69,21 @@ export function CoconutJourney() {
                 <span className="text-[#C8A96A] text-[11px] font-medium tracking-[0.35em] uppercase mb-6 block">
                   Chapter {stage.chapter}
                 </span>
-                <h3 className="text-[clamp(3rem,5vw,4.5rem)] font-light mb-6 leading-[0.95] tracking-tight text-[#1E1E1E]">
+                <h3 className="text-[clamp(3rem,5vw,4.5rem)] font-light mb-6 leading-[0.95] tracking-tight text-white drop-shadow-md">
                   {stage.title}
                 </h3>
-                <p className="text-[clamp(1rem,1.5vw,1.15rem)] text-[#1E1E1E]/60 font-light leading-relaxed mb-8 max-w-sm">
+                <p className="text-[clamp(1rem,1.5vw,1.15rem)] text-white/80 font-light leading-relaxed mb-8 max-w-sm drop-shadow">
                   {stage.desc}
                 </p>
-                {/* Mood line — the signature emotional note for each chapter */}
-                <p className="text-[11px] tracking-[0.3em] uppercase text-[#205C3B] font-medium">
+                {/* Mood line — signature emotional note for each chapter */}
+                <p className="text-[11px] tracking-[0.3em] uppercase text-emerald-300 font-medium drop-shadow">
                   {stage.mood}
                 </p>
               </div>
 
               {/* Visual */}
-              <div className="journey-visual flex-1 w-full max-w-[480px] aspect-[4/5] md:aspect-[3/4] relative rounded-[2rem] overflow-hidden will-change-transform opacity-0 scale-[0.96] bg-[#E8E4DC]"
-                style={{ boxShadow: '0 40px 80px -20px rgba(30,30,30,0.12)' }}
+              <div className="journey-visual flex-1 w-full max-w-[480px] aspect-[4/5] md:aspect-[3/4] relative rounded-[2rem] overflow-hidden will-change-transform opacity-0 scale-[0.96] bg-[#1E1E1E]"
+                style={{ boxShadow: '0 40px 80px -20px rgba(0,0,0,0.5)' }}
               >
                 <div className="journey-image-inner absolute inset-0 will-change-transform scale-[1.08]">
                   <Image 
@@ -86,7 +97,7 @@ export function CoconutJourney() {
                 </div>
                 {/* Vignette */}
                 <div className="absolute inset-0 rounded-[2rem]"
-                  style={{ background: 'linear-gradient(to bottom, transparent 60%, rgba(30,30,30,0.15))' }}
+                  style={{ background: 'linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.35))' }}
                 />
               </div>
 
@@ -94,7 +105,7 @@ export function CoconutJourney() {
               <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-20">
                 {JOURNEY_STAGES.map((_, j) => (
                   <div key={j}
-                    className={`h-px transition-all duration-500 ${j === i ? 'w-8 bg-[#C8A96A]' : 'w-3 bg-[#1E1E1E]/20'}`}
+                    className={`h-px transition-all duration-500 ${j === i ? 'w-8 bg-[#C8A96A]' : 'w-3 bg-white/30'}`}
                   />
                 ))}
               </div>
