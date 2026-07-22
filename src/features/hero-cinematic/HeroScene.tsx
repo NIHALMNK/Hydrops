@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState, useCallback, useMemo } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -64,19 +64,28 @@ export const HeroScene = () => {
 
   const totalFrames = FRAME_MANIFEST.length;
 
-  // Responsive scroll configuration
-  const { scrollHeight, scrubValue } = useMemo(() => {
-    if (typeof window === 'undefined') {
-      return { scrollHeight: '850vh', scrubValue: 1.2 };
-    }
-    const w = window.innerWidth;
-    if (w <= 768) {
-      return { scrollHeight: '1300vh', scrubValue: 2.5 };
-    }
-    if (w <= 1024) {
-      return { scrollHeight: '1050vh', scrubValue: 2.0 };
-    }
-    return { scrollHeight: '850vh', scrubValue: 1.2 };
+  // Responsive scroll configuration (useState + layoutEffect for 100% hydration match)
+  const [scrollHeight, setScrollHeight] = useState('850vh');
+  const [scrubValue, setScrubValue] = useState(1.2);
+
+  useIsomorphicLayoutEffect(() => {
+    const handleResize = () => {
+      const w = window.innerWidth;
+      if (w <= 768) {
+        setScrollHeight('1300vh');
+        setScrubValue(2.5);
+      } else if (w <= 1024) {
+        setScrollHeight('1050vh');
+        setScrubValue(2.0);
+      } else {
+        setScrollHeight('850vh');
+        setScrubValue(1.2);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const { progress, isReady } = useHeroLoader();
@@ -393,7 +402,7 @@ export const HeroScene = () => {
     },
     {
       scope: containerRef,
-      dependencies: [splashDone, totalFrames, scrubValue],
+      dependencies: [splashDone, totalFrames, scrubValue, scrollHeight],
     }
   );
 
