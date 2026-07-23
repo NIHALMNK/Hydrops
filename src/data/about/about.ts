@@ -35,6 +35,8 @@ export const aboutData: AboutPageData = {
   story: {
     eyebrow: 'The Journey',
     headline: 'A story rooted\nin the coconut.',
+    image: { src: '/images/brand/philosophy-coconut.png', alt: 'Coconuts from Kerala, the source of Hydrops pure coconut oil', width: 1200, height: 1600 },
+    imageCaption: 'Kerala · India',
     chapters: [
       {
         year: '2024',
@@ -116,29 +118,25 @@ export const aboutData: AboutPageData = {
         step: '01',
         title: 'Selection',
         body: 'Only fully ripened coconuts are accepted. Each batch is assessed for density, moisture content, and visual quality before it enters our process. Nothing sub-standard enters.',
-        image: '/images/quality/craft-inspect.png',
-        imageAlt: 'Hand carefully inspecting a fresh coconut for quality and maturity',
+        image: { src: '', alt: '', width: 960, height: 1200 },
       },
       {
         step: '02',
         title: 'Extraction',
         body: 'We use a cold-extraction method that preserves the natural fatty acid profile and aroma of the coconut without the application of heat. The oil emerges as nature intended it.',
-        image: '/images/journey/4-selection.png',
-        imageAlt: 'Careful selection and extraction process in natural light',
+        image: { src: '', alt: '', width: 960, height: 1200 },
       },
       {
         step: '03',
         title: 'First Filtration',
         body: 'The first pass removes macro-impurities — solids, particulates, and any matter that does not belong in the oil. The result is noticeably cleaner, but not yet Hydrops.',
-        image: '/images/quality/craft-filter.png',
-        imageAlt: 'Crystal-clear coconut oil undergoing first filtration stage',
+        image: { src: '', alt: '', width: 960, height: 1200 },
       },
       {
         step: '04',
         title: 'Second Filtration',
         body: 'The second pass targets microscopic particles that survive the first stage. After this filtration, the oil achieves the crystal clarity that defines Hydrops. This is the step that separates us.',
-        image: '/images/quality/craft-bottle.png',
-        imageAlt: 'Premium Hydrops bottle with crystal-clear oil on a dark surface',
+        image: { src: '', alt: '', width: 960, height: 1200 },
       },
     ],
   },
@@ -206,6 +204,7 @@ export const aboutData: AboutPageData = {
     eyebrow: 'Company Details',
     headline: 'Hydrops India',
     legalName: 'Hydrops India Pvt. Ltd.',
+    legalNameLabel: 'Legal Name',
     foundedLabel: 'Founded',
     foundedValue: '2024',
     originLabel: 'Origin',
@@ -218,6 +217,7 @@ export const aboutData: AboutPageData = {
       line2: 'Bangalore, Karnataka 560001',
       line3: 'India',
     },
+    standardsLabel: 'Standards',
     certifications: [
       'FSSAI Certified',
       'Food Grade Facility',
@@ -236,5 +236,6 @@ export const aboutData: AboutPageData = {
     secondaryLabel: 'Get In Touch',
     secondaryHref: '/contact',
     tagline: 'Crafted with care. Filtered with precision. Trusted by families.',
+    backgroundImage: { src: '/images/products/hydrops-coconut-oil.png', alt: '', width: 768, height: 1536 },
   },
 };

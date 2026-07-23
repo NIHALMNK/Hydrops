@@ -6,7 +6,7 @@ export function generateProductSchema(product: Product) {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
-    image: product.images.gallery.map(img => `${siteConfig.url}${img}`),
+    image: product.images.gallery.map((img: string) => `${siteConfig.url}${img}`),
     description: product.description,
     sku: product.id,
     brand: {
