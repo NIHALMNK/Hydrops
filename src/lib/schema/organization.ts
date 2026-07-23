@@ -1,4 +1,4 @@
-import { companyData } from '@/data/company';
+import { companyData } from '@/data/site/company';
 import { siteConfig } from '@/constants/site';
 
 export function generateOrganizationSchema() {
