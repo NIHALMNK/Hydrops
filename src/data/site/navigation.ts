@@ -6,6 +6,8 @@ export const navigationData: NavigationDocument = {
   _type: 'navigation',
   ariaLabel: 'Primary navigation',
   homeLabel: 'Hydrops — Home',
+  brandName: 'Hydrops',
+  brandTagline: 'Pure Coconut Oil · India',
   brandLogo: { src: '/images/brand/logo.png', alt: 'Hydrops', width: 140, height: 46 },
   items: [
     { label: 'Home', href: ROUTES.HOME },
@@ -17,4 +19,5 @@ export const navigationData: NavigationDocument = {
   openMenuLabel: 'Open navigation',
   closeMenuLabel: 'Close navigation',
   mobileMenuLabel: 'Mobile navigation',
+  overlayCopyright: '© 2026 Hydrops',
 };

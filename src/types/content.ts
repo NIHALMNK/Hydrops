@@ -170,11 +170,14 @@ export interface NavigationItem {
 export interface NavigationDocument extends ContentDocument {
   ariaLabel: string;
   homeLabel: string;
+  brandName: string;
+  brandTagline: string;
   brandLogo: ImageAsset;
   items: NavigationItem[];
   openMenuLabel: string;
   closeMenuLabel: string;
   mobileMenuLabel: string;
+  overlayCopyright: string;
 }
 
 export interface FooterDocument extends ContentDocument {
