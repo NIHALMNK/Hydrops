@@ -1,8 +1,10 @@
 import { Navbar } from '@/components/layout/Navbar';
+import { navigationData } from '@/data/site/navigation';
 import { Footer } from '@/components/layout/Footer';
 import type { Metadata } from 'next';
 
 import { aboutData } from '@/data/about/about';
+import { aboutSeo } from '@/data/site/seo';
 import {
   AboutHero,
   BrandIntroduction,
@@ -17,14 +19,9 @@ import {
 } from '@/features/about';
 
 export const metadata: Metadata = {
-  title: 'About Us — Hydrops',
-  description:
-    'Discover the story of Hydrops. A company built around a single belief — that purity is never an accident. Double-filtered virgin coconut oil from the finest Indian coconuts.',
-  openGraph: {
-    title: 'About Us — Hydrops',
-    description: 'A company built around a single belief — that purity is never an accident.',
-    images: ['/images/brand/philosophy-coconut.png'],
-  },
+  title: aboutSeo.title,
+  description: aboutSeo.description,
+  openGraph: { title: aboutSeo.title, description: aboutSeo.description, images: [aboutSeo.openGraphImage.src] },
 };
 
 export default function AboutPage() {
@@ -34,7 +31,7 @@ export default function AboutPage() {
         The Navbar is globally aware and will automatically adapt its text colour 
         based on the sections it passes over via the canvas probe we built earlier.
       */}
-      <Navbar />
+      <Navbar data={navigationData} />
       
       <main className="w-full flex flex-col">
         <AboutHero data={aboutData.hero} />

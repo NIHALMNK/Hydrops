@@ -13,7 +13,9 @@ import { Everyday } from '@/features/home/components/Everyday';
 import { ContactCTA } from '@/features/home/components/ContactCTA';
 import { HomeAnimationController } from '@/features/home/animations/master';
 import { Navbar } from '@/components/layout/Navbar';
+import { navigationData } from '@/data/site/navigation';
 import { Footer } from '@/components/layout/Footer';
+import { homePageData } from '@/data/home/home';
 
 export default function HomePage() {
   const mainRef = useRef<HTMLDivElement>(null);
@@ -33,10 +35,10 @@ export default function HomePage() {
 
   return (
     <>
-      <Navbar />
+      <Navbar data={navigationData} />
       <main ref={mainRef} className="w-full relative overflow-hidden" style={{ backgroundColor: '#F5F2EC' }}>
         {/* 01 · Cinematic Hero */}
-        <HeroScene />
+        <HeroScene data={homePageData.hero} />
 
         {/* 02 · Breathing moment — the brand soul emerges from darkness */}
         <SoulStatement />
@@ -45,22 +47,22 @@ export default function HomePage() {
         <Philosophy />
 
         {/* 04 · Origin — The human story behind every bottle */}
-        <CoconutJourney />
+        <CoconutJourney data={homePageData.journey} />
 
         {/* 05 · Product — The bottle as hero */}
-        <ProductShowcase />
+        <ProductShowcase data={homePageData.productShowcase} />
 
         {/* 06 · Purity Statement — The dark contrast beat */}
-        <PurityStatement />
+        <PurityStatement data={homePageData.purityStatement} />
 
         {/* 07 · Craftsmanship — Documentary process story */}
-        <Craftsmanship />
+        <Craftsmanship data={homePageData.craftsmanship} />
 
         {/* 08 · Everyday — Life with Hydrops */}
-        <Everyday />
+        <Everyday data={homePageData.everyday} />
 
         {/* 09 · Closing — The brand arrives */}
-        <ContactCTA />
+        <ContactCTA data={homePageData.contactCta} />
       </main>
       <Footer />
     </>

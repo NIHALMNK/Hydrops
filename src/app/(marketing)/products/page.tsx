@@ -1,17 +1,18 @@
 import { Navbar } from '@/components/layout/Navbar';
+import { navigationData } from '@/data/site/navigation';
 import { Footer } from '@/components/layout/Footer';
 import type { Metadata } from 'next';
+import { productsPageData } from '@/data/products/products-page';
 
 export const metadata: Metadata = {
-  title: 'Products — Hydrops',
-  description:
-    'Explore the Hydrops range of pure, double-filtered coconut oil products — crafted for purity and everyday use.',
+  title: productsPageData.seo.title,
+  description: productsPageData.seo.description,
 };
 
 export default function ProductsPage() {
   return (
     <>
-      <Navbar />
+      <Navbar data={navigationData} />
       <main
         className="min-h-screen w-full"
         style={{ backgroundColor: '#F5F2EC', paddingTop: '8rem' }}
@@ -26,13 +27,13 @@ export default function ProductsPage() {
               lineHeight: 1.1,
             }}
           >
-            Our Products
+            {productsPageData.heading}
           </h1>
           <p
             className="mt-6 text-[1.1rem] leading-relaxed max-w-2xl"
             style={{ color: 'rgba(30,30,30,0.55)' }}
           >
-            Double-filtered purity in every drop. Discover the Hydrops product range.
+            {productsPageData.description}
           </p>
         </section>
       </main>

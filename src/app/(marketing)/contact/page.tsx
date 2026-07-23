@@ -1,17 +1,18 @@
 import { Navbar } from '@/components/layout/Navbar';
+import { navigationData } from '@/data/site/navigation';
 import { Footer } from '@/components/layout/Footer';
 import type { Metadata } from 'next';
+import { contactPageData } from '@/data/contact/contact-page';
 
 export const metadata: Metadata = {
-  title: 'Contact — Hydrops',
-  description:
-    'Get in touch with Hydrops. Enquire about our pure coconut oil products, wholesale orders, or any questions you may have.',
+  title: contactPageData.seo.title,
+  description: contactPageData.seo.description,
 };
 
 export default function ContactPage() {
   return (
     <>
-      <Navbar />
+      <Navbar data={navigationData} />
       <main
         className="min-h-screen w-full"
         style={{ backgroundColor: '#F5F2EC', paddingTop: '8rem' }}
@@ -26,13 +27,13 @@ export default function ContactPage() {
               lineHeight: 1.1,
             }}
           >
-            Contact Us
+            {contactPageData.heading}
           </h1>
           <p
             className="mt-6 text-[1.1rem] leading-relaxed max-w-2xl"
             style={{ color: 'rgba(30,30,30,0.55)' }}
           >
-            We&apos;d love to hear from you. Reach out about products, orders, or anything else.
+            {contactPageData.description}
           </p>
         </section>
       </main>
