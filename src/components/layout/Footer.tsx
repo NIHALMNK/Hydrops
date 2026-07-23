@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { companyData } from '@/data/site/company';
 import { footerData } from '@/data/site/footer';
 import { socialData } from '@/data/site/social';
 import type { FooterDocument, SocialLinkDocument } from '@/types';
@@ -201,13 +202,13 @@ function FooterBrandColumn({ socials }: { socials: SocialLinkDocument[] }) {
           className="block text-[22px] font-light tracking-[0.3em] uppercase"
           style={{ color: 'rgba(255,255,255,0.92)' }}
         >
-          Hydrops
+          {companyData.name}
         </span>
         <span
           className="block mt-1 text-[10px] tracking-[0.25em] uppercase"
           style={{ color: GOLD_DIM }}
         >
-          Pure Coconut Oil · India
+          {companyData.countryLabel}
         </span>
       </div>
 
@@ -259,7 +260,7 @@ function FooterContactColumn({
   contact,
   address,
 }: Pick<FooterDocument, 'contact' | 'address'>) {
-  const emailDisplay = contact.email ?? 'Email coming soon';
+  const emailDisplay = contact.email ?? footerData.labels.emailUnavailable;
   const emailHref = contact.email ? `mailto:${contact.email}` : undefined;
 
 

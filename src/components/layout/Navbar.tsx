@@ -6,6 +6,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { companyData } from '@/data/site/company';
+import { footerData } from '@/data/site/footer';
 import type { NavigationDocument, NavigationItem } from "@/types";
 
 
@@ -412,7 +414,7 @@ export function Navbar({ data }: Props) {
             className="text-[11px] font-light tracking-[0.45em] uppercase select-none"
             style={{ color: "rgba(255,255,255,0.22)" }}
           >
-            Hydrops
+            {data.brandName}
           </span>
           <button
             onClick={closeMenu}
@@ -487,13 +489,13 @@ export function Navbar({ data }: Props) {
             className="text-[10px] tracking-[0.3em] uppercase"
             style={{ color: "rgba(255,255,255,0.18)" }}
           >
-            Pure Coconut Oil · India
+            {data.brandTagline}
           </p>
           <p
             className="text-[10px] tracking-[0.25em] uppercase"
             style={{ color: "rgba(200,169,106,0.30)" }}
           >
-            © 2026 Hydrops
+            {data.overlayCopyright}
           </p>
         </div>
       </div>
