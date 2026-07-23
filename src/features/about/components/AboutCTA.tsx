@@ -36,8 +36,8 @@ export function AboutCTA({ data }: Props) {
         className="absolute right-[-5%] top-1/2 -translate-y-1/2 w-[45vw] max-w-[480px] h-[85vh] opacity-[0.12] pointer-events-none"
       >
         <Image
-          src="/images/products/hydrops-coconut-oil.png"
-          alt=""
+          src={data.backgroundImage.src}
+          alt={data.backgroundImage.alt}
           fill
           className="object-contain"
           sizes="45vw"

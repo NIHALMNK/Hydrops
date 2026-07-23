@@ -38,8 +38,8 @@ export function BrandStory({ data }: Props) {
               style={{ boxShadow: '0 48px 96px -24px rgba(0,0,0,0.5)' }}
             >
               <Image
-                src="/images/brand/philosophy-coconut.png"
-                alt="Coconuts from Kerala, the source of Hydrops pure coconut oil"
+                src={data.image.src}
+                alt={data.image.alt}
                 fill
                 sizes="(max-width: 1024px) 100vw, 40vw"
                 className="object-cover"
@@ -59,7 +59,7 @@ export function BrandStory({ data }: Props) {
                 className="absolute bottom-6 left-6 text-white/40"
                 style={{ fontSize: '10px', letterSpacing: '0.3em', textTransform: 'uppercase' }}
               >
-                Kerala · India
+                {data.imageCaption}
               </p>
             </div>
           </div>

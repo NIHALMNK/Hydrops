@@ -3,8 +3,11 @@
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { EnvironmentLayer } from '../../../../components/ui/EnvironmentLayer';
+import type { ProductShowcaseDocument } from '@/types';
 
-export function ProductBottle() {
+interface Props { data: ProductShowcaseDocument; }
+
+export function ProductBottle({ data }: Props) {
   return (
     <div className="product-bottle-container w-full h-full flex items-center justify-center relative perspective-[1000px] z-10">
       
@@ -41,8 +44,8 @@ export function ProductBottle() {
 
           {/* Hydrops Bottle */}
           <Image 
-            src="/images/products/hydrops-coconut-oil.png"
-            alt="Hydrops Coconut Oil Bottle"
+            src={data.productImage.src}
+            alt={data.productImage.alt}
             fill
             className="object-contain z-20"
             sizes="(max-width: 768px) 75vw, (max-width: 1200px) 48vw, 720px"
@@ -62,7 +65,7 @@ export function ProductBottle() {
         }}
         transition={{ duration: 15, ease: "easeInOut", repeat: Infinity }}
       >
-        <Image src="/images/assets/premium-floating-coconut.png" alt="" fill sizes="(max-width: 768px) 100px, 150px" className="object-contain drop-shadow-2xl" />
+        <Image src={data.floatingAsset.src} alt={data.floatingAsset.alt} fill sizes="(max-width: 768px) 100px, 150px" className="object-contain drop-shadow-2xl" />
       </motion.div>
 
       {/* Layer 5: Crystal Oil Droplets (CSS Based for perfect clarity) */}

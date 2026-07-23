@@ -70,8 +70,8 @@ export function ManufacturingPhilosophy({ data }: Props) {
               style={{ boxShadow: '0 32px 64px -16px rgba(30,30,30,0.10)' }}
             >
               <Image
-                src={stage.image}
-                alt={stage.imageAlt}
+                src={stage.image.src}
+                alt={stage.image.alt}
                 fill
                 sizes="(max-width: 768px) 100vw, 440px"
                 className="object-cover"

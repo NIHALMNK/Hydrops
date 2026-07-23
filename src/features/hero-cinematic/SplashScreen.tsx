@@ -2,8 +2,10 @@
 
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
+import type { HeroCinematicDocument } from '@/types';
 
 interface SplashScreenProps {
+  data: HeroCinematicDocument['splash'];
   progress: number;   // 0 – 1
   isReady: boolean;
   onDone: () => void; // called after exit animation completes
@@ -18,7 +20,7 @@ interface SplashScreenProps {
  *   • A paper-thin gold progress bar — the brand's signature gold thread
  *   • Fades out smoothly, then calls onDone so the hero becomes interactive
  */
-export function SplashScreen({ progress, isReady, onDone }: SplashScreenProps) {
+export function SplashScreen({ data, progress, isReady, onDone }: SplashScreenProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const hasExited = useRef(false);
 
@@ -57,7 +59,7 @@ export function SplashScreen({ progress, isReady, onDone }: SplashScreenProps) {
     <div
       ref={overlayRef}
       role="status"
-      aria-label="Loading Hydrops"
+      aria-label={data.statusLabel}
       aria-live="polite"
       className="fixed inset-0 z-[100] flex flex-col items-center justify-center"
       style={{ backgroundColor: '#050505' }}
@@ -68,8 +70,8 @@ export function SplashScreen({ progress, isReady, onDone }: SplashScreenProps) {
         style={{ width: 160, height: 52 }}
       >
         <Image
-          src="/images/brand/logo.png"
-          alt="Hydrops"
+          src={data.logo.src}
+          alt={data.logo.alt}
           fill
           sizes="160px"
           className="object-contain"
@@ -123,7 +125,7 @@ export function SplashScreen({ progress, isReady, onDone }: SplashScreenProps) {
           color: 'rgba(255,255,255,0.12)',
         }}
       >
-        Pure Coconut Oil · India
+        {data.brandWhisper}
       </p>
     </div>
   );

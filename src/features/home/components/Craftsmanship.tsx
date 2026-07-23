@@ -1,47 +1,15 @@
 import Image from 'next/image';
 import { SectionRipple } from './SectionRipple';
+import type { CraftsmanshipDocument } from '@/types';
 
 /**
  * Craftsmanship – documentary-style process story.
  * Four intimate scenes: Inspect → Filter → Bottle → Seal.
  * Close-ups. Real materials. The hands behind every drop.
  */
-const PROCESS_STEPS = [
-  {
-    step: '01',
-    title: 'Inspection',
-    headline: 'Only the best\nmake it through.',
-    desc: 'Every coconut is assessed by hand. Density, moisture, maturity. Nothing enters our process that doesn\'t meet our standards — no exceptions.',
-    image: '/images/quality/craft-inspect.png',
-    imageAlt: 'Hand inspecting a fresh coconut in morning light',
-  },
-  {
-    step: '02',
-    title: 'Filtration',
-    headline: 'Clarity is not\nan accident.',
-    desc: 'Two separate filtration stages. First, gross impurities. Then, microscopic particles. What remains is oil so clear, you can see straight through it.',
-    image: '/images/quality/craft-filter.png',
-    imageAlt: 'Crystal-clear oil filtering in warm light',
-  },
-  {
-    step: '03',
-    title: 'Preservation',
-    headline: 'Purity sealed\nat its peak.',
-    desc: 'The moment the oil reaches its ideal clarity, it is sealed. No delays. No exposure. The bottle captures the oil exactly as it was when it emerged from filtration.',
-    image: '/images/quality/craft-bottle.png',
-    imageAlt: 'Premium bottle with crystal-clear oil on dark surface',
-  },
-  {
-    step: '04',
-    title: 'Integrity',
-    headline: 'Our promise\nin every seal.',
-    desc: 'The final seal is a guarantee. What you open is exactly what was intended — uncompromised, untouched, unaltered. This is what we call the Hydrops Promise.',
-    image: '/images/quality/craft-seal.png',
-    imageAlt: 'Hands carefully sealing a premium bottle',
-  },
-];
+interface Props { data: CraftsmanshipDocument; }
 
-export function Craftsmanship() {
+export function Craftsmanship({ data }: Props) {
   return (
     <section
       id="craftsmanship-section"
@@ -58,20 +26,20 @@ export function Craftsmanship() {
       {/* Section intro */}
       <div className="container mx-auto px-8 md:px-16 mb-24">
         <p className="text-[11px] font-medium tracking-[0.35em] uppercase text-[#C8A96A] mb-6 craft-label opacity-0">
-          Craftsmanship
+          {data.heading.eyebrow}
         </p>
         <h2
           className="font-light text-[#1E1E1E] tracking-tight craft-headline opacity-0"
           style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', lineHeight: 0.95 }}
         >
-          Every step.<br />
-          <span className="text-[#1E1E1E]/40">Deliberate.</span>
+          {data.heading.headline}<br />
+          <span className="text-[#1E1E1E]/40">{data.heading.supportingText}</span>
         </h2>
       </div>
 
       {/* Process steps — alternating layout */}
       <div className="container mx-auto px-8 md:px-16 space-y-32">
-        {PROCESS_STEPS.map((step, i) => (
+        {data.steps.map((step, i) => (
           <div
             key={i}
             className={`craft-step flex flex-col ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-12 md:gap-20 items-center opacity-0 translate-y-16 will-change-transform`}
@@ -81,8 +49,8 @@ export function Craftsmanship() {
               style={{ boxShadow: '0 32px 64px -16px rgba(30,30,30,0.10)' }}
             >
               <Image
-                src={step.image}
-                alt={step.imageAlt}
+                src={step.image.src}
+                alt={step.image.alt}
                 fill
                 sizes="(max-width: 768px) 100vw, 460px"
                 className="object-cover"
@@ -112,7 +80,7 @@ export function Craftsmanship() {
               <p className="text-[#1E1E1E]/55 font-light leading-relaxed"
                 style={{ fontSize: 'clamp(0.95rem, 1.3vw, 1.05rem)' }}
               >
-                {step.desc}
+                {step.description}
               </p>
             </div>
           </div>

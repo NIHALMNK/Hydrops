@@ -1,8 +1,11 @@
 import { Scene } from './Scene';
 import { ProductContent } from './product-showcase/ProductContent';
 import { ProductBottle } from './product-showcase/ProductBottle';
+import type { ProductShowcaseDocument } from '@/types';
 
-export function ProductShowcase() {
+interface Props { data: ProductShowcaseDocument; }
+
+export function ProductShowcase({ data }: Props) {
   return (
     <Scene id="product-showcase-section" className="bg-[#F5F2EC] relative min-h-[100svh] overflow-hidden">
       
@@ -11,12 +14,12 @@ export function ProductShowcase() {
         
         {/* Left Side: Editorial Content (40%) */}
         <div className="w-full md:w-[40%] h-full flex flex-col justify-center relative z-20">
-           <ProductContent />
+           <ProductContent data={data} />
         </div>
 
         {/* Right Side: Immersive Product Composition (60%) */}
         <div className="w-full md:w-[60%] h-[60vh] md:h-[100svh] relative flex items-center justify-center">
-           <ProductBottle />
+           <ProductBottle data={data} />
         </div>
       </div>
     </Scene>

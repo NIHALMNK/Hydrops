@@ -12,28 +12,13 @@ import { mapScrollToFrame } from '../hero/utils/frameMath';
 import { useHeroLoader } from '../hero/hooks/useHeroLoader';
 import { SplashScreen } from './SplashScreen';
 import { ScrollIndicator } from './ScrollIndicator';
+import type { HeroCinematicDocument } from '@/types';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Chapter definitions — synchronized to frame ranges
-const CHAPTERS = [
-  { id: 'scene-01', startFrame: 0, endFrame: 80, title: 'HYDROPS', subtitle: null },
-  { id: 'scene-02', startFrame: 81, endFrame: 180, title: 'Crystal Clear.', subtitle: 'Naturally Pure.' },
-  { id: 'scene-03', startFrame: 181, endFrame: 260, title: 'Every Drop', subtitle: 'Carefully Refined.' },
-  { id: 'scene-04', startFrame: 261, endFrame: 340, title: 'Hydrops', subtitle: 'Double Filtered.' },
-  { id: 'scene-05', startFrame: 341, endFrame: 400, title: null, subtitle: null },
-];
+interface Props { data: HeroCinematicDocument; }
 
-// Lighting moods keyed to frame numbers
-const LIGHTING_MOODS = [
-  { frame: 40, bg: 'rgba(200,210,230,0.06)', opacity: 0.3 },   // Soft Dawn
-  { frame: 130, bg: 'rgba(255,230,180,0.12)', opacity: 0.5 },  // Morning Sun
-  { frame: 220, bg: 'rgba(255,253,240,0.18)', opacity: 0.6 },  // Crystal Light
-  { frame: 300, bg: 'rgba(240,240,230,0.15)', opacity: 0.5 },  // Premium Studio
-  { frame: 370, bg: 'rgba(255,255,255,0.2)', opacity: 0.6 },   // Museum White
-];
-
-export const HeroScene = () => {
+export const HeroScene = ({ data }: Props) => {
   const containerRef = useRef<HTMLElement>(null);
   const pinnedRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -229,7 +214,7 @@ export const HeroScene = () => {
       });
 
       // ── Phase 1: Hero Typography & Lighting (0.00 -> 0.35) ───────────────
-      CHAPTERS.forEach((chapter, i) => {
+      data.chapters.forEach((chapter, i) => {
         const el = chapters[i];
         if (!el) return;
         const dur = ((chapter.endFrame - chapter.startFrame) / totalFrames) * HERO_BEAT_END;
@@ -245,7 +230,7 @@ export const HeroScene = () => {
           inStart
         );
 
-        if (i < CHAPTERS.length - 1) {
+        if (i < data.chapters.length - 1) {
           masterTl.to(
             el,
             { opacity: 0, y: -20, filter: 'blur(6px)', duration: fadeOut, ease: 'power2.in' },
@@ -263,10 +248,10 @@ export const HeroScene = () => {
         );
       }
 
-      LIGHTING_MOODS.forEach((mood, i) => {
+      data.lightingMoods.forEach((mood, i) => {
         const el = lightDivs[i];
         if (!el) return;
-        const start = ((i === 0 ? 0 : LIGHTING_MOODS[i - 1].frame) / totalFrames) * HERO_BEAT_END;
+        const start = ((i === 0 ? 0 : data.lightingMoods[i - 1].frame) / totalFrames) * HERO_BEAT_END;
         const frameTime = (mood.frame / totalFrames) * HERO_BEAT_END;
 
         masterTl.fromTo(
@@ -276,8 +261,8 @@ export const HeroScene = () => {
           start
         );
 
-        if (i < LIGHTING_MOODS.length - 1) {
-          const nextTime = (LIGHTING_MOODS[i + 1].frame / totalFrames) * HERO_BEAT_END;
+        if (i < data.lightingMoods.length - 1) {
+          const nextTime = (data.lightingMoods[i + 1].frame / totalFrames) * HERO_BEAT_END;
           masterTl.to(
             el,
             { opacity: 0, duration: (nextTime - frameTime) * 0.8, ease: 'power1.inOut' },
@@ -411,6 +396,7 @@ export const HeroScene = () => {
       {/* ── Splash — shown until initial frame batch is cached ────────── */}
       {!splashDone && (
         <SplashScreen
+          data={data.splash}
           progress={progress}
           isReady={isReady}
           onDone={handleSplashDone}
@@ -433,12 +419,12 @@ export const HeroScene = () => {
           <div className="absolute inset-0 w-full h-full z-10 flex items-center justify-center">
             {/* Lighting layer */}
             <div ref={lightingRef} className="absolute inset-0 pointer-events-none z-10 mix-blend-overlay">
-              {LIGHTING_MOODS.map((mood, i) => (
+              {data.lightingMoods.map((mood, i) => (
                 <div
                   key={i}
                   className="hc-light absolute inset-0"
                   style={{
-                    background: `radial-gradient(ellipse at 50% 50%, ${mood.bg} 0%, transparent 70%)`,
+                    background: `radial-gradient(ellipse at 50% 50%, ${mood.background} 0%, transparent 70%)`,
                     opacity: 0,
                     filter: 'blur(60px)',
                   }}
@@ -458,7 +444,7 @@ export const HeroScene = () => {
 
             {/* Typography layer */}
             <div ref={typographyRef} className="absolute inset-0 pointer-events-none z-20 flex items-center justify-center">
-              {CHAPTERS.map((chapter, i) => (
+              {data.chapters.map((chapter, i) => (
                 <div
                   key={chapter.id}
                   className="hc-chapter absolute inset-0 flex flex-col items-center justify-center text-center px-6"
@@ -486,10 +472,10 @@ export const HeroScene = () => {
               {/* Scene 5 CTA */}
               <div className="hc-cta absolute bottom-[15%] left-1/2 -translate-x-1/2 pointer-events-auto" style={{ opacity: 0 }}>
                 <a
-                  href="#product-showcase"
+                  href={data.primaryCta.href}
                   className="inline-flex items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-full text-sm font-medium tracking-[0.15em] uppercase hover:bg-white/20 transition-colors"
                 >
-                  Explore Product
+                  {data.primaryCta.label}
                 </a>
               </div>
             </div>
@@ -510,8 +496,8 @@ export const HeroScene = () => {
             {/* Background Image Layer */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/images/backgrounds/coconuts-and-leaves-on-blue-background-free-photo.jpeg"
-              alt="Coconuts and leaves on blue background"
+              src={data.soulStatement.background.src}
+              alt={data.soulStatement.background.alt}
               className="absolute inset-0 w-full h-full object-cover object-center z-0"
             />
 
@@ -549,7 +535,7 @@ export const HeroScene = () => {
                 ref={heading1Ref}
                 className="text-[clamp(2.2rem,6.5vw,4.5rem)] font-light text-[#F5F2EC] leading-[1.1] tracking-tight mb-2 sm:mb-4 opacity-0 will-change-[opacity,transform] drop-shadow-md"
               >
-                Purity isn&apos;t a claim.
+                {data.soulStatement.headline}
               </h2>
 
               {/* Heading Line 2 */}
@@ -557,7 +543,7 @@ export const HeroScene = () => {
                 ref={heading2Ref}
                 className="text-[clamp(2.2rem,6.5vw,4.5rem)] font-light text-[#C8A96A] italic leading-[1.1] tracking-tight opacity-0 will-change-[opacity,transform] drop-shadow-md"
               >
-                It&apos;s a commitment.
+                {data.soulStatement.accentHeadline}
               </h3>
             </div>
           </div>
@@ -583,8 +569,8 @@ export const HeroScene = () => {
             {/* ── Top-Right Palm Fronds Asset ── */}
             <img
               ref={topRightBotanicalRef}
-              src="/assets/Gemini_Generated_Image_n90cohn90cohn90c.png"
-              alt="Palm fronds decoration"
+              src={data.philosophy.topRightDecoration.src}
+              alt={data.philosophy.topRightDecoration.alt}
               className="absolute top-0 right-0 w-[400px] h-[400px] object-contain mix-blend-multiply opacity-90 z-0 pointer-events-none"
               style={{ mixBlendMode: 'multiply' }}
             />
@@ -592,8 +578,8 @@ export const HeroScene = () => {
             {/* ── Bottom-Left Coconut Cluster Asset ── */}
             <img
               ref={bottomLeftBotanicalRef}
-              src="/assets/Gemini_Generated_Image_6ra6rf6ra6rf6ra6.png"
-              alt="Coconut cluster decoration"
+              src={data.philosophy.bottomLeftDecoration.src}
+              alt={data.philosophy.bottomLeftDecoration.alt}
               className="absolute bottom-0 left-0 w-[400px] h-[400px] object-contain mix-blend-multiply opacity-90 z-0 pointer-events-none"
               style={{ mixBlendMode: 'multiply' }}
             />
@@ -651,8 +637,8 @@ export const HeroScene = () => {
                     className="philosophy-chapter chapter-1 absolute inset-0 w-full flex flex-col items-center justify-start opacity-0"
                   >
                     <h3 className="text-[clamp(2.5rem,5.5vw,4.5rem)] font-light tracking-tight text-[#1E1E1E]">
-                      Begins <br />
-                      <span className="text-[#205C3B] italic">With Purity.</span>
+                      {data.philosophy.chapters[0].lines[0]} <br />
+                      <span className="text-[#205C3B] italic">{data.philosophy.chapters[0].accentLine}</span>
                     </h3>
                   </div>
 
@@ -662,11 +648,11 @@ export const HeroScene = () => {
                     className="philosophy-chapter chapter-2 absolute inset-0 w-full flex flex-col items-center justify-start opacity-0"
                   >
                     <h3 className="text-[clamp(2rem,4.5vw,3.8rem)] font-light tracking-tight leading-tight text-[#1E1E1E]">
-                      Carefully Selected.
+                      {data.philosophy.chapters[1].lines[0]}
                       <br />
-                      Patiently Crafted.
+                      {data.philosophy.chapters[1].lines[1]}
                       <br />
-                      <span className="text-[#C8A96A] italic">Crystal Clear.</span>
+                      <span className="text-[#C8A96A] italic">{data.philosophy.chapters[1].accentLine}</span>
                     </h3>
                   </div>
 
@@ -676,7 +662,7 @@ export const HeroScene = () => {
                     className="philosophy-chapter chapter-3 absolute inset-0 w-full flex flex-col items-center justify-start opacity-0"
                   >
                     <h3 className="text-[clamp(2.5rem,5.5vw,4.5rem)] font-light tracking-tight text-[#1E1E1E]">
-                      Earns Your Trust.
+                      {data.philosophy.chapters[2].lines[0]}
                     </h3>
 
                     {/* Final CTA */}
@@ -685,10 +671,10 @@ export const HeroScene = () => {
                       className="philosophy-cta mt-8 opacity-0 flex justify-center w-full"
                     >
                       <a
-                        href="#coconut-journey"
+                        href={data.philosophy.cta.href}
                         className="text-xs font-medium tracking-[0.25em] uppercase text-[#205C3B] border-b border-[#205C3B]/50 pb-1 hover:border-[#205C3B] transition-colors duration-300"
                       >
-                        Discover The Journey
+                        {data.philosophy.cta.label}
                       </a>
                     </div>
                   </div>

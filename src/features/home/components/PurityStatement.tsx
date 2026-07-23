@@ -5,6 +5,7 @@ import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SectionRipple } from './SectionRipple';
+import type { PurityStatementDocument } from '@/types';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,13 +15,9 @@ gsap.registerPlugin(ScrollTrigger);
  * "Nothing Hidden. Nothing Added. Only Purity." — animated one line at a time.
  * Background: #171717
  */
-const STATEMENTS = [
-  { line: 'Nothing Hidden.', delay: 0 },
-  { line: 'Nothing Added.', delay: 0.15 },
-  { line: 'Only Purity.', delay: 0.3, accent: true },
-];
+interface Props { data: PurityStatementDocument; }
 
-export function PurityStatement() {
+export function PurityStatement({ data }: Props) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const linesRef = useRef<(HTMLSpanElement | null)[]>([]);
   const labelRef = useRef<HTMLParagraphElement>(null);
@@ -39,7 +36,7 @@ export function PurityStatement() {
             opacity: 1, y: 0, filter: 'blur(0px)',
             duration: 1.1,
             ease: 'power3.out',
-            delay: STATEMENTS[i].delay,
+            delay: data.statements[i].delay,
             scrollTrigger: {
               trigger: sectionRef.current,
               start: 'top 55%',
@@ -101,12 +98,12 @@ export function PurityStatement() {
         ref={labelRef}
         className="text-[#C8A96A] text-[11px] font-medium tracking-[0.4em] uppercase mb-16 opacity-0"
       >
-        Double Filtered · Crystal Clear · Zero Residue
+        {data.label}
       </p>
 
       {/* The three statements */}
       <div className="text-center">
-        {STATEMENTS.map((stmt, i) => (
+        {data.statements.map((stmt, i) => (
           <div key={i} className="overflow-hidden">
             <span
               ref={el => { linesRef.current[i] = el; }}
@@ -128,7 +125,7 @@ export function PurityStatement() {
         ref={subRef}
         className="mt-16 text-white text-[clamp(0.9rem,1.5vw,1.1rem)] font-light leading-relaxed max-w-md text-center opacity-0"
       >
-        Every bottle of Hydrops passes through two rigorous filtration stages — not one — leaving only what the coconut intended.
+        {data.supportingText}
       </p>
 
       {/* Signature ripple (light on dark) */}

@@ -1,3 +1,5 @@
+import type { ImageAsset } from '@/types';
+
 // ── About page type definitions ─────────────────────────────────────────────
 
 export interface AboutHeroData {
@@ -23,6 +25,8 @@ export interface BrandStoryChapter {
 export interface BrandStoryData {
   eyebrow: string;
   headline: string;
+  image: ImageAsset;
+  imageCaption: string;
   chapters: BrandStoryChapter[];
 }
 
@@ -55,8 +59,7 @@ export interface ManufacturingStage {
   step: string;
   title: string;
   body: string;
-  image: string;
-  imageAlt: string;
+  image: ImageAsset;
 }
 
 export interface ManufacturingPhilosophyData {
@@ -109,6 +112,8 @@ export interface CompanyInfoData {
     line3: string;
   };
   certifications: string[];
+  legalNameLabel: string;
+  standardsLabel: string;
 }
 
 export interface AboutCTAData {
@@ -121,6 +126,7 @@ export interface AboutCTAData {
   secondaryLabel: string;
   secondaryHref: string;
   tagline: string;
+  backgroundImage: ImageAsset;
 }
 
 export interface AboutPageData {

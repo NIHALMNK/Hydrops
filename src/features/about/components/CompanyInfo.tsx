@@ -53,7 +53,7 @@ export function CompanyInfo({ data }: Props) {
 
             <dl className="flex flex-col gap-6">
               {[
-                { term: 'Legal Name', detail: data.legalName },
+                { term: data.legalNameLabel, detail: data.legalName },
                 { term: data.foundedLabel, detail: data.foundedValue },
                 { term: data.originLabel, detail: data.originValue },
               ].map(({ term, detail }) => (
