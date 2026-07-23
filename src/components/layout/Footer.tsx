@@ -1,10 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { footerData } from '@/data/footer';
-import { socialData } from '@/data/social';
-import type { FooterData } from '@/types';
-import type { SocialLink } from '@/types';
+import { footerData } from '@/data/site/footer';
+import { socialData } from '@/data/site/social';
+import type { FooterDocument, SocialLinkDocument } from '@/types';
 
 // ─── Design tokens (local constants so the component is self-contained) ────────
 const GOLD = 'rgba(200,169,106,1)';
@@ -193,7 +192,7 @@ function ContactRow({
 }
 
 /** Brand / first column */
-function FooterBrandColumn({ socials }: { socials: SocialLink[] }) {
+function FooterBrandColumn({ socials }: { socials: SocialLinkDocument[] }) {
   return (
     <div className="flex flex-col gap-6">
       {/* Wordmark */}
@@ -259,7 +258,7 @@ function FooterBrandColumn({ socials }: { socials: SocialLink[] }) {
 function FooterContactColumn({
   contact,
   address,
-}: Pick<FooterData, 'contact' | 'address'>) {
+}: Pick<FooterDocument, 'contact' | 'address'>) {
   const emailDisplay = contact.email ?? 'Email coming soon';
   const emailHref = contact.email ? `mailto:${contact.email}` : undefined;
 
@@ -334,7 +333,7 @@ function FooterContactColumn({
 /** Hours / third column */
 function FooterHoursColumn({
   workingHours,
-}: Pick<FooterData, 'workingHours'>) {
+}: Pick<FooterDocument, 'workingHours'>) {
   return (
     <div className="flex flex-col gap-4">
       {/* Section label */}
@@ -398,7 +397,7 @@ function FooterHoursColumn({
 function FooterLegalBar({
   copyright,
   legalLinks,
-}: Pick<FooterData, 'copyright' | 'legalLinks'>) {
+}: Pick<FooterDocument, 'copyright' | 'legalLinks'>) {
   return (
     <div
       className="pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0"
@@ -413,7 +412,7 @@ function FooterLegalBar({
       <nav aria-label="Legal links">
         <ul className="flex items-center gap-6">
           {legalLinks.map((link) => (
-            <li key={link.name}>
+            <li key={link.label}>
               <Link
                 href={link.href}
                 className="text-[11px] tracking-[0.15em] uppercase transition-colors duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#C8A96A] rounded-sm"
@@ -425,7 +424,7 @@ function FooterLegalBar({
                   (e.currentTarget.style.color = WHITE_18)
                 }
               >
-                {link.name}
+                {link.label}
               </Link>
             </li>
           ))}

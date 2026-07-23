@@ -6,14 +6,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { MAIN_NAVIGATION } from "@/constants/navigation";
-import type { NavItem } from "@/types/navigation";
+import type { NavigationDocument, NavigationItem } from "@/types";
 
-// ─────────────────────────────────────────────
-// Derived lists from the single data source
-// ─────────────────────────────────────────────
-const NAV_LINKS: NavItem[] = MAIN_NAVIGATION.filter((item) => !item.isCta);
-const CTA_ITEM: NavItem | undefined = MAIN_NAVIGATION.find((item) => item.isCta);
 
 // ─────────────────────────────────────────────
 // Hook: continuously reads the visual context
@@ -128,7 +122,9 @@ function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(href + "/");
 }
 
-export function Navbar() {
+interface Props { data: NavigationDocument; }
+
+export function Navbar({ data }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const navRef    = useRef<HTMLElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -218,9 +214,11 @@ export function Navbar() {
   // A permanent, minimal frosted-glass surface sits behind the logo at all
   // times.  It is deliberately faint so it disappears on dark hero frames
   // All overlay items: regular links + CTA (if defined)
-  const overlayItems: NavItem[] = CTA_ITEM
-    ? [...NAV_LINKS, CTA_ITEM]
-    : NAV_LINKS;
+  const navLinks: NavigationItem[] = data.items.filter((item) => !item.isCta);
+  const ctaItem: NavigationItem | undefined = data.items.find((item) => item.isCta);
+  const overlayItems: NavigationItem[] = ctaItem
+    ? [...navLinks, ctaItem]
+    : navLinks;
 
   return (
     <>
@@ -240,7 +238,7 @@ export function Navbar() {
       <nav
         ref={navRef}
         data-navbar
-        aria-label="Primary navigation"
+        aria-label={data.ariaLabel}
         className="fixed top-0 left-0 right-0 z-50 pointer-events-none"
       >
         <div className="flex items-center justify-between px-6 md:px-12 lg:px-16 pt-6 md:pt-8 pointer-events-auto">
@@ -256,7 +254,7 @@ export function Navbar() {
           <Link
             href="/"
             data-logo
-            aria-label="Hydrops — Home"
+            aria-label={data.homeLabel}
             className="relative shrink-0 block"
             style={{
               width: 140,
@@ -264,8 +262,8 @@ export function Navbar() {
             }}
           >
             <Image
-              src="/images/brand/logo.png"
-              alt="Hydrops"
+              src={data.brandLogo.src}
+              alt={data.brandLogo.alt}
               fill
               sizes="140px"
               className="object-contain"
@@ -277,11 +275,11 @@ export function Navbar() {
 
           {/* ── Desktop links ─────────────────────────────────────── */}
           <div className="hidden md:flex items-center gap-10 lg:gap-14" role="list">
-            {NAV_LINKS.map((item) => {
+            {navLinks.map((item) => {
               const active = isActive(pathname, item.href);
               return (
                 <Link
-                  key={item.name}
+                  key={item.label}
                   href={item.href}
                   data-navlink
                   role="listitem"
@@ -297,7 +295,7 @@ export function Navbar() {
                   onMouseEnter={(e) => gsap.to(e.currentTarget, { color: linkHov, duration: 0.25 })}
                   onMouseLeave={(e) => gsap.to(e.currentTarget, { color: active ? linkActive : linkCol, duration: 0.55 })}
                 >
-                  {item.name}
+                  {item.label}
                   {/* Gold thread — always visible on active, hover-only otherwise */}
                   <span
                     aria-hidden
@@ -324,11 +322,11 @@ export function Navbar() {
             })}
 
             {/* Enquire CTA ────────────────────────────────────────── */}
-            {CTA_ITEM && (
+            {ctaItem && (
               <Link
-                href={CTA_ITEM.href}
+                href={ctaItem.href}
                 data-navlink
-                aria-label="Enquire about Hydrops"
+                aria-label={ctaItem.label}
                 className="flex items-center gap-[7px] text-[12px] font-normal tracking-[0.18em] uppercase select-none"
                 style={{
                   color: ctaCol,
@@ -345,7 +343,7 @@ export function Navbar() {
                     transition: "background 0.55s ease",
                   }}
                 />
-                {CTA_ITEM.name}
+                {ctaItem.label}
               </Link>
             )}
           </div>
@@ -353,7 +351,7 @@ export function Navbar() {
           {/* ── Mobile trigger ─────────────────────────────────────── */}
           <button
             data-menubtn
-            aria-label="Open navigation"
+            aria-label={data.openMenuLabel}
             aria-expanded={menuOpen}
             aria-controls="mobile-nav-overlay"
             onClick={openMenu}
@@ -418,7 +416,7 @@ export function Navbar() {
           </span>
           <button
             onClick={closeMenu}
-            aria-label="Close navigation"
+            aria-label={data.closeMenuLabel}
             className="relative w-9 h-9 flex items-center justify-center"
           >
             <span
@@ -443,14 +441,14 @@ export function Navbar() {
         {/* Large editorial links */}
         <nav
           ref={overlayLinksRef}
-          aria-label="Mobile navigation"
+          aria-label={data.mobileMenuLabel}
           className="flex-1 flex flex-col justify-center px-8 md:px-16"
         >
           {overlayItems.map((item, i) => {
             const active = isActive(pathname, item.href) && !item.isCta;
             return (
               <Link
-                key={item.name}
+                key={item.label}
                 href={item.href}
                 data-overlay-link
                 aria-current={active ? "page" : undefined}
@@ -470,7 +468,7 @@ export function Navbar() {
                     transition: "color 0.35s ease",
                   }}
                 >
-                  {item.name}
+                  {item.label}
                 </span>
                 <span
                   className="text-[10px] tracking-[0.35em] uppercase self-center tabular-nums"
