@@ -108,22 +108,22 @@ export function Hero({ data }: HeroProps) {
       <div className="relative z-20 container mx-auto px-6 sm:px-12 md:px-16 lg:px-20 h-full flex flex-col justify-center items-center md:items-start text-center md:text-left pt-[10vh]">
         <div ref={contentRef} className="max-w-3xl flex flex-col items-center md:items-start">
           {/* Eyebrow */}
-          <p className="font-light tracking-[0.35em] text-[#C8A96A] text-xs sm:text-sm uppercase mb-4 sm:mb-6 select-none">
+          <p className="hero-eyebrow font-light tracking-[0.35em] text-[#C8A96A] text-xs sm:text-sm uppercase mb-4 sm:mb-6 select-none">
             {eyebrow}
           </p>
 
           {/* Heading */}
-          <h1 className="text-[clamp(2.5rem,5.5vw,5.5rem)] font-light text-[#F5F2EC] leading-[1.08] tracking-tight mb-6 drop-shadow-lg max-w-2xl">
+          <h1 className="hero-heading text-[clamp(2.5rem,5.5vw,5.5rem)] font-light text-[#F5F2EC] leading-[1.08] tracking-tight mb-6 drop-shadow-lg max-w-2xl">
             {headline}
           </h1>
 
           {/* Description */}
-          <p className="text-white/75 font-light text-base sm:text-lg md:text-xl leading-relaxed mb-8 md:mb-10 max-w-xl">
+          <p className="hero-description text-white/75 font-light text-base sm:text-lg md:text-xl leading-relaxed mb-8 md:mb-10 max-w-xl">
             {description}
           </p>
 
           {/* Action CTAs */}
-          <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+          <div className="hero-ctas flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
             <Link
               href={primaryCta.href}
               className="w-full sm:w-auto text-center inline-flex items-center justify-center bg-[#C8A96A] text-[#050505] hover:bg-[#D4B87C] rounded-full px-8 py-3.5 text-sm font-medium tracking-wide transition-all duration-300 shadow-lg hover:shadow-[#C8A96A]/20 hover:-translate-y-0.5 active:translate-y-0"

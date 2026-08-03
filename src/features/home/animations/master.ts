@@ -1,6 +1,7 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initGlobalGSAP } from './global';
+import { initHeroTransition } from './heroTransition';
 import { initPhilosophy } from './philosophy';
 import { initJourney } from './journey';
 import { initProduct } from './product';
@@ -24,6 +25,7 @@ export class HomeAnimationController {
       const root = this.scope.current;
       if (!root) return;
 
+      const heroSoulWrapper = root.querySelector('#hero-soul-wrapper') as HTMLElement;
       const philosophy = root.querySelector('#philosophy-section') as HTMLElement;
       const journey = root.querySelector('#journey-section') as HTMLElement;
       const product = root.querySelector('#product-showcase-section') as HTMLElement;
@@ -31,6 +33,7 @@ export class HomeAnimationController {
       const everyday = root.querySelector('#everyday-section') as HTMLElement;
       const cta = root.querySelector('#cta-section') as HTMLElement;
 
+      if (heroSoulWrapper) this.addCleanup(initHeroTransition(root));
       if (philosophy) this.addCleanup(initPhilosophy(philosophy));
       if (journey) this.addCleanup(initJourney(journey));
       if (product) this.addCleanup(initProduct(product));

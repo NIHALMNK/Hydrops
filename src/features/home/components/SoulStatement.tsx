@@ -18,6 +18,11 @@ export function SoulStatement() {
   const lineRef = useRef<HTMLDivElement>(null);
 
   useIsomorphicLayoutEffect(() => {
+    // If hero-section is present on the page, the unified heroTransition controller handles the transition.
+    if (typeof document !== 'undefined' && document.getElementById('hero-section')) {
+      return;
+    }
+
     const ctx = gsap.context(() => {
       if (!sectionRef.current || !quoteRef.current) return;
 
@@ -109,19 +114,19 @@ export function SoulStatement() {
       </div>
 
       {/* ── 3. Foreground Text Content (Centered, Immersive) ── */}
-      <div ref={quoteRef} className="relative z-20 text-center max-w-4xl px-6 sm:px-8 py-12 opacity-0">
+      <div ref={quoteRef} className="soul-quote-container relative z-20 text-center max-w-4xl px-6 sm:px-8 py-12">
         {/* Eyebrow */}
-        <p className="font-light tracking-[0.35em] text-[#C8A96A] text-xs sm:text-sm uppercase mb-6 sm:mb-8">
+        <p className="soul-eyebrow font-light tracking-[0.35em] text-[#C8A96A] text-xs sm:text-sm uppercase mb-6 sm:mb-8">
           HYDROPS
         </p>
 
         {/* Main Heading (Line 1) */}
-        <h2 className="text-[clamp(2.5rem,6.5vw,4.8rem)] font-light text-[#F5F2EC] leading-[1.15] tracking-tight mb-2 sm:mb-3 drop-shadow-lg">
+        <h2 className="soul-heading text-[clamp(2.5rem,6.5vw,4.8rem)] font-light text-[#F5F2EC] leading-[1.15] tracking-tight mb-2 sm:mb-3 drop-shadow-lg">
           Purity isn&apos;t a claim.
         </h2>
 
         {/* Highlighted Gold Accent (Line 2) */}
-        <h3 className="text-[clamp(2.5rem,6.5vw,4.8rem)] font-light text-[#C8A96A] italic leading-[1.15] tracking-tight drop-shadow-lg">
+        <h3 className="soul-highlight text-[clamp(2.5rem,6.5vw,4.8rem)] font-light text-[#C8A96A] italic leading-[1.15] tracking-tight drop-shadow-lg">
           It&apos;s a commitment.
         </h3>
       </div>
@@ -129,7 +134,7 @@ export function SoulStatement() {
       {/* Bottom signature gold ripple line */}
       <div
         ref={lineRef}
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[40vw] h-[1px] origin-left opacity-0 z-20"
+        className="soul-gold-line absolute bottom-0 left-1/2 -translate-x-1/2 w-[40vw] h-[1px] origin-left z-20"
         style={{
           background:
             'linear-gradient(90deg, transparent, rgba(200,169,106,0.5), transparent)',

@@ -37,11 +37,41 @@ export default function HomePage() {
     <>
       <Navbar data={navigationData} />
       <main ref={mainRef} className="w-full relative overflow-hidden" style={{ backgroundColor: '#F5F2EC' }}>
-        {/* 01 · Video Hero */}
-        <Hero data={homePageData.hero} />
+        {/* SVG clipPath definition for organic curved reveal (normalized objectBoundingBox coordinates) */}
+        <svg width="0" height="0" className="absolute top-0 left-0 w-0 h-0 pointer-events-none" aria-hidden="true">
+          <defs>
+            <clipPath id="hero-curved-clip-path" clipPathUnits="objectBoundingBox">
+              <path
+                id="hero-clip-path-shape"
+                d="M 0,0 L 1,0 L 1,1 C 0.85,1 0.65,1 0.5,1 C 0.35,1 0.15,1 0,1 Z"
+              />
+            </clipPath>
+          </defs>
+        </svg>
 
-        {/* 02 · Breathing moment — the brand soul emerges from darkness */}
-        <SoulStatement />
+        {/* 01 & 02 · Organic Curved Reveal Sequence: Video Hero → Soul Statement */}
+        <div id="hero-soul-wrapper" className="relative w-full">
+          <div id="hero-soul-pinned-container" className="relative w-full h-screen overflow-hidden">
+            {/* Soul Statement (Background Stationary Layer - z-10) */}
+            <div className="absolute inset-0 w-full h-full z-10 pointer-events-auto">
+              <SoulStatement />
+            </div>
+
+            {/* Video Hero (Foreground Layer with SVG Curved Clip-Path & Ambient Depth Drop Shadow - z-20) */}
+            <div
+              id="hero-clipped-layer"
+              className="absolute inset-0 w-full h-full z-20 pointer-events-auto will-change-[clip-path,filter]"
+              style={{
+                clipPath: 'url(#hero-curved-clip-path)',
+                WebkitClipPath: 'url(#hero-curved-clip-path)',
+                filter: 'drop-shadow(0px -20px 40px rgba(0, 0, 0, 0.75))',
+                WebkitFilter: 'drop-shadow(0px -20px 40px rgba(0, 0, 0, 0.75))',
+              }}
+            >
+              <Hero data={homePageData.hero} />
+            </div>
+          </div>
+        </div>
 
         {/* 03 · Philosophy — Every drop begins with purity */}
         <Philosophy />
