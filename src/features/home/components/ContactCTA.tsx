@@ -92,7 +92,9 @@ export function ContactCTA({ data }: Props) {
               </div>
 
               <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                <span className="text-[10px] font-mono tracking-[0.25em] text-white/40 uppercase">10°03'38.6"N 76°19'34.7"E</span>
+                <span className="text-[10px] font-mono tracking-[0.25em] text-white/40 uppercase">
+                  {"10°03'38.6\"N 76°19'34.7\"E"}
+                </span>
                 <a
                   href="https://maps.app.goo.gl/LykpGeLBQjAHpcVd8"
                   target="_blank"
