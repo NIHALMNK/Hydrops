@@ -1,4 +1,5 @@
 import type { HomePageDocument } from '@/types';
+import { HERO_VIDEO, HERO_POSTER } from '@/features/hero/constants/hero';
 
 const productImage = {
   src: '/images/products/hydrops-coconut-oil.png',
@@ -12,46 +13,36 @@ export const homePageData: HomePageDocument = {
   _type: 'homePage',
   hero: {
     _id: 'home-hero',
-    _type: 'heroCinematic',
-    chapters: [
-      { id: 'scene-01', startFrame: 0, endFrame: 80, title: 'HYDROPS', subtitle: null },
-      { id: 'scene-02', startFrame: 81, endFrame: 180, title: 'Crystal Clear.', subtitle: 'Naturally Pure.' },
-      { id: 'scene-03', startFrame: 181, endFrame: 260, title: 'Every Drop', subtitle: 'Carefully Refined.' },
-      { id: 'scene-04', startFrame: 261, endFrame: 340, title: 'Hydrops', subtitle: 'Double Filtered.' },
-      { id: 'scene-05', startFrame: 341, endFrame: 400, title: null, subtitle: null },
-    ],
-    lightingMoods: [
-      { frame: 40, background: 'rgba(200,210,230,0.06)', opacity: 0.3 },
-      { frame: 130, background: 'rgba(255,230,180,0.12)', opacity: 0.5 },
-      { frame: 220, background: 'rgba(255,253,240,0.18)', opacity: 0.6 },
-      { frame: 300, background: 'rgba(240,240,230,0.15)', opacity: 0.5 },
-      { frame: 370, background: 'rgba(255,255,255,0.2)', opacity: 0.6 },
-    ],
+    _type: 'hero',
+    eyebrow: 'CRYSTAL CLEAR · NATURALLY PURE',
+    headline: 'Colorless Crystal Clear Coconut Oil',
+    description: 'Experience the purest form of coconut oil. Double filtered to achieve a crystal clear finish that preserves natural goodness without any residue.',
     primaryCta: { label: 'Explore Product', href: '#product-showcase' },
-    splash: {
-      statusLabel: 'Loading Hydrops',
-      readyLabel: 'Ready',
-      brandWhisper: 'Pure Coconut Oil · India',
-      logo: { src: '/images/brand/logo.png', alt: 'Hydrops', width: 160, height: 52 },
-    },
-    soulStatement: {
-      background: { src: '/images/backgrounds/coconuts-and-leaves-on-blue-background-free-photo.jpeg', alt: 'Coconuts and leaves on blue background', width: 1920, height: 1080 },
-      label: 'HYDROPS',
-      headline: "Purity isn't a claim.",
-      accentHeadline: "It's a commitment.",
-    },
-    philosophy: {
-      topRightDecoration: { src: '/assets/Gemini_Generated_Image_n90cohn90cohn90c.png', alt: 'Palm fronds decoration', width: 1024, height: 1024 },
-      bottomLeftDecoration: { src: '/assets/Gemini_Generated_Image_6ra6rf6ra6rf6ra6.png', alt: 'Coconut cluster decoration', width: 1024, height: 1024 },
-      watermark: 'HYDROPS',
-      persistentPhrase: 'Every Drop',
-      chapters: [
-        { lines: ['Begins'], accentLine: 'With Purity.' },
-        { lines: ['Carefully Selected.', 'Patiently Crafted.'], accentLine: 'Crystal Clear.' },
-        { lines: ['Earns Your Trust.'] },
-      ],
-      cta: { label: 'Discover The Journey', href: '#coconut-journey' },
-    },
+    secondaryCta: { label: 'Contact Us', href: '/contact' },
+    videoUrl: HERO_VIDEO,
+    posterUrl: HERO_POSTER,
+  },
+  soulStatement: {
+    _id: 'home-soul-statement',
+    _type: 'soulStatement',
+    background: { src: '/images/backgrounds/coconuts-and-leaves-on-blue-background-free-photo.jpeg', alt: 'Coconuts and leaves on blue background', width: 1920, height: 1080 },
+    label: 'HYDROPS',
+    headline: "Purity isn't a claim.",
+    accentHeadline: "It's a commitment.",
+  },
+  philosophy: {
+    _id: 'home-philosophy',
+    _type: 'philosophy',
+    topRightDecoration: { src: '/assets/Gemini_Generated_Image_n90cohn90cohn90c.png', alt: 'Palm fronds decoration', width: 1024, height: 1024 },
+    bottomLeftDecoration: { src: '/assets/Gemini_Generated_Image_6ra6rf6ra6rf6ra6.png', alt: 'Coconut cluster decoration', width: 1024, height: 1024 },
+    watermark: 'HYDROPS',
+    persistentPhrase: 'Every Drop',
+    chapters: [
+      { lines: ['Begins'], accentLine: 'With Purity.' },
+      { lines: ['Carefully Selected.', 'Patiently Crafted.'], accentLine: 'Crystal Clear.' },
+      { lines: ['Earns Your Trust.'] },
+    ],
+    cta: { label: 'Discover The Journey', href: '#journey-section' },
   },
   journey: {
     _id: 'home-journey',

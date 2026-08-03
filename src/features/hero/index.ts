@@ -1,3 +1,2 @@
-export { HeroScene } from './components/HeroScene';
-export { HERO_SCENES } from './content/heroScenes';
-export { useHeroCanvas } from './hooks/useHeroCanvas';
+export { Hero } from './Hero';
+export { HERO_VIDEO, HERO_POSTER } from './constants/hero';

@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect';
-import { HeroScene } from '@/features/hero-cinematic';
+import { Hero } from '@/features/hero';
 import { SoulStatement } from '@/features/home/components/SoulStatement';
 import { Philosophy } from '@/features/home/components/Philosophy';
 import { CoconutJourney } from '@/features/home/components/CoconutJourney';
@@ -37,8 +37,8 @@ export default function HomePage() {
     <>
       <Navbar data={navigationData} />
       <main ref={mainRef} className="w-full relative overflow-hidden" style={{ backgroundColor: '#F5F2EC' }}>
-        {/* 01 · Cinematic Hero */}
-        <HeroScene data={homePageData.hero} />
+        {/* 01 · Video Hero */}
+        <Hero data={homePageData.hero} />
 
         {/* 02 · Breathing moment — the brand soul emerges from darkness */}
         <SoulStatement />

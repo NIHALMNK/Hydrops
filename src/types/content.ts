@@ -35,30 +35,37 @@ export interface LightingMood {
   opacity: number;
 }
 
-export interface HeroCinematicDocument extends ContentDocument {
-  chapters: HeroChapter[];
-  lightingMoods: LightingMood[];
+export interface HeroDocument extends ContentDocument {
+  eyebrow?: string;
+  headline: string;
+  description: string;
   primaryCta: CTA;
-  splash: {
-    statusLabel: string;
-    readyLabel: string;
-    brandWhisper: string;
-    logo: ImageAsset;
-  };
-  soulStatement: {
-    background: ImageAsset;
-    label: string;
-    headline: string;
-    accentHeadline: string;
-  };
-  philosophy: {
-    topRightDecoration: ImageAsset;
-    bottomLeftDecoration: ImageAsset;
-    watermark: string;
-    persistentPhrase: string;
-    chapters: [{ lines: string[]; accentLine: string }, { lines: string[]; accentLine: string }, { lines: string[] }];
-    cta: CTA;
-  };
+  secondaryCta?: CTA;
+  videoUrl?: string;
+  posterUrl?: string;
+}
+
+export type HeroCinematicDocument = HeroDocument;
+
+export interface SoulStatementDocument extends ContentDocument {
+  background: ImageAsset;
+  label: string;
+  headline: string;
+  accentHeadline: string;
+}
+
+export interface PhilosophyChapter {
+  lines: string[];
+  accentLine?: string;
+}
+
+export interface PhilosophyDocument extends ContentDocument {
+  topRightDecoration?: ImageAsset;
+  bottomLeftDecoration?: ImageAsset;
+  watermark?: string;
+  persistentPhrase: string;
+  chapters: PhilosophyChapter[];
+  cta?: CTA;
 }
 
 export interface JourneyStage {
@@ -130,7 +137,9 @@ export interface ContactCtaDocument extends ContentDocument {
 }
 
 export interface HomePageDocument extends ContentDocument {
-  hero: HeroCinematicDocument;
+  hero: HeroDocument;
+  soulStatement: SoulStatementDocument;
+  philosophy: PhilosophyDocument;
   journey: JourneyDocument;
   productShowcase: ProductShowcaseDocument;
   purityStatement: PurityStatementDocument;
