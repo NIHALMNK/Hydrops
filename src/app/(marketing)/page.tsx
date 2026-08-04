@@ -1,7 +1,3 @@
-'use client';
-
-import { useRef } from 'react';
-import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect';
 import { Hero } from '@/features/hero';
 import { SoulStatement } from '@/features/home/components/SoulStatement';
 import { Philosophy } from '@/features/home/components/Philosophy';
@@ -11,32 +7,19 @@ import { PurityStatement } from '@/features/home/components/PurityStatement';
 import { Craftsmanship } from '@/features/home/components/Craftsmanship';
 import { Everyday } from '@/features/home/components/Everyday';
 import { ContactCTA } from '@/features/home/components/ContactCTA';
-import { HomeAnimationController } from '@/features/home/animations/master';
 import { Navbar } from '@/components/layout/Navbar';
 import { navigationData } from '@/data/site/navigation';
 import { Footer } from '@/components/layout/Footer';
-import { homePageData } from '@/data/home/home';
+import { getHomePage } from '@/lib/sanity/fetch';
+import { HomeAnimationWrapper } from './HomeClient';
 
-export default function HomePage() {
-  const mainRef = useRef<HTMLDivElement>(null);
-
-  useIsomorphicLayoutEffect(() => {
-    const controller = new HomeAnimationController(mainRef);
-    
-    const timer = setTimeout(() => {
-      controller.init();
-    }, 100);
-
-    return () => {
-      clearTimeout(timer);
-      controller.cleanup();
-    };
-  }, []);
+export default async function HomePage() {
+  const homePageData = await getHomePage();
 
   return (
     <>
       <Navbar data={navigationData} />
-      <main ref={mainRef} className="w-full relative overflow-hidden" style={{ backgroundColor: '#F5F2EC' }}>
+      <HomeAnimationWrapper>
         {/* SVG clipPath definition for organic curved reveal (normalized objectBoundingBox coordinates) */}
         <svg width="0" height="0" className="absolute top-0 left-0 w-0 h-0 pointer-events-none" aria-hidden="true">
           <defs>
@@ -93,7 +76,7 @@ export default function HomePage() {
 
         {/* 09 · Closing — The brand arrives */}
         <ContactCTA data={homePageData.contactCta} />
-      </main>
+      </HomeAnimationWrapper>
       <Footer />
     </>
   );
