@@ -1,5 +1,40 @@
 import { StructureResolver } from 'sanity/structure';
 
+const HOME_TYPES = [
+  'homeHero',
+  'homeSoulStatement',
+  'homePhilosophy',
+  'homeJourney',
+  'homeProductShowcase',
+  'homePurityStatement',
+  'homeCraftsmanship',
+  'homeEveryday',
+  'homeContactCta',
+];
+
+const ABOUT_TYPES = [
+  'aboutHero',
+  'aboutIntroduction',
+  'aboutStory',
+  'aboutMission',
+  'aboutVision',
+  'aboutValues',
+  'aboutManufacturing',
+  'aboutCommitment',
+  'aboutWhyHydrops',
+  'aboutCompanyInfo',
+];
+
+const SINGLETON_TYPES = [
+  'brand',
+  'business',
+  'contact',
+  'social',
+  'footer',
+  'navigation',
+  'seoSettings',
+];
+
 export const deskStructure: StructureResolver = (S) =>
   S.list()
     .title('Content')
@@ -50,17 +85,99 @@ export const deskStructure: StructureResolver = (S) =>
             ])
         ),
 
-      // 📄 Pages Group
+      // 🏠 Home Group
       S.listItem()
-        .title('Pages')
+        .title('Home')
         .child(
           S.list()
-            .title('Pages')
+            .title('Home')
             .items([
               S.listItem()
-                .title('Home Page')
-                .id('homePage')
-                .child(S.document().schemaType('homePage').documentId('homePage')),
+                .title('Hero')
+                .id('homeHero')
+                .child(S.document().schemaType('homeHero').documentId('homeHero')),
+              S.listItem()
+                .title('Soul Statement')
+                .id('homeSoulStatement')
+                .child(S.document().schemaType('homeSoulStatement').documentId('homeSoulStatement')),
+              S.listItem()
+                .title('Philosophy')
+                .id('homePhilosophy')
+                .child(S.document().schemaType('homePhilosophy').documentId('homePhilosophy')),
+              S.listItem()
+                .title('Journey')
+                .id('homeJourney')
+                .child(S.document().schemaType('homeJourney').documentId('homeJourney')),
+              S.listItem()
+                .title('Product Showcase')
+                .id('homeProductShowcase')
+                .child(S.document().schemaType('homeProductShowcase').documentId('homeProductShowcase')),
+              S.listItem()
+                .title('Purity Statement')
+                .id('homePurityStatement')
+                .child(S.document().schemaType('homePurityStatement').documentId('homePurityStatement')),
+              S.listItem()
+                .title('Craftsmanship')
+                .id('homeCraftsmanship')
+                .child(S.document().schemaType('homeCraftsmanship').documentId('homeCraftsmanship')),
+              S.listItem()
+                .title('Everyday')
+                .id('homeEveryday')
+                .child(S.document().schemaType('homeEveryday').documentId('homeEveryday')),
+              S.listItem()
+                .title('Contact CTA')
+                .id('homeContactCta')
+                .child(S.document().schemaType('homeContactCta').documentId('homeContactCta')),
+            ])
+        ),
+
+      // 📝 About Group
+      S.listItem()
+        .title('About')
+        .child(
+          S.list()
+            .title('About')
+            .items([
+              S.listItem()
+                .title('Hero')
+                .id('aboutHero')
+                .child(S.document().schemaType('aboutHero').documentId('aboutHero')),
+              S.listItem()
+                .title('Introduction')
+                .id('aboutIntroduction')
+                .child(S.document().schemaType('aboutIntroduction').documentId('aboutIntroduction')),
+              S.listItem()
+                .title('Story')
+                .id('aboutStory')
+                .child(S.document().schemaType('aboutStory').documentId('aboutStory')),
+              S.listItem()
+                .title('Mission')
+                .id('aboutMission')
+                .child(S.document().schemaType('aboutMission').documentId('aboutMission')),
+              S.listItem()
+                .title('Vision')
+                .id('aboutVision')
+                .child(S.document().schemaType('aboutVision').documentId('aboutVision')),
+              S.listItem()
+                .title('Values')
+                .id('aboutValues')
+                .child(S.document().schemaType('aboutValues').documentId('aboutValues')),
+              S.listItem()
+                .title('Manufacturing')
+                .id('aboutManufacturing')
+                .child(S.document().schemaType('aboutManufacturing').documentId('aboutManufacturing')),
+              S.listItem()
+                .title('Commitment')
+                .id('aboutCommitment')
+                .child(S.document().schemaType('aboutCommitment').documentId('aboutCommitment')),
+              S.listItem()
+                .title('Why Hydrops')
+                .id('aboutWhyHydrops')
+                .child(S.document().schemaType('aboutWhyHydrops').documentId('aboutWhyHydrops')),
+              S.listItem()
+                .title('Company Information')
+                .id('aboutCompanyInfo')
+                .child(S.document().schemaType('aboutCompanyInfo').documentId('aboutCompanyInfo')),
             ])
         ),
 
@@ -83,19 +200,11 @@ export const deskStructure: StructureResolver = (S) =>
             ])
         ),
 
-      // Filter out singletons and objects from the root list
+      // Prevent all managed types from appearing in the root list
       ...S.documentTypeListItems().filter(
         (listItem) =>
-          ![
-            'brand',
-            'business',
-            'contact',
-            'social',
-            'footer',
-            'navigation',
-            'homePage',
-            'seoSettings',
-            'product',
-          ].includes(listItem.getId() as string)
+          ![...SINGLETON_TYPES, ...HOME_TYPES, ...ABOUT_TYPES, 'product'].includes(
+            listItem.getId() as string
+          )
       ),
     ]);

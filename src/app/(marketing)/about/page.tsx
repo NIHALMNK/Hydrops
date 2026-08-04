@@ -3,7 +3,7 @@ import { navigationData } from '@/data/site/navigation';
 import { Footer } from '@/components/layout/Footer';
 import type { Metadata } from 'next';
 
-import { aboutData } from '@/data/about/about';
+// Data now fetched from Sanity
 import { aboutSeo } from '@/data/site/seo';
 import {
   AboutHero,
@@ -25,7 +25,11 @@ export const metadata: Metadata = {
 
 import { AboutAnimationWrapper } from './AboutClient';
 
-export default function AboutPage() {
+import { getAboutPage } from '@/lib/sanity/fetch';
+
+export default async function AboutPage() {
+  const aboutData = await getAboutPage();
+
   return (
     <>
       {/* 

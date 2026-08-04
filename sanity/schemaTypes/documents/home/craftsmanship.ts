@@ -1,0 +1,87 @@
+import { defineField, defineType } from 'sanity';
+import { UlistIcon } from '@sanity/icons/Ulist';
+
+export const homeCraftsmanship = defineType({
+  name: 'homeCraftsmanship',
+  title: 'Home - Craftsmanship',
+  type: 'document',
+  icon: UlistIcon,
+  description: 'Stacked 100vh pinned scrolling cards section',
+  fields: [
+    defineField({
+      name: 'heading',
+      title: 'Section Heading',
+      type: 'headingBlock',
+      description: 'The title configuration for the section',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'steps',
+      title: 'Process Steps',
+      type: 'array',
+      description: 'The cards in the horizontal stack',
+      validation: (Rule) =>
+        Rule.required().min(4).error('The UI design expects 4 process steps.'),
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'step',
+              title: 'Step Identifier',
+              type: 'string',
+              description: 'e.g., "01", "02"',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'title',
+              title: 'Step Title',
+              type: 'string',
+              description: 'e.g., "Inspection"',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'headline',
+              title: 'Card Headline',
+              type: 'string',
+              description: 'The main text inside the card',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'description',
+              title: 'Description',
+              type: 'text',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'image',
+              title: 'Card Image',
+              type: 'cloudinaryImage',
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: { title: 'title', subtitle: 'step' },
+            prepare(value: Record<string, any>) {
+              return {
+                title: value.title || 'Unnamed Step',
+                subtitle: value.subtitle ? `Step ${value.subtitle}` : '',
+                icon: UlistIcon,
+              };
+            },
+          },
+        },
+      ],
+    }),
+  ],
+  preview: {
+    select: { title: 'heading.title', steps: 'steps' },
+    prepare({ title, steps }) {
+      return {
+        title: title || 'Craftsmanship Section',
+        subtitle: steps ? `${steps.length} steps` : '0 steps',
+        icon: UlistIcon,
+      };
+    },
+  },
+});

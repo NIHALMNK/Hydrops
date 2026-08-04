@@ -8,7 +8,7 @@ import { address } from './objects/address';
 import { businessHours } from './objects/businessHours';
 import { contactInfo } from './objects/contactInfo';
 
-// Homepage Sections (Objects)
+// Homepage Section Objects (kept as objects — used as embedded types by home documents)
 import { hero } from './objects/hero';
 import { soulStatement } from './objects/soulStatement';
 import { philosophy } from './objects/philosophy';
@@ -18,6 +18,29 @@ import { purityStatement } from './objects/purityStatement';
 import { craftsmanship } from './objects/craftsmanship';
 import { everyday } from './objects/everyday';
 import { contactCta } from './objects/contactCta';
+
+// Home Page Documents
+import { homeHero } from './documents/home/hero';
+import { homeSoulStatement } from './documents/home/soulStatement';
+import { homePhilosophy } from './documents/home/philosophy';
+import { homeJourney } from './documents/home/journey';
+import { homeProductShowcase } from './documents/home/productShowcase';
+import { homePurityStatement } from './documents/home/purityStatement';
+import { homeCraftsmanship } from './documents/home/craftsmanship';
+import { homeEveryday } from './documents/home/everyday';
+import { homeContactCta } from './documents/home/contactCta';
+
+// About Page Documents
+import { aboutHero } from './documents/about/hero';
+import { aboutIntroduction } from './documents/about/introduction';
+import { aboutStory } from './documents/about/story';
+import { aboutMission } from './documents/about/mission';
+import { aboutVision } from './documents/about/vision';
+import { aboutValues } from './documents/about/values';
+import { aboutManufacturing } from './documents/about/manufacturing';
+import { aboutCommitment } from './documents/about/commitment';
+import { aboutWhyHydrops } from './documents/about/whyHydrops';
+import { aboutCompanyInfo } from './documents/about/companyInfo';
 
 // Documents
 import { product } from './documents/product';
@@ -30,7 +53,6 @@ import { social } from './singletons/social';
 import { seoSettings } from './singletons/seoSettings';
 import { navigation } from './singletons/navigation';
 import { footer } from './singletons/footer';
-import { homePage } from './singletons/homePage';
 
 export const schema = {
   types: [
@@ -43,8 +65,8 @@ export const schema = {
     address,
     businessHours,
     contactInfo,
-    
-    // Homepage Section Objects
+
+    // Homepage Section Objects (still registered so any existing references resolve)
     hero,
     soulStatement,
     philosophy,
@@ -54,6 +76,29 @@ export const schema = {
     craftsmanship,
     everyday,
     contactCta,
+
+    // Home Page Documents
+    homeHero,
+    homeSoulStatement,
+    homePhilosophy,
+    homeJourney,
+    homeProductShowcase,
+    homePurityStatement,
+    homeCraftsmanship,
+    homeEveryday,
+    homeContactCta,
+
+    // About Page Documents
+    aboutHero,
+    aboutIntroduction,
+    aboutStory,
+    aboutMission,
+    aboutVision,
+    aboutValues,
+    aboutManufacturing,
+    aboutCommitment,
+    aboutWhyHydrops,
+    aboutCompanyInfo,
 
     // Documents
     product,
@@ -66,6 +111,5 @@ export const schema = {
     seoSettings,
     navigation,
     footer,
-    homePage,
   ],
 };

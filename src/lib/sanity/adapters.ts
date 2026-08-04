@@ -220,3 +220,128 @@ function mapContactCta(contact: any): ContactCtaDocument {
     }
   };
 }
+
+// ── About Page Adapter ────────────────────────────────────────────────────────
+
+import type { AboutPageData } from '@/features/about/types';
+
+export function mapSanityAboutToFrontend(raw: any): AboutPageData {
+  return {
+    hero: {
+      eyebrow: raw.hero?.eyebrow || '',
+      headline: raw.hero?.headline || '',
+      subheadline: raw.hero?.subheadline || '',
+      tagline: raw.hero?.tagline || '',
+    },
+    introduction: {
+      eyebrow: raw.introduction?.eyebrow || '',
+      headline: raw.introduction?.headline || '',
+      body: raw.introduction?.body || [],
+      stat: {
+        value: raw.introduction?.stat?.value || '',
+        label: raw.introduction?.stat?.label || '',
+      },
+    },
+    story: {
+      eyebrow: raw.story?.eyebrow || '',
+      headline: raw.story?.headline || '',
+      image: {
+        src: raw.story?.image?.secureUrl || '',
+        alt: raw.story?.image?.alt || '',
+        width: raw.story?.image?.width || 1200,
+        height: raw.story?.image?.height || 1600,
+      },
+      imageCaption: raw.story?.imageCaption || '',
+      chapters: (raw.story?.chapters || []).map((ch: any) => ({
+        year: ch.year || '',
+        heading: ch.heading || '',
+        body: ch.body || '',
+      })),
+    },
+    missionVision: {
+      mission: {
+        eyebrow: raw.mission?.eyebrow || '',
+        headline: raw.mission?.headline || '',
+        body: raw.mission?.body || '',
+      },
+      vision: {
+        eyebrow: raw.vision?.eyebrow || '',
+        headline: raw.vision?.headline || '',
+        body: raw.vision?.body || '',
+      },
+    },
+    coreValues: {
+      eyebrow: raw.coreValues?.eyebrow || '',
+      headline: raw.coreValues?.headline || '',
+      values: (raw.coreValues?.items || []).map((v: any) => ({
+        number: v.number || '',
+        title: v.title || '',
+        body: v.body || '',
+      })),
+    },
+    manufacturing: {
+      eyebrow: raw.manufacturing?.eyebrow || '',
+      headline: raw.manufacturing?.headline || '',
+      subheadline: raw.manufacturing?.subheadline || '',
+      stages: (raw.manufacturing?.stages || []).map((st: any) => ({
+        step: st.step || '',
+        title: st.title || '',
+        body: st.body || '',
+        image: {
+          src: st.image?.secureUrl || '',
+          alt: st.image?.alt || '',
+          width: st.image?.width || 960,
+          height: st.image?.height || 1200,
+        },
+      })),
+    },
+    quality: {
+      eyebrow: raw.quality?.eyebrow || '',
+      headline: raw.quality?.headline || '',
+      body: raw.quality?.body || '',
+      pillars: (raw.quality?.pillars || []).map((p: any) => ({
+        label: p.label || '',
+        headline: p.headline || '',
+        body: p.body || '',
+      })),
+      seal: raw.quality?.seal || '',
+    },
+    whyChoose: {
+      eyebrow: raw.whyChoose?.eyebrow || '',
+      headline: raw.whyChoose?.headline || '',
+      items: (raw.whyChoose?.items || []).map((i: any) => ({
+        number: i.number || '',
+        title: i.title || '',
+        body: i.body || '',
+      })),
+    },
+    companyInfo: {
+      eyebrow: raw.companyInfo?.eyebrow || '',
+      heading: raw.companyInfo?.heading || '',
+      description: raw.companyInfo?.description || '',
+      companyName: raw.companyInfo?.companyName || '',
+      legalName: raw.companyInfo?.legalName || '',
+      founded: raw.companyInfo?.founded || '',
+      origin: raw.companyInfo?.origin || '',
+      email: raw.companyInfo?.email || '',
+      phone: raw.companyInfo?.phone || '',
+      address: {
+        line1: raw.companyInfo?.address?.line1 || '',
+        line2: raw.companyInfo?.address?.line2 || '',
+        line3: raw.companyInfo?.address?.line3 || '',
+      },
+      coordinates: raw.companyInfo?.coordinates || '',
+      mapUrl: raw.companyInfo?.mapUrl || '',
+      businessHours: raw.companyInfo?.businessHours || '',
+      certifications: raw.companyInfo?.certifications || [],
+      primaryCta: {
+        label: raw.companyInfo?.primaryCta?.text || '',
+        href: raw.companyInfo?.primaryCta?.route || '',
+      },
+      secondaryCta: {
+        label: raw.companyInfo?.secondaryCta?.text || '',
+        href: raw.companyInfo?.secondaryCta?.route || '',
+      },
+    },
+  };
+}
