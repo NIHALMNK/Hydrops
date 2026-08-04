@@ -24,6 +24,8 @@ export const metadata: Metadata = {
   openGraph: { title: aboutSeo.title, description: aboutSeo.description, images: [aboutSeo.openGraphImage.src] },
 };
 
+import { AboutAnimationWrapper } from './AboutClient';
+
 export default function AboutPage() {
   return (
     <>
@@ -33,7 +35,7 @@ export default function AboutPage() {
       */}
       <Navbar data={navigationData} />
       
-      <main className="w-full flex flex-col">
+      <AboutAnimationWrapper>
         <AboutHero data={aboutData.hero} />
         <BrandIntroduction data={aboutData.introduction} />
         <BrandStory data={aboutData.story} />
@@ -44,7 +46,7 @@ export default function AboutPage() {
         <WhyChooseHydrops data={aboutData.whyChoose} />
         <CompanyInfo data={aboutData.companyInfo} />
         <AboutCTA data={aboutData.cta} />
-      </main>
+      </AboutAnimationWrapper>
 
       <Footer />
     </>
