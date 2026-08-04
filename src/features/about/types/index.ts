@@ -116,19 +116,6 @@ export interface CompanyInfoData {
   standardsLabel: string;
 }
 
-export interface AboutCTAData {
-  eyebrow: string;
-  headline: string;
-  subheadline: string;
-  body: string;
-  primaryLabel: string;
-  primaryHref: string;
-  secondaryLabel: string;
-  secondaryHref: string;
-  tagline: string;
-  backgroundImage: ImageAsset;
-}
-
 export interface AboutPageData {
   hero: AboutHeroData;
   introduction: BrandIntroductionData;
@@ -139,5 +126,4 @@ export interface AboutPageData {
   quality: QualityCommitmentData;
   whyChoose: WhyChooseData;
   companyInfo: CompanyInfoData;
-  cta: AboutCTAData;
 }

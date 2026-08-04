@@ -11,4 +11,3 @@ export { ManufacturingPhilosophy } from './components/ManufacturingPhilosophy';
 export { QualityCommitment } from './components/QualityCommitment';
 export { WhyChooseHydrops } from './components/WhyChooseHydrops';
 export { CompanyInfo } from './components/CompanyInfo';
-export { AboutCTA } from './components/AboutCTA';

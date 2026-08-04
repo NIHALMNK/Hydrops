@@ -224,18 +224,4 @@ export const aboutData: AboutPageData = {
       'Double Filtered Standard',
     ],
   },
-
-  // ── 10. Call To Action ────────────────────────────────────────────────────
-  cta: {
-    eyebrow: 'Hydrops · Pure Coconut Oil',
-    headline: 'Taste the difference\npurity makes.',
-    subheadline: 'Experience Hydrops',
-    body: 'Discover our range of double-filtered virgin coconut oil — crafted for your kitchen, your wellness, and your trust.',
-    primaryLabel: 'Explore Products',
-    primaryHref: '/products',
-    secondaryLabel: 'Get In Touch',
-    secondaryHref: '/contact',
-    tagline: 'Crafted with care. Filtered with precision. Trusted by families.',
-    backgroundImage: { src: '/images/products/hydrops-coconut-oil.png', alt: '', width: 768, height: 1536 },
-  },
 };

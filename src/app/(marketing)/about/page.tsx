@@ -14,8 +14,7 @@ import {
   ManufacturingPhilosophy,
   QualityCommitment,
   WhyChooseHydrops,
-  CompanyInfo,
-  AboutCTA
+  CompanyInfo
 } from '@/features/about';
 
 export const metadata: Metadata = {
@@ -45,7 +44,6 @@ export default function AboutPage() {
         <QualityCommitment data={aboutData.quality} />
         <WhyChooseHydrops data={aboutData.whyChoose} />
         <CompanyInfo data={aboutData.companyInfo} />
-        <AboutCTA data={aboutData.cta} />
       </AboutAnimationWrapper>
 
       <Footer />

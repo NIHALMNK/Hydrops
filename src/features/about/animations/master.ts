@@ -10,8 +10,6 @@ import { initManufacturing } from './manufacturing';
 import { initQuality } from './quality';
 import { initWhy } from './why';
 import { initCompany } from './company';
-import { initCTA } from './cta';
-
 export class AboutAnimationController {
   private ctx: gsap.Context;
   private mm: gsap.MatchMedia;
@@ -37,7 +35,6 @@ export class AboutAnimationController {
       const quality = root.querySelector('#about-quality') as HTMLElement || root.querySelector('section:nth-of-type(7)') as HTMLElement; // Fallback
       const why = root.querySelector('#about-why') as HTMLElement || root.querySelector('section:nth-of-type(8)') as HTMLElement; // Fallback
       const company = root.querySelector('#about-company') as HTMLElement || root.querySelector('section:nth-of-type(9)') as HTMLElement; // Fallback
-      const cta = root.querySelector('#about-cta') as HTMLElement;
 
       // Wrap animations in a matchMedia block to respect prefers-reduced-motion
       this.mm.add("(prefers-reduced-motion: no-preference)", () => {
@@ -50,7 +47,6 @@ export class AboutAnimationController {
         if (quality) this.addCleanup(initQuality(quality));
         if (why) this.addCleanup(initWhy(why));
         if (company) this.addCleanup(initCompany(company));
-        if (cta) this.addCleanup(initCTA(cta));
       });
     });
 
