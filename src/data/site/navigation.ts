@@ -12,9 +12,9 @@ export const navigationData: NavigationDocument = {
   items: [
     { label: 'Home', href: ROUTES.HOME },
     { label: 'About', href: ROUTES.ABOUT },
+    { label: 'Blog', href: ROUTES.BLOG },
     { label: 'Products', href: ROUTES.PRODUCTS },
-    { label: 'Contact', href: ROUTES.CONTACT },
-    { label: 'Enquire', href: ROUTES.CONTACT, isCta: true },
+    { label: 'Contact', href: ROUTES.CONTACT, isCta: true },
   ],
   openMenuLabel: 'Open navigation',
   closeMenuLabel: 'Close navigation',

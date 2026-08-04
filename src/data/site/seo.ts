@@ -17,3 +17,14 @@ export const productsSeo: SeoDocument = {
 export const contactSeo: SeoDocument = {
   _id: 'contact-seo', _type: 'seoPage', title: 'Contact — Hydrops', description: 'Get in touch with Hydrops. Enquire about our pure coconut oil products, wholesale orders, or any questions you may have.', keywords: siteSeo.keywords, openGraphImage: logo, twitterImage: logo,
 };
+
+export const blogSeo: SeoDocument & { robots?: { index: boolean; follow: boolean } } = {
+  _id: 'blog-seo', 
+  _type: 'seoPage', 
+  title: 'Blog | Hydrops', 
+  description: 'The Hydrops Journal is coming soon. Discover product stories, wellness articles, recipes, and behind-the-scenes updates.', 
+  keywords: siteSeo.keywords, 
+  openGraphImage: logo, 
+  twitterImage: logo,
+  robots: { index: false, follow: true }
+};
