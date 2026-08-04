@@ -43,12 +43,11 @@ export const homePhilosophy = defineType({
           ],
           preview: {
             select: { lines: 'lines', accent: 'accentLine' },
-            prepare(value: Record<string, any>) {
-              const firstLine =
-                value.lines && value.lines.length > 0 ? value.lines[0] : 'Untitled Chapter';
+            prepare({ lines, accent }: { lines?: string[]; accent?: string }) {
+              const firstLine = lines && lines.length > 0 ? lines[0] : 'Untitled Chapter';
               return {
                 title: firstLine,
-                subtitle: value.accent ? `+ ${value.accent}` : '',
+                subtitle: accent ? `+ ${accent}` : '',
               };
             },
           },

@@ -62,10 +62,10 @@ export const homeCraftsmanship = defineType({
           ],
           preview: {
             select: { title: 'title', subtitle: 'step' },
-            prepare(value: Record<string, any>) {
+            prepare({ title, subtitle }: { title?: string; subtitle?: string }) {
               return {
-                title: value.title || 'Unnamed Step',
-                subtitle: value.subtitle ? `Step ${value.subtitle}` : '',
+                title: title ?? 'Unnamed Step',
+                subtitle: subtitle ? `Step ${subtitle}` : '',
                 icon: UlistIcon,
               };
             },

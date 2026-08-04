@@ -1,15 +1,81 @@
-import type { HomePageDocument, HeroDocument, PhilosophyDocument, JourneyDocument, ProductShowcaseDocument, PurityStatementDocument, CraftsmanshipDocument, EverydayDocument, ContactCtaDocument, SoulStatementDocument } from '@/data/types';
-// Note: In a real implementation, you would import the generated types from './types' 
-// e.g. import { HomePageQueryResult } from './types'
-// and use them as the input type here. For now, we use `any` to represent the raw Sanity data.
+import type {
+  HomePageDocument,
+  HeroDocument,
+  PhilosophyDocument,
+  JourneyDocument,
+  ProductShowcaseDocument,
+  PurityStatementDocument,
+  CraftsmanshipDocument,
+  EverydayDocument,
+  ContactCtaDocument,
+  SoulStatementDocument,
+  ImageAsset,
+  CTA,
+} from '@/data/types';
+
+import type {
+  SanityRawHomePage,
+  SanityRawHero,
+  SanityRawSoulStatement,
+  SanityRawPhilosophy,
+  SanityRawPhilosophyChapter,
+  SanityRawJourney,
+  SanityRawJourneyStage,
+  SanityRawProductShowcase,
+  SanityRawPurityStatement,
+  SanityRawCraftsmanship,
+  SanityRawCraftStep,
+  SanityRawEveryday,
+  SanityRawEverydayMoment,
+  SanityRawContactCta,
+  SanityCloudinaryImage,
+  SanityButton,
+  SanityRawAboutPage,
+  SanityRawAboutStoryChapter,
+  SanityRawAboutValueItem,
+  SanityRawManufacturingStage,
+  SanityRawCommitmentPillar,
+  SanityRawWhyItem,
+} from './sanity.raw.types';
+
+import type { AboutPageData } from '@/features/about/types';
+
+// ── Shared Primitive Mappers ──────────────────────────────────────────────────
+
+function mapImage(
+  raw: SanityCloudinaryImage | undefined,
+  fallbackWidth = 1920,
+  fallbackHeight = 1080,
+): ImageAsset {
+  return {
+    src: raw?.secureUrl ?? '',
+    alt: raw?.alt ?? '',
+    width: raw?.width ?? fallbackWidth,
+    height: raw?.height ?? fallbackHeight,
+  };
+}
+
+function mapCta(raw: SanityButton | undefined): CTA {
+  return {
+    label: raw?.text ?? '',
+    href: raw?.route ?? '',
+  };
+}
+
+function mapOptionalCta(raw: SanityButton | undefined): CTA | undefined {
+  if (!raw) return undefined;
+  return { label: raw.text ?? '', href: raw.route ?? '' };
+}
+
+// ── Home Page Adapter ─────────────────────────────────────────────────────────
 
 /**
- * Adapter mapping the raw Sanity HomePage query result perfectly to the expected 
+ * Adapter mapping the raw Sanity HomePage query result perfectly to the expected
  * local frontend HomePageDocument interface. This guarantees zero UI changes.
  */
-export function mapSanityHomeToFrontend(raw: any): HomePageDocument {
+export function mapSanityHomeToFrontend(raw: SanityRawHomePage): HomePageDocument {
   return {
-    _id: raw._id || 'home-page',
+    _id: 'home-page',
     _type: 'homePage',
     hero: mapHero(raw.hero),
     soulStatement: mapSoulStatement(raw.soulStatement),
@@ -23,324 +89,270 @@ export function mapSanityHomeToFrontend(raw: any): HomePageDocument {
   };
 }
 
-// -- Individual Mappers --
+// ── Individual Home Mappers ───────────────────────────────────────────────────
 
-function mapHero(hero: any): HeroDocument {
+function mapHero(hero: SanityRawHero | undefined): HeroDocument {
   return {
-    _id: hero?._key || 'home-hero',
+    _id: 'home-hero',
     _type: 'hero',
     eyebrow: hero?.eyebrow,
-    headline: hero?.headline || '',
-    description: hero?.description || '',
+    headline: hero?.headline ?? '',
+    description: hero?.description ?? '',
     videoUrl: hero?.videoUrl,
     posterUrl: hero?.posterUrl,
     primaryCta: {
-      label: hero?.primaryCta?.text || 'Explore Product',
-      href: hero?.primaryCta?.route || '#product-showcase',
+      label: hero?.primaryCta?.text ?? 'Explore Product',
+      href: hero?.primaryCta?.route ?? '#product-showcase',
     },
-    secondaryCta: hero?.secondaryCta ? {
-      label: hero.secondaryCta.text,
-      href: hero.secondaryCta.route,
-    } : undefined,
+    secondaryCta: mapOptionalCta(hero?.secondaryCta),
   };
 }
 
-function mapSoulStatement(soul: any): SoulStatementDocument {
+function mapSoulStatement(soul: SanityRawSoulStatement | undefined): SoulStatementDocument {
   return {
-    _id: soul?._key || 'home-soul-statement',
+    _id: 'home-soul-statement',
     _type: 'soulStatement',
-    label: soul?.label || '',
-    headline: soul?.headline || '',
-    accentHeadline: soul?.accentHeadline || '',
-    background: {
-      src: soul?.background?.secureUrl || '',
-      alt: soul?.background?.alt || '',
-      width: soul?.background?.width || 1920,
-      height: soul?.background?.height || 1080,
-    }
+    label: soul?.label ?? '',
+    headline: soul?.headline ?? '',
+    accentHeadline: soul?.accentHeadline ?? '',
+    background: mapImage(soul?.background),
   };
 }
 
-function mapPhilosophy(phil: any): PhilosophyDocument {
+function mapPhilosophyChapter(ch: SanityRawPhilosophyChapter): PhilosophyDocument['chapters'][number] {
   return {
-    _id: phil?._key || 'home-philosophy',
+    lines: ch.lines ?? [],
+    accentLine: ch.accentLine,
+  };
+}
+
+function mapPhilosophy(phil: SanityRawPhilosophy | undefined): PhilosophyDocument {
+  return {
+    _id: 'home-philosophy',
     _type: 'philosophy',
-    persistentPhrase: phil?.persistentPhrase || '',
-    chapters: (phil?.chapters || []).map((ch: any) => ({
-      lines: ch.lines || [],
-      accentLine: ch.accentLine,
-    })),
-    cta: phil?.cta ? {
-      label: phil.cta.text,
-      href: phil.cta.route,
-    } : undefined,
+    persistentPhrase: phil?.persistentPhrase ?? '',
+    chapters: (phil?.chapters ?? []).map(mapPhilosophyChapter),
+    cta: mapOptionalCta(phil?.cta),
   };
 }
 
-function mapJourney(journey: any): JourneyDocument {
+function mapJourneyStage(st: SanityRawJourneyStage): JourneyDocument['stages'][number] {
   return {
-    _id: journey?._key || 'home-journey',
+    chapter: st.chapter ?? '',
+    title: st.title ?? '',
+    description: st.description ?? '',
+    mood: st.mood ?? '',
+    image: mapImage(st.image, 960, 1200),
+  };
+}
+
+function mapJourney(journey: SanityRawJourney | undefined): JourneyDocument {
+  return {
+    _id: 'home-journey',
     _type: 'journeySection',
-    ambientImage: {
-      src: journey?.ambientImage?.secureUrl || '',
-      alt: journey?.ambientImage?.alt || '',
-      width: journey?.ambientImage?.width || 1920,
-      height: journey?.ambientImage?.height || 1080,
-    },
-    stages: (journey?.stages || []).map((st: any) => ({
-      chapter: st.chapter,
-      title: st.title,
-      description: st.description,
-      mood: st.mood || '',
-      image: {
-        src: st.image?.secureUrl || '',
-        alt: st.image?.alt || '',
-        width: st.image?.width || 960,
-        height: st.image?.height || 1200,
-      }
-    })),
+    ambientImage: mapImage(journey?.ambientImage),
+    stages: (journey?.stages ?? []).map(mapJourneyStage),
   };
 }
 
-function mapProductShowcase(prod: any): ProductShowcaseDocument {
+function mapProductShowcase(prod: SanityRawProductShowcase | undefined): ProductShowcaseDocument {
   return {
-    _id: prod?._key || 'home-product-showcase',
+    _id: 'home-product-showcase',
     _type: 'productShowcase',
-    label: prod?.label || '',
-    headline: prod?.headline || '',
-    description: prod?.description || '',
-    primaryCta: {
-      label: prod?.primaryCta?.text || '',
-      href: prod?.primaryCta?.route || '',
-    },
-    secondaryCta: {
-      label: prod?.secondaryCta?.text || '',
-      href: prod?.secondaryCta?.route || '',
-    },
-    productImage: {
-      src: prod?.productImage?.secureUrl || '',
-      alt: prod?.productImage?.alt || '',
-      width: prod?.productImage?.width || 768,
-      height: prod?.productImage?.height || 1536,
-    },
-    floatingAsset: {
-      src: prod?.floatingAsset?.secureUrl || '',
-      alt: prod?.floatingAsset?.alt || '',
-      width: prod?.floatingAsset?.width || 512,
-      height: prod?.floatingAsset?.height || 512,
-    }
+    label: prod?.label ?? '',
+    headline: prod?.headline ?? '',
+    description: prod?.description ?? '',
+    primaryCta: mapCta(prod?.primaryCta),
+    secondaryCta: mapCta(prod?.secondaryCta),
+    productImage: mapImage(prod?.productImage, 768, 1536),
+    floatingAsset: mapImage(prod?.floatingAsset, 512, 512),
   };
 }
 
-function mapPurityStatement(purity: any): PurityStatementDocument {
+function mapPurityStatement(purity: SanityRawPurityStatement | undefined): PurityStatementDocument {
   return {
-    _id: purity?._key || 'home-purity-statement',
+    _id: 'home-purity-statement',
     _type: 'purityStatement',
-    label: purity?.label || '',
-    supportingText: purity?.supportingText || '',
-    statements: (purity?.statements || []).map((st: any) => ({
-      line: st.line,
-      delay: st.delay,
+    label: purity?.label ?? '',
+    supportingText: purity?.supportingText ?? '',
+    statements: (purity?.statements ?? []).map((st) => ({
+      line: st.line ?? '',
+      delay: st.delay ?? 0,
       accent: st.accent,
     })),
   };
 }
 
-function mapCraftsmanship(craft: any): CraftsmanshipDocument {
+function mapCraftStep(st: SanityRawCraftStep): CraftsmanshipDocument['steps'][number] {
   return {
-    _id: craft?._key || 'home-craftsmanship',
+    step: st.step ?? '',
+    title: st.title ?? '',
+    headline: st.headline ?? '',
+    description: st.description ?? '',
+    image: mapImage(st.image, 960, 1200),
+  };
+}
+
+function mapCraftsmanship(craft: SanityRawCraftsmanship | undefined): CraftsmanshipDocument {
+  return {
+    _id: 'home-craftsmanship',
     _type: 'craftsmanshipSection',
     heading: {
       eyebrow: craft?.heading?.label,
-      headline: craft?.heading?.title || '',
+      headline: craft?.heading?.title ?? '',
       supportingText: craft?.heading?.subtitle,
     },
-    steps: (craft?.steps || []).map((st: any) => ({
-      step: st.step,
-      title: st.title,
-      headline: st.headline,
-      description: st.description,
-      image: {
-        src: st.image?.secureUrl || '',
-        alt: st.image?.alt || '',
-        width: st.image?.width || 960,
-        height: st.image?.height || 1200,
-      }
-    })),
+    steps: (craft?.steps ?? []).map(mapCraftStep),
   };
 }
 
-function mapEveryday(everyday: any): EverydayDocument {
+function mapEverydayMoment(m: SanityRawEverydayMoment): EverydayDocument['moments'][number] {
   return {
-    _id: everyday?._key || 'home-everyday',
+    id: m.id ?? '',
+    label: m.label ?? '',
+    headline: m.headline ?? '',
+    description: m.description ?? '',
+    accent: m.accent ?? '',
+    image: mapImage(m.image, 1200, 900),
+  };
+}
+
+function mapEveryday(everyday: SanityRawEveryday | undefined): EverydayDocument {
+  return {
+    _id: 'home-everyday',
     _type: 'everydaySection',
     heading: {
       eyebrow: everyday?.heading?.label,
-      headline: everyday?.heading?.title || '',
+      headline: everyday?.heading?.title ?? '',
     },
-    headlineAccent: everyday?.headlineAccent || '',
-    moments: (everyday?.moments || []).map((m: any) => ({
-      id: m.id,
-      label: m.label,
-      headline: m.headline,
-      description: m.description,
-      accent: m.accent || '',
-      image: {
-        src: m.image?.secureUrl || '',
-        alt: m.image?.alt || '',
-        width: m.image?.width || 1200,
-        height: m.image?.height || 900,
-      }
-    })),
+    headlineAccent: everyday?.headlineAccent ?? '',
+    moments: (everyday?.moments ?? []).map(mapEverydayMoment),
   };
 }
 
-function mapContactCta(contact: any): ContactCtaDocument {
+function mapContactCta(contact: SanityRawContactCta | undefined): ContactCtaDocument {
   return {
-    _id: contact?._key || 'home-contact-cta',
+    _id: 'home-contact-cta',
     _type: 'contactCta',
-    label: contact?.label || '',
-    headline: contact?.headline || '',
-    accentHeadline: contact?.accentHeadline || '',
-    description: contact?.description || '',
-    tagline: contact?.tagline || '',
-    primaryCta: {
-      label: contact?.primaryCta?.text || '',
-      href: contact?.primaryCta?.route || '',
-    },
-    secondaryCta: {
-      label: contact?.secondaryCta?.text || '',
-      href: contact?.secondaryCta?.route || '',
-    },
-    backgroundImage: {
-      src: contact?.backgroundImage?.secureUrl || '',
-      alt: contact?.backgroundImage?.alt || '',
-      width: contact?.backgroundImage?.width || 1920,
-      height: contact?.backgroundImage?.height || 1080,
-    }
+    label: contact?.label ?? '',
+    headline: contact?.headline ?? '',
+    accentHeadline: contact?.accentHeadline ?? '',
+    description: contact?.description ?? '',
+    tagline: contact?.tagline ?? '',
+    primaryCta: mapCta(contact?.primaryCta),
+    secondaryCta: mapCta(contact?.secondaryCta),
+    backgroundImage: mapImage(contact?.backgroundImage),
   };
 }
 
 // ── About Page Adapter ────────────────────────────────────────────────────────
 
-import type { AboutPageData } from '@/features/about/types';
-
-export function mapSanityAboutToFrontend(raw: any): AboutPageData {
+export function mapSanityAboutToFrontend(raw: SanityRawAboutPage): AboutPageData {
   return {
     hero: {
-      eyebrow: raw.hero?.eyebrow || '',
-      headline: raw.hero?.headline || '',
-      subheadline: raw.hero?.subheadline || '',
-      tagline: raw.hero?.tagline || '',
+      eyebrow: raw.hero?.eyebrow ?? '',
+      headline: raw.hero?.headline ?? '',
+      subheadline: raw.hero?.subheadline ?? '',
+      tagline: raw.hero?.tagline ?? '',
     },
     introduction: {
-      eyebrow: raw.introduction?.eyebrow || '',
-      headline: raw.introduction?.headline || '',
-      body: raw.introduction?.body || [],
+      eyebrow: raw.introduction?.eyebrow ?? '',
+      headline: raw.introduction?.headline ?? '',
+      body: raw.introduction?.body ?? [],
       stat: {
-        value: raw.introduction?.stat?.value || '',
-        label: raw.introduction?.stat?.label || '',
+        value: raw.introduction?.stat?.value ?? '',
+        label: raw.introduction?.stat?.label ?? '',
       },
     },
     story: {
-      eyebrow: raw.story?.eyebrow || '',
-      headline: raw.story?.headline || '',
-      image: {
-        src: raw.story?.image?.secureUrl || '',
-        alt: raw.story?.image?.alt || '',
-        width: raw.story?.image?.width || 1200,
-        height: raw.story?.image?.height || 1600,
-      },
-      imageCaption: raw.story?.imageCaption || '',
-      chapters: (raw.story?.chapters || []).map((ch: any) => ({
-        year: ch.year || '',
-        heading: ch.heading || '',
-        body: ch.body || '',
+      eyebrow: raw.story?.eyebrow ?? '',
+      headline: raw.story?.headline ?? '',
+      image: mapImage(raw.story?.image, 1200, 1600),
+      imageCaption: raw.story?.imageCaption ?? '',
+      chapters: (raw.story?.chapters ?? []).map((ch: SanityRawAboutStoryChapter) => ({
+        year: ch.year ?? '',
+        heading: ch.heading ?? '',
+        body: ch.body ?? '',
       })),
     },
     missionVision: {
       mission: {
-        eyebrow: raw.mission?.eyebrow || '',
-        headline: raw.mission?.headline || '',
-        body: raw.mission?.body || '',
+        eyebrow: raw.mission?.eyebrow ?? '',
+        headline: raw.mission?.headline ?? '',
+        body: raw.mission?.body ?? '',
       },
       vision: {
-        eyebrow: raw.vision?.eyebrow || '',
-        headline: raw.vision?.headline || '',
-        body: raw.vision?.body || '',
+        eyebrow: raw.vision?.eyebrow ?? '',
+        headline: raw.vision?.headline ?? '',
+        body: raw.vision?.body ?? '',
       },
     },
     coreValues: {
-      eyebrow: raw.coreValues?.eyebrow || '',
-      headline: raw.coreValues?.headline || '',
-      values: (raw.coreValues?.items || []).map((v: any) => ({
-        number: v.number || '',
-        title: v.title || '',
-        body: v.body || '',
+      eyebrow: raw.coreValues?.eyebrow ?? '',
+      headline: raw.coreValues?.headline ?? '',
+      values: (raw.coreValues?.items ?? []).map((v: SanityRawAboutValueItem) => ({
+        number: v.number ?? '',
+        title: v.title ?? '',
+        body: v.body ?? '',
       })),
     },
     manufacturing: {
-      eyebrow: raw.manufacturing?.eyebrow || '',
-      headline: raw.manufacturing?.headline || '',
-      subheadline: raw.manufacturing?.subheadline || '',
-      stages: (raw.manufacturing?.stages || []).map((st: any) => ({
-        step: st.step || '',
-        title: st.title || '',
-        body: st.body || '',
-        image: {
-          src: st.image?.secureUrl || '',
-          alt: st.image?.alt || '',
-          width: st.image?.width || 960,
-          height: st.image?.height || 1200,
-        },
+      eyebrow: raw.manufacturing?.eyebrow ?? '',
+      headline: raw.manufacturing?.headline ?? '',
+      subheadline: raw.manufacturing?.subheadline ?? '',
+      stages: (raw.manufacturing?.stages ?? []).map((st: SanityRawManufacturingStage) => ({
+        step: st.step ?? '',
+        title: st.title ?? '',
+        body: st.body ?? '',
+        image: mapImage(st.image, 960, 1200),
       })),
     },
     quality: {
-      eyebrow: raw.quality?.eyebrow || '',
-      headline: raw.quality?.headline || '',
-      body: raw.quality?.body || '',
-      pillars: (raw.quality?.pillars || []).map((p: any) => ({
-        label: p.label || '',
-        headline: p.headline || '',
-        body: p.body || '',
+      eyebrow: raw.quality?.eyebrow ?? '',
+      headline: raw.quality?.headline ?? '',
+      body: raw.quality?.body ?? '',
+      pillars: (raw.quality?.pillars ?? []).map((p: SanityRawCommitmentPillar) => ({
+        label: p.label ?? '',
+        headline: p.headline ?? '',
+        body: p.body ?? '',
       })),
-      seal: raw.quality?.seal || '',
+      seal: raw.quality?.seal ?? '',
     },
     whyChoose: {
-      eyebrow: raw.whyChoose?.eyebrow || '',
-      headline: raw.whyChoose?.headline || '',
-      items: (raw.whyChoose?.items || []).map((i: any) => ({
-        number: i.number || '',
-        title: i.title || '',
-        body: i.body || '',
+      eyebrow: raw.whyChoose?.eyebrow ?? '',
+      headline: raw.whyChoose?.headline ?? '',
+      items: (raw.whyChoose?.items ?? []).map((i: SanityRawWhyItem) => ({
+        number: i.number ?? '',
+        title: i.title ?? '',
+        body: i.body ?? '',
       })),
     },
     companyInfo: {
-      eyebrow: raw.companyInfo?.eyebrow || '',
-      heading: raw.companyInfo?.heading || '',
-      description: raw.companyInfo?.description || '',
-      companyName: raw.companyInfo?.companyName || '',
-      legalName: raw.companyInfo?.legalName || '',
-      founded: raw.companyInfo?.founded || '',
-      origin: raw.companyInfo?.origin || '',
-      email: raw.companyInfo?.email || '',
-      phone: raw.companyInfo?.phone || '',
+      eyebrow: raw.companyInfo?.eyebrow ?? '',
+      heading: raw.companyInfo?.heading ?? '',
+      description: raw.companyInfo?.description ?? '',
+      companyName: raw.companyInfo?.companyName ?? '',
+      legalName: raw.companyInfo?.legalName ?? '',
+      founded: raw.companyInfo?.founded ?? '',
+      origin: raw.companyInfo?.origin ?? '',
+      email: raw.companyInfo?.email ?? '',
+      phone: raw.companyInfo?.phone ?? '',
       address: {
-        line1: raw.companyInfo?.address?.line1 || '',
-        line2: raw.companyInfo?.address?.line2 || '',
-        line3: raw.companyInfo?.address?.line3 || '',
+        line1: raw.companyInfo?.address?.line1 ?? '',
+        line2: raw.companyInfo?.address?.line2 ?? '',
+        line3: raw.companyInfo?.address?.line3 ?? '',
       },
-      coordinates: raw.companyInfo?.coordinates || '',
-      mapUrl: raw.companyInfo?.mapUrl || '',
-      businessHours: raw.companyInfo?.businessHours || '',
-      certifications: raw.companyInfo?.certifications || [],
+      coordinates: raw.companyInfo?.coordinates ?? '',
+      mapUrl: raw.companyInfo?.mapUrl ?? '',
+      businessHours: raw.companyInfo?.businessHours ?? '',
+      certifications: raw.companyInfo?.certifications ?? [],
       primaryCta: {
-        label: raw.companyInfo?.primaryCta?.text || '',
-        href: raw.companyInfo?.primaryCta?.route || '',
+        label: raw.companyInfo?.primaryCta?.text ?? '',
+        href: raw.companyInfo?.primaryCta?.route ?? '',
       },
       secondaryCta: {
-        label: raw.companyInfo?.secondaryCta?.text || '',
-        href: raw.companyInfo?.secondaryCta?.route || '',
+        label: raw.companyInfo?.secondaryCta?.text ?? '',
+        href: raw.companyInfo?.secondaryCta?.route ?? '',
       },
     },
   };

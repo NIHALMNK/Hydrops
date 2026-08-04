@@ -29,7 +29,10 @@ export const aboutValues = defineType({
           ],
           preview: {
             select: { title: 'title', subtitle: 'number' },
-            prepare: (value: Record<string, any>) => ({ title: value.title || 'Untitled', subtitle: `Value ${value.subtitle}` })
+            prepare: ({ title, subtitle }: { title?: string; subtitle?: string }) => ({
+              title: title ?? 'Untitled',
+              subtitle: `Value ${subtitle ?? ''}`,
+            })
           }
         },
       ],

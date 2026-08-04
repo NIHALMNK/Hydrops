@@ -4,10 +4,11 @@ import { mapSanityHomeToFrontend, mapSanityAboutToFrontend } from './adapters';
 import { homePageData as fallbackHomePageData } from '@/data/home/home';
 import type { HomePageDocument } from '@/data/types';
 import type { AboutPageData } from '@/features/about/types';
+import type { SanityRawHomePage, SanityRawAboutPage } from './sanity.raw.types';
 
 export async function getHomePage(): Promise<HomePageDocument> {
   try {
-    const rawData = await client.fetch(HOME_PAGE_QUERY, {}, { next: { revalidate: 60 } });
+    const rawData = await client.fetch<SanityRawHomePage>(HOME_PAGE_QUERY, {}, { next: { revalidate: 60 } });
     if (!rawData) {
       console.warn('Sanity returned null for home page, falling back to static data.');
       return fallbackHomePageData;
@@ -23,7 +24,7 @@ import { aboutData as fallbackAboutPageData } from '@/data/about/about';
 
 export async function getAboutPage(): Promise<AboutPageData> {
   try {
-    const rawData = await client.fetch(ABOUT_PAGE_QUERY, {}, { next: { revalidate: 60 } });
+    const rawData = await client.fetch<SanityRawAboutPage>(ABOUT_PAGE_QUERY, {}, { next: { revalidate: 60 } });
     if (!rawData) {
       console.warn('Sanity returned null for about page, falling back to static data.');
       return fallbackAboutPageData;

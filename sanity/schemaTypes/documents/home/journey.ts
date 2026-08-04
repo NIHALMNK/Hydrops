@@ -61,10 +61,10 @@ export const homeJourney = defineType({
           ],
           preview: {
             select: { title: 'title', subtitle: 'chapter' },
-            prepare(value: Record<string, any>) {
+            prepare({ title, subtitle }: { title?: string; subtitle?: string }) {
               return {
-                title: value.title || 'Unnamed Stage',
-                subtitle: value.subtitle ? `Chapter ${value.subtitle}` : '',
+                title: title ?? 'Unnamed Stage',
+                subtitle: subtitle ? `Chapter ${subtitle}` : '',
                 icon: RocketIcon,
               };
             },

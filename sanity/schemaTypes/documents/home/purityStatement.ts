@@ -49,10 +49,10 @@ export const homePurityStatement = defineType({
           ],
           preview: {
             select: { title: 'line', subtitle: 'delay' },
-            prepare(value: Record<string, any>) {
+            prepare({ title, subtitle }: { title?: string; subtitle?: number }) {
               return {
-                title: value.title || 'Empty Line',
-                subtitle: `Delay: ${value.subtitle}s`,
+                title: title ?? 'Empty Line',
+                subtitle: `Delay: ${subtitle ?? 0}s`,
               };
             },
           },

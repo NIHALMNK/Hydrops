@@ -31,7 +31,10 @@ export const aboutManufacturing = defineType({
           ],
           preview: {
             select: { title: 'title', subtitle: 'step' },
-            prepare: (value: Record<string, any>) => ({ title: value.title || 'Untitled Stage', subtitle: `Step ${value.subtitle}` })
+            prepare: ({ title, subtitle }: { title?: string; subtitle?: string }) => ({
+              title: title ?? 'Untitled Stage',
+              subtitle: subtitle ? `Step ${subtitle}` : '',
+            })
           }
         },
       ],

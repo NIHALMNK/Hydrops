@@ -1,145 +1,275 @@
 import type { CompanyInfoData } from '@/features/about/types';
-import { MapPin, Clock, Phone, Mail, ArrowRight, ExternalLink } from 'lucide-react';
-import Link from 'next/link';
 
 interface Props {
   data: CompanyInfoData;
 }
 
+/**
+ * CompanyInfo — premium editorial layout with location card, business hours,
+ * certifications, and dual CTA buttons. Final section of the About page.
+ */
 export function CompanyInfo({ data }: Props) {
+  const addressLines = [data.address.line1, data.address.line2, data.address.line3].filter(Boolean);
+
   return (
     <section
       id="about-company"
       aria-labelledby="company-heading"
-      className="relative w-full bg-[#0A0A0A] text-white py-32 overflow-hidden"
+      className="relative w-full bg-[#0D0D0D] py-32 overflow-hidden"
     >
-      <div className="container mx-auto px-8 md:px-16 lg:px-24">
-        
-        {/* Top Area */}
-        <div className="mb-20 max-w-3xl">
+      {/* Ambient gold radial glow */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse at 70% 30%, rgba(200,169,106,0.06) 0%, transparent 55%)',
+        }}
+      />
+
+      <div className="container mx-auto px-8 md:px-16 lg:px-24 relative">
+
+        {/* ── Top: Eyebrow + Heading + Description + CTAs ──────────── */}
+        <div className="mb-24">
           <p
-            className="company-eyebrow text-[#C8A96A] font-medium uppercase mb-6"
+            className="text-[#C8A96A] font-medium uppercase mb-6"
             style={{ fontSize: '11px', letterSpacing: '0.4em' }}
           >
             {data.eyebrow}
           </p>
-          <h2
-            id="company-heading"
-            className="company-heading font-light text-white mb-6"
-            style={{
-              fontSize: 'clamp(2.5rem, 4vw, 4rem)',
-              lineHeight: 1.1,
-              letterSpacing: '-0.02em',
-            }}
-            dangerouslySetInnerHTML={{
-              __html: data.heading.replace('real purity', '<span class="text-[#C8A96A] italic pr-2">real purity</span>')
-            }}
-          />
-          <p className="company-desc text-white/60 font-light text-lg mb-10 max-w-xl leading-relaxed">
-            {data.description}
-          </p>
-          
-          <div className="company-ctas flex flex-wrap gap-4">
-            <Link
-              href={data.primaryCta.href}
-              className="group inline-flex items-center justify-center gap-3 bg-white text-[#0A0A0A] px-8 py-4 rounded-full font-medium transition-transform hover:scale-105"
-            >
-              {data.primaryCta.label}
-              <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-            </Link>
-            <a
-              href={data.secondaryCta.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center justify-center gap-3 bg-[#25D366] text-white px-8 py-4 rounded-full font-medium transition-transform hover:scale-105"
-            >
-              {data.secondaryCta.label}
-            </a>
-          </div>
-        </div>
 
-        {/* Bottom Area: Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
-          {/* Left Column */}
-          <div className="flex flex-col gap-6">
-            
-            {/* Location Card */}
-            <div className="company-card group relative flex flex-col bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md transition-all duration-500 hover:border-[#C8A96A]/40 hover:bg-white/[0.07] hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#C8A96A]/5 overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#C8A96A]/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" />
-              
-              <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center mb-8 transition-colors group-hover:border-[#C8A96A]/50">
-                <MapPin size={20} className="text-[#C8A96A] transition-transform duration-500 group-hover:scale-110" />
-              </div>
-              
-              <h3 className="text-2xl font-light mb-2">{data.companyName}</h3>
-              <p className="text-white/60 font-light mb-8 max-w-xs leading-relaxed">
-                {data.address.line1}, {data.address.line2}, {data.address.line3}
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-12">
+            <div className="max-w-2xl">
+              <h2
+                id="company-heading"
+                className="font-light text-white mb-6"
+                style={{
+                  fontSize: 'clamp(2.5rem, 5vw, 4.5rem)',
+                  lineHeight: 0.95,
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                {data.heading}
+              </h2>
+              <p
+                className="font-light leading-relaxed"
+                style={{
+                  color: 'rgba(255,255,255,0.45)',
+                  fontSize: 'clamp(0.95rem, 1.3vw, 1.1rem)',
+                }}
+              >
+                {data.description}
               </p>
-              
-              <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-6">
-                <span className="text-white/40 text-xs font-mono tracking-widest uppercase">{data.coordinates}</span>
-                <a
-                  href={data.mapUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-[#C8A96A] text-xs font-medium tracking-[0.2em] uppercase transition-colors hover:text-white"
-                >
-                  Navigate <ExternalLink size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                </a>
-              </div>
             </div>
 
-            {/* Sub Grid (Hours & Phone) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              
-              {/* Hours Card */}
-              <div className="company-card group flex flex-col bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md transition-all duration-500 hover:border-[#C8A96A]/40 hover:bg-white/[0.07] hover:-translate-y-1 hover:shadow-2xl">
-                <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center mb-6 transition-colors group-hover:border-[#C8A96A]/50">
-                  <Clock size={16} className="text-[#C8A96A] transition-transform duration-500 group-hover:rotate-12" />
-                </div>
-                <p className="text-white/40 text-[10px] tracking-[0.3em] uppercase mb-2">Hours</p>
-                <div className="text-white font-light text-sm whitespace-pre-line leading-relaxed">
-                  {data.businessHours}
-                </div>
-              </div>
-
-              {/* Phone Card */}
-              <a href={`tel:${data.phone.replace(/\s/g, '')}`} className="company-card group flex flex-col bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md transition-all duration-500 hover:border-[#C8A96A]/40 hover:bg-white/[0.07] hover:-translate-y-1 hover:shadow-2xl">
-                <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center mb-6 transition-colors group-hover:border-[#C8A96A]/50">
-                  <Phone size={16} className="text-[#C8A96A] transition-transform duration-500 group-hover:rotate-12" />
-                </div>
-                <p className="text-white/40 text-[10px] tracking-[0.3em] uppercase mb-2">Call Us</p>
-                <p className="text-white font-light text-lg tracking-wide">{data.phone}</p>
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row gap-4 shrink-0">
+              <a
+                href={data.primaryCta.href}
+                className="inline-flex items-center justify-center px-8 py-4 text-[#0D0D0D] bg-[#C8A96A] font-medium transition-opacity hover:opacity-85"
+                style={{ fontSize: '13px', letterSpacing: '0.08em' }}
+              >
+                {data.primaryCta.label}
               </a>
+              <a
+                href={data.secondaryCta.href}
+                target={data.secondaryCta.href.startsWith('http') ? '_blank' : undefined}
+                rel={data.secondaryCta.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                className="inline-flex items-center justify-center px-8 py-4 font-medium border transition-colors hover:border-[#C8A96A] hover:text-[#C8A96A]"
+                style={{
+                  fontSize: '13px',
+                  letterSpacing: '0.08em',
+                  color: 'rgba(255,255,255,0.65)',
+                  borderColor: 'rgba(255,255,255,0.15)',
+                }}
+              >
+                {data.secondaryCta.label}
+              </a>
+            </div>
+          </div>
+        </div>
 
+        {/* ── Divider ──────────────────────────────────────────────── */}
+        <div
+          aria-hidden="true"
+          className="w-full mb-20"
+          style={{ height: '1px', background: 'rgba(255,255,255,0.06)' }}
+        />
+
+        {/* ── Bottom: Two-column grid ───────────────────────────────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+
+          {/* LEFT — Location card */}
+          <div
+            className="flex flex-col gap-8 p-10"
+            style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.06)',
+            }}
+          >
+            {/* Map placeholder / embed wrapper */}
+            {data.mapUrl && (
+              <div
+                className="w-full overflow-hidden"
+                style={{ aspectRatio: '16/7' }}
+                aria-label="Location map"
+              >
+                <iframe
+                  src={data.mapUrl}
+                  title="Hydrops India location"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0, filter: 'grayscale(0.6) contrast(1.1)' }}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            )}
+
+            {/* Address */}
+            <div className="flex flex-col gap-2">
+              <p
+                className="text-[#C8A96A] font-medium uppercase mb-2"
+                style={{ fontSize: '10px', letterSpacing: '0.35em' }}
+              >
+                Address
+              </p>
+              {addressLines.map((line, i) => (
+                <p
+                  key={i}
+                  className="font-light text-white/70"
+                  style={{ fontSize: 'clamp(0.9rem, 1.1vw, 1rem)', lineHeight: 1.6 }}
+                >
+                  {line}
+                </p>
+              ))}
+              {data.coordinates && (
+                <p
+                  className="font-light mt-1"
+                  style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.05em' }}
+                >
+                  {data.coordinates}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* RIGHT — Contact + Hours + Company + Certifications */}
+          <div className="flex flex-col gap-10">
+
+            {/* Contact */}
+            <div>
+              <p
+                className="text-[#C8A96A] font-medium uppercase mb-5"
+                style={{ fontSize: '10px', letterSpacing: '0.35em' }}
+              >
+                Contact
+              </p>
+              <div className="flex flex-col gap-3">
+                {data.email && (
+                  <a
+                    href={`mailto:${data.email}`}
+                    className="font-light text-white/70 hover:text-[#C8A96A] transition-colors"
+                    style={{ fontSize: 'clamp(0.9rem, 1.1vw, 1rem)' }}
+                  >
+                    {data.email}
+                  </a>
+                )}
+                {data.phone && (
+                  <a
+                    href={`tel:${data.phone.replace(/\s/g, '')}`}
+                    className="font-light text-white/70 hover:text-[#C8A96A] transition-colors"
+                    style={{ fontSize: 'clamp(0.9rem, 1.1vw, 1rem)' }}
+                  >
+                    {data.phone}
+                  </a>
+                )}
+              </div>
             </div>
 
-            {/* Email Card */}
-            <a href={`mailto:${data.email}`} className="company-card group flex items-center gap-6 bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md transition-all duration-500 hover:border-[#C8A96A]/40 hover:bg-white/[0.07] hover:-translate-y-1 hover:shadow-2xl">
-              <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center transition-colors group-hover:border-[#C8A96A]/50">
-                <Mail size={16} className="text-[#C8A96A] transition-transform duration-500 group-hover:scale-110" />
-              </div>
+            {/* Business Hours */}
+            {data.businessHours && (
               <div>
-                <p className="text-white/40 text-[10px] tracking-[0.3em] uppercase mb-1">Email Us</p>
-                <p className="text-white font-light text-lg">{data.email}</p>
+                <p
+                  className="text-[#C8A96A] font-medium uppercase mb-5"
+                  style={{ fontSize: '10px', letterSpacing: '0.35em' }}
+                >
+                  Business Hours
+                </p>
+                <p
+                  className="font-light text-white/70 whitespace-pre-line"
+                  style={{ fontSize: 'clamp(0.9rem, 1.1vw, 1rem)', lineHeight: 1.8 }}
+                >
+                  {data.businessHours}
+                </p>
               </div>
-            </a>
-          </div>
+            )}
 
-          {/* Right Column: Google Map */}
-          <div className="company-map relative w-full h-[500px] lg:h-auto rounded-3xl overflow-hidden border border-white/10">
-            <iframe
-              src={data.mapUrl}
-              className="absolute inset-0 w-full h-full filter grayscale contrast-125 opacity-80 transition-all duration-700 hover:filter-none hover:opacity-100"
-              style={{ border: 0 }}
-              allowFullScreen={false}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </div>
+            {/* Company Details */}
+            <div>
+              <p
+                className="text-[#C8A96A] font-medium uppercase mb-5"
+                style={{ fontSize: '10px', letterSpacing: '0.35em' }}
+              >
+                Company
+              </p>
+              <dl className="flex flex-col gap-2">
+                {[
+                  { label: 'Legal Name', value: data.legalName },
+                  { label: 'Founded', value: data.founded },
+                  { label: 'Origin', value: data.origin },
+                ].map(({ label, value }) =>
+                  value ? (
+                    <div key={label} className="flex gap-6">
+                      <dt
+                        className="font-light shrink-0"
+                        style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)', width: 90 }}
+                      >
+                        {label}
+                      </dt>
+                      <dd
+                        className="font-light text-white/65"
+                        style={{ fontSize: 'clamp(0.85rem, 1vw, 0.95rem)' }}
+                      >
+                        {value}
+                      </dd>
+                    </div>
+                  ) : null
+                )}
+              </dl>
+            </div>
 
+            {/* Certifications */}
+            {data.certifications.length > 0 && (
+              <div>
+                <p
+                  className="text-[#C8A96A] font-medium uppercase mb-5"
+                  style={{ fontSize: '10px', letterSpacing: '0.35em' }}
+                >
+                  Certifications
+                </p>
+                <ul className="flex flex-wrap gap-3">
+                  {data.certifications.map((cert) => (
+                    <li
+                      key={cert}
+                      className="font-light"
+                      style={{
+                        fontSize: '11px',
+                        letterSpacing: '0.06em',
+                        color: 'rgba(255,255,255,0.55)',
+                        padding: '6px 14px',
+                        border: '1px solid rgba(200,169,106,0.25)',
+                      }}
+                    >
+                      {cert}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
+
       </div>
     </section>
   );

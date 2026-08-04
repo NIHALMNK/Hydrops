@@ -74,10 +74,10 @@ export const homeEveryday = defineType({
           ],
           preview: {
             select: { title: 'label', subtitle: 'headline' },
-            prepare(value: Record<string, any>) {
+            prepare({ title, subtitle }: { title?: string; subtitle?: string }) {
               return {
-                title: value.title || 'Unnamed Moment',
-                subtitle: value.subtitle || 'No headline',
+                title: title ?? 'Unnamed Moment',
+                subtitle: subtitle ?? 'No headline',
                 icon: SparklesIcon,
               };
             },

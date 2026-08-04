@@ -31,7 +31,10 @@ export const aboutCommitment = defineType({
           ],
           preview: {
             select: { title: 'headline', subtitle: 'label' },
-            prepare: (value: Record<string, any>) => ({ title: value.title || 'Untitled Pillar', subtitle: value.subtitle })
+            prepare: ({ title, subtitle }: { title?: string; subtitle?: string }) => ({
+              title: title ?? 'Untitled Pillar',
+              subtitle,
+            })
           }
         },
       ],
