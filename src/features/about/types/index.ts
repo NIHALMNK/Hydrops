@@ -97,13 +97,12 @@ export interface WhyChooseData {
 
 export interface CompanyInfoData {
   eyebrow: string;
-  headline: string;
+  heading: string;
+  description: string;
+  companyName: string;
   legalName: string;
-  foundedLabel: string;
-  foundedValue: string;
-  originLabel: string;
-  originValue: string;
-  contactLabel: string;
+  founded: string;
+  origin: string;
   email: string;
   phone: string;
   address: {
@@ -111,9 +110,12 @@ export interface CompanyInfoData {
     line2: string;
     line3: string;
   };
+  coordinates: string;
+  mapUrl: string;
+  businessHours: string;
   certifications: string[];
-  legalNameLabel: string;
-  standardsLabel: string;
+  primaryCta: { label: string; href: string };
+  secondaryCta: { label: string; href: string };
 }
 
 export interface AboutPageData {
