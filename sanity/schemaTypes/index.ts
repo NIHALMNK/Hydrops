@@ -42,8 +42,16 @@ import { aboutCommitment } from './documents/about/commitment';
 import { aboutWhyHydrops } from './documents/about/whyHydrops';
 import { aboutCompanyInfo } from './documents/about/companyInfo';
 
-// Documents
-import { product } from './documents/product';
+// Product Documents
+import { product } from './documents/products/product';
+
+// Blog / Journal Documents
+import { blogCategory } from './documents/blog/category';
+import { blogAuthor } from './documents/blog/author';
+import { blogTag } from './documents/blog/tag';
+import { blogSeries } from './documents/blog/series';
+import { blogPost } from './documents/blog/post';
+import { blogSettings } from './documents/blog/settings';
 
 // Singletons
 import { brand } from './singletons/brand';
@@ -66,7 +74,7 @@ export const schema = {
     businessHours,
     contactInfo,
 
-    // Homepage Section Objects (still registered so any existing references resolve)
+    // Homepage Section Objects
     hero,
     soulStatement,
     philosophy,
@@ -100,8 +108,16 @@ export const schema = {
     aboutWhyHydrops,
     aboutCompanyInfo,
 
-    // Documents
+    // Product Documents
     product,
+
+    // Blog / Journal Documents
+    blogCategory,
+    blogAuthor,
+    blogTag,
+    blogSeries,
+    blogPost,
+    blogSettings,
 
     // Singletons
     brand,

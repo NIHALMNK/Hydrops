@@ -273,3 +273,105 @@ export interface SanityRawAboutPage {
   whyChoose?: SanityRawAboutWhyHydrops;
   companyInfo?: SanityRawAboutCompanyInfo;
 }
+
+// ── Blog / Journal Raw Shapes ─────────────────────────────────────────────────
+
+export interface SanityRawBlogCategory {
+  _id?: string;
+  title?: string;
+  slug?: { current?: string };
+  description?: string;
+  colour?: string;
+  icon?: string;
+}
+
+export interface SanityRawBlogTag {
+  _id?: string;
+  name?: string;
+  slug?: { current?: string };
+  description?: string;
+}
+
+export interface SanityRawBlogSocialLink {
+  platform?: string;
+  url?: string;
+}
+
+export interface SanityRawBlogAuthor {
+  _id?: string;
+  name?: string;
+  slug?: { current?: string };
+  designation?: string;
+  experience?: string;
+  avatar?: SanityCloudinaryImage;
+  shortBio?: string;
+  bio?: string;
+  linkedin?: string;
+  website?: string;
+  socialLinks?: SanityRawBlogSocialLink[];
+}
+
+export interface SanityRawBlogSeries {
+  _id?: string;
+  title?: string;
+  slug?: { current?: string };
+  description?: string;
+  coverImage?: SanityCloudinaryImage;
+}
+
+/** Flattened shape returned by the post summary GROQ projection. */
+export interface SanityRawBlogPostSummary {
+  _id?: string;
+  title?: string;
+  slug?: { current?: string };
+  excerpt?: string;
+  featuredImage?: SanityCloudinaryImage;
+  category?: SanityRawBlogCategory;
+  author?: Pick<SanityRawBlogAuthor, '_id' | 'name' | 'slug' | 'designation' | 'avatar'>;
+  tags?: SanityRawBlogTag[];
+  publishDate?: string;
+  content?: string;
+  estimatedReadTimeOverride?: number | null;
+  isFeatured?: boolean;
+  isPinned?: boolean;
+  editorialStatus?: string;
+  series?: Pick<SanityRawBlogSeries, '_id' | 'title' | 'slug'> | null;
+  partNumber?: number | null;
+}
+
+/** Full shape returned by the individual post GROQ projection. */
+export interface SanityRawBlogPost extends SanityRawBlogPostSummary {
+  featuredQuote?: string;
+  author?: SanityRawBlogAuthor;
+  category?: SanityRawBlogCategory;
+  tags?: SanityRawBlogTag[];
+  series?: SanityRawBlogSeries | null;
+  youtubeUrl?: string;
+  hideToc?: boolean;
+  hideVideo?: boolean;
+  hideRelated?: boolean;
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    socialImage?: SanityCloudinaryImage;
+    canonicalUrl?: string;
+    noIndex?: boolean;
+  };
+}
+
+export interface SanityRawBlogSettings {
+  articlesPerPage?: number;
+  latestArticlesCount?: number;
+  relatedArticlesCount?: number;
+  defaultSorting?: string;
+  enableSearch?: boolean;
+  enableCategories?: boolean;
+  enableTags?: boolean;
+  enableNewsletter?: boolean;
+  showYoutubeSection?: boolean;
+  newsletterHeadline?: string;
+  newsletterSubtext?: string;
+  journalTitle?: string;
+  journalEyebrow?: string;
+  journalTagline?: string;
+}

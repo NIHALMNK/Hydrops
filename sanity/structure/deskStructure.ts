@@ -35,6 +35,15 @@ const SINGLETON_TYPES = [
   'seoSettings',
 ];
 
+const BLOG_TYPES = [
+  'blogPost',
+  'blogCategory',
+  'blogAuthor',
+  'blogTag',
+  'blogSeries',
+  'blogSettings',
+];
+
 export const deskStructure: StructureResolver = (S) =>
   S.list()
     .title('Content')
@@ -184,6 +193,30 @@ export const deskStructure: StructureResolver = (S) =>
       // 🛍️ Products Group
       S.documentTypeListItem('product').title('Products'),
 
+      // 📰 Journal Group
+      S.listItem()
+        .title('Journal')
+        .child(
+          S.list()
+            .title('Journal')
+            .items([
+              S.documentTypeListItem('blogPost').title('Articles'),
+              S.documentTypeListItem('blogCategory').title('Categories'),
+              S.documentTypeListItem('blogAuthor').title('Authors'),
+              S.documentTypeListItem('blogTag').title('Tags'),
+              S.documentTypeListItem('blogSeries').title('Series'),
+              S.divider(),
+              S.listItem()
+                .title('Settings')
+                .child(
+                  S.document()
+                    .schemaType('blogSettings')
+                    .documentId('blog-settings')
+                    .title('Journal Settings')
+                ),
+            ])
+        ),
+
       // ⚙️ SEO Group
       S.listItem()
         .title('SEO')
@@ -203,8 +236,12 @@ export const deskStructure: StructureResolver = (S) =>
       // Prevent all managed types from appearing in the root list
       ...S.documentTypeListItems().filter(
         (listItem) =>
-          ![...SINGLETON_TYPES, ...HOME_TYPES, ...ABOUT_TYPES, 'product'].includes(
-            listItem.getId() as string
-          )
+          ![
+            ...SINGLETON_TYPES,
+            ...HOME_TYPES,
+            ...ABOUT_TYPES,
+            ...BLOG_TYPES,
+            'product',
+          ].includes(listItem.getId() as string)
       ),
     ]);

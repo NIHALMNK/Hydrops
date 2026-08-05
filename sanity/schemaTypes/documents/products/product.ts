@@ -1,0 +1,60 @@
+import { defineField, defineType } from 'sanity';
+import { TagIcon } from '@sanity/icons/Tag';
+
+export const product = defineType({
+  name: 'product',
+  title: 'Product',
+  type: 'document',
+  icon: TagIcon,
+  description: 'A product that can be referenced across the site',
+  fields: [
+    defineField({
+      name: 'name',
+      title: 'Product Name',
+      type: 'string',
+      description: 'The internal and external name of the product',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      description: 'The URL-friendly identifier for the product',
+      options: {
+        source: 'name',
+        maxLength: 96,
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'tagline',
+      title: 'Tagline / Short Description',
+      type: 'string',
+    }),
+    defineField({
+      name: 'primaryImage',
+      title: 'Primary Image',
+      type: 'cloudinaryImage',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'description',
+      title: 'Full Description',
+      type: 'text',
+    }),
+  ],
+  preview: {
+    select: {
+      title: 'name',
+      subtitle: 'tagline',
+      media: 'primaryImage.secureUrl',
+    },
+    prepare({ title, subtitle, media }) {
+      return {
+        title: title || 'Unnamed Product',
+        subtitle: subtitle || 'No tagline',
+        media: media ? media : TagIcon,
+      };
+    },
+  },
+});
