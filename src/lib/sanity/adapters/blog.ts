@@ -42,15 +42,22 @@ import type {
 import { parseMarkdownToHtml } from '@/lib/markdown/parser';
 import { calculateReadingTime } from '@/lib/markdown/readingTime';
 import { extractTableOfContents } from '@/lib/markdown/toc';
+import { formatDate } from '@/lib/date/formatDate';
 
 // ── Shared Primitive Mappers ──────────────────────────────────────────────────
 
-function extractSlug(raw: any): string {
+function extractSlug(raw: unknown): string {
   if (!raw) return '';
   if (typeof raw === 'string') return raw;
-  if (typeof raw.current === 'string') return raw.current;
-  if (typeof raw.slug === 'string') return raw.slug;
-  if (typeof raw.slug?.current === 'string') return raw.slug.current;
+  if (typeof (raw as { current?: string }).current === 'string') {
+    return (raw as { current: string }).current;
+  }
+  if (typeof (raw as { slug?: unknown }).slug === 'string') {
+    return (raw as { slug: string }).slug;
+  }
+  if (typeof (raw as { slug?: { current?: string } }).slug?.current === 'string') {
+    return (raw as { slug: { current: string } }).slug.current;
+  }
   return '';
 }
 
@@ -205,7 +212,7 @@ export function mapBlogPostSummary(raw: SanityRawBlogPostSummary): BlogPostSumma
     },
     author: mapAuthorSummary(raw.author),
     tags: (raw.tags ?? []).map(mapBlogTag),
-    publishDate: raw.publishDate ?? '',
+    publishDate: formatDate(raw.publishDate),
     readingTime,
     estimatedReadTimeOverride: raw.estimatedReadTimeOverride ?? null,
     isFeatured: raw.isFeatured ?? false,
@@ -263,7 +270,7 @@ export async function mapBlogPost(raw: SanityRawBlogPost): Promise<BlogPost> {
     toc,
 
     // Publishing
-    publishDate: raw.publishDate ?? '',
+    publishDate: formatDate(raw.publishDate),
     isFeatured: raw.isFeatured ?? false,
     isPinned: raw.isPinned ?? false,
 

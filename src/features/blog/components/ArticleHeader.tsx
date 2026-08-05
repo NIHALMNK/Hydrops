@@ -7,13 +7,7 @@ interface Props {
 }
 
 export function ArticleHeader({ post }: Props) {
-  const formattedDate = post.publishDate
-    ? new Date(post.publishDate).toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-      })
-    : '';
+  const formattedDate = post.publishDate || '';
 
   return (
     <header className="pt-12 pb-10 md:pt-16 md:pb-14 max-w-4xl mx-auto text-left">

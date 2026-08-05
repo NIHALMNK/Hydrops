@@ -1,41 +1,51 @@
+import type { Metadata } from 'next';
 import { Navbar } from '@/components/layout/Navbar';
 import { navigationData } from '@/data/site/navigation';
 import { Footer } from '@/components/layout/Footer';
-import type { Metadata } from 'next';
-import { productsPageData } from '@/data/products/products-page';
+import { getProductLandingData, getProductBySlug, getRelatedJournalArticles } from '@/lib/sanity/fetch/product';
+import { ProductsLandingClient } from './ProductsLandingClient';
 
-export const metadata: Metadata = {
-  title: productsPageData.seo.title,
-  description: productsPageData.seo.description,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await getProductLandingData();
+  const title = `${data.settings.showcaseTitle} | Hydrops Water`;
+  const description = data.settings.showcaseTagline || 'Discover authentic cold-pressed botanical extraction from Hydrops India.';
 
-export default function ProductsPage() {
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
+  };
+}
+
+export default async function ProductsPage() {
+  const data = await getProductLandingData();
+  const relatedArticles = await getRelatedJournalArticles();
+
+  let flagshipDetail = null;
+  if (data.flagshipProduct?.slug) {
+    flagshipDetail = await getProductBySlug(data.flagshipProduct.slug);
+  } else if (data.allProducts.length > 0 && data.allProducts[0].slug) {
+    flagshipDetail = await getProductBySlug(data.allProducts[0].slug);
+  }
+
   return (
     <>
       <Navbar data={navigationData} />
-      <main
-        className="min-h-screen w-full"
-        style={{ backgroundColor: '#F5F2EC', paddingTop: '8rem' }}
-      >
-        {/* Placeholder — Products page content goes here */}
-        <section className="container mx-auto px-6 md:px-12 lg:px-16 py-24">
-          <h1
-            className="font-light tracking-tight"
-            style={{
-              fontSize: 'clamp(2.5rem, 6vw, 5rem)',
-              color: 'rgba(30,30,30,0.85)',
-              lineHeight: 1.1,
-            }}
-          >
-            {productsPageData.heading}
-          </h1>
-          <p
-            className="mt-6 text-[1.1rem] leading-relaxed max-w-2xl"
-            style={{ color: 'rgba(30,30,30,0.55)' }}
-          >
-            {productsPageData.description}
-          </p>
-        </section>
+      <main className="w-full min-h-screen bg-[#F5F2EC]">
+        <ProductsLandingClient
+          data={data}
+          flagshipDetail={flagshipDetail}
+          relatedArticles={relatedArticles}
+        />
       </main>
       <Footer />
     </>

@@ -316,7 +316,7 @@ export function mapSanityAboutToFrontend(raw: SanityRawAboutPage): AboutPageData
         headline: p.headline ?? '',
         body: p.body ?? '',
       })),
-      seal: raw.quality?.seal ?? '',
+      seal: typeof raw.quality?.seal === 'string' ? raw.quality.seal : (raw.quality?.seal?.title ?? ''),
     },
     whyChoose: {
       eyebrow: raw.whyChoose?.eyebrow ?? '',

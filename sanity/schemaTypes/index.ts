@@ -1,4 +1,4 @@
-// Objects
+// Base Objects
 import { cloudinaryImage } from './objects/cloudinaryImage';
 import { button } from './objects/button';
 import { headingBlock } from './objects/headingBlock';
@@ -8,7 +8,33 @@ import { address } from './objects/address';
 import { businessHours } from './objects/businessHours';
 import { contactInfo } from './objects/contactInfo';
 
-// Homepage Section Objects (kept as objects — used as embedded types by home documents)
+// Product Objects
+import { productHighlight } from './objects/product/highlight';
+import { productSpecification } from './objects/product/specification';
+import { productStorageCare } from './objects/product/storageCare';
+import { productFeature } from './objects/product/feature';
+import { productUsage } from './objects/product/usage';
+import { productNutritionItem } from './objects/product/nutritionItem';
+import { productProcessStep } from './objects/product/processStep';
+import { productCertification } from './objects/product/certification';
+import { productComparisonItem } from './objects/product/comparisonItem';
+import { productDownload } from './objects/product/download';
+import { productQuickFact } from './objects/product/quickFact';
+import { productFaq } from './objects/product/faq';
+import { productStoryChapter } from './objects/product/storyChapter';
+
+// Product Page Section Objects
+import { productHeroSection } from './objects/product/heroSection';
+import { productHighlightsSection } from './objects/product/highlightsSection';
+import { productStorySection } from './objects/product/storySection';
+import { productTechnicalProfileSection } from './objects/product/technicalProfileSection';
+import { productBenefitsSection } from './objects/product/benefitsSection';
+import { productManufacturingSection } from './objects/product/manufacturingSection';
+import { productTrustSection } from './objects/product/trustSection';
+import { productRelatedArticlesSection } from './objects/product/relatedArticlesSection';
+import { productCtaSection } from './objects/product/ctaSection';
+
+// Homepage Section Objects
 import { hero } from './objects/hero';
 import { soulStatement } from './objects/soulStatement';
 import { philosophy } from './objects/philosophy';
@@ -44,6 +70,7 @@ import { aboutCompanyInfo } from './documents/about/companyInfo';
 
 // Product Documents
 import { product } from './documents/products/product';
+import { productSettings } from './documents/products/productSettings';
 
 // Blog / Journal Documents
 import { blogCategory } from './documents/blog/category';
@@ -73,6 +100,32 @@ export const schema = {
     address,
     businessHours,
     contactInfo,
+
+    // Product Objects
+    productHighlight,
+    productSpecification,
+    productStorageCare,
+    productFeature,
+    productUsage,
+    productNutritionItem,
+    productProcessStep,
+    productCertification,
+    productComparisonItem,
+    productDownload,
+    productQuickFact,
+    productFaq,
+    productStoryChapter,
+
+    // Product Page Section Objects
+    productHeroSection,
+    productHighlightsSection,
+    productStorySection,
+    productTechnicalProfileSection,
+    productBenefitsSection,
+    productManufacturingSection,
+    productTrustSection,
+    productRelatedArticlesSection,
+    productCtaSection,
 
     // Homepage Section Objects
     hero,
@@ -110,6 +163,7 @@ export const schema = {
 
     // Product Documents
     product,
+    productSettings,
 
     // Blog / Journal Documents
     blogCategory,

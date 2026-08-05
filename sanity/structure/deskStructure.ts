@@ -191,7 +191,24 @@ export const deskStructure: StructureResolver = (S) =>
         ),
 
       // 🛍️ Products Group
-      S.documentTypeListItem('product').title('Products'),
+      S.listItem()
+        .title('Products')
+        .child(
+          S.list()
+            .title('Products Management')
+            .items([
+              S.documentTypeListItem('product').title('Flagship Products'),
+              S.divider(),
+              S.listItem()
+                .title('Settings')
+                .child(
+                  S.document()
+                    .schemaType('productSettings')
+                    .documentId('product-settings')
+                    .title('Product Settings')
+                ),
+            ])
+        ),
 
       // 📰 Journal Group
       S.listItem()
@@ -242,6 +259,7 @@ export const deskStructure: StructureResolver = (S) =>
             ...ABOUT_TYPES,
             ...BLOG_TYPES,
             'product',
+            'productSettings',
           ].includes(listItem.getId() as string)
       ),
     ]);

@@ -1,95 +1,141 @@
-/**
- * Raw types representing exactly what Sanity returns for each query.
- * These are the shapes BEFORE the adapter transforms them into frontend interfaces.
- * They mirror the GROQ projections defined in queries.ts.
- */
-
-// ── Shared Primitives ─────────────────────────────────────────────────────────
-
-export interface SanityButton {
-  text?: string;
-  variant?: string;
-  size?: string;
-  icon?: string;
-  route?: string;
-  external?: boolean;
-}
-
+// Base Cloudinary image shape
 export interface SanityCloudinaryImage {
-  secureUrl?: string;
   publicId?: string;
-  resourceType?: string;
-  alt?: string;
-  caption?: string;
+  url?: string;
+  secureUrl?: string;
+  format?: string;
   width?: number;
   height?: number;
-  isDecorative?: boolean;
+  bytes?: number;
+  duration?: number;
+  tags?: string[];
+  alt?: string;
+  caption?: string;
+}
+
+export interface SanityButton {
+  label?: string;
+  text?: string;
+  href?: string;
+  route?: string;
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
 }
 
 export interface SanityHeadingBlock {
+  eyebrow?: string;
   label?: string;
+  heading?: string;
   title?: string;
+  headline?: string;
   subtitle?: string;
-  accent?: string;
+  supportingText?: string;
+  description?: string;
 }
 
-// ── Home Page Raw Shapes ──────────────────────────────────────────────────────
+export interface SanitySeo {
+  metaTitle?: string;
+  metaDescription?: string;
+  socialImage?: SanityCloudinaryImage;
+  canonicalUrl?: string;
+  noIndex?: boolean;
+}
+
+// ── Homepage Raw Shapes ────────────────────────────────────────────────────────
 
 export interface SanityRawHero {
   eyebrow?: string;
   headline?: string;
+  subheadline?: string;
   description?: string;
   videoUrl?: string;
   posterUrl?: string;
   primaryCta?: SanityButton;
   secondaryCta?: SanityButton;
+  bgImage?: SanityCloudinaryImage;
 }
 
 export interface SanityRawSoulStatement {
+  eyebrow?: string;
   label?: string;
   headline?: string;
   accentHeadline?: string;
+  description?: string;
   background?: SanityCloudinaryImage;
+  quote?: string;
+  authorName?: string;
+  authorTitle?: string;
 }
 
 export interface SanityRawPhilosophyChapter {
+  number?: string;
+  title?: string;
+  description?: string;
   lines?: string[];
   accentLine?: string;
 }
 
 export interface SanityRawPhilosophy {
+  eyebrow?: string;
+  headline?: string;
   persistentPhrase?: string;
+  description?: string;
   chapters?: SanityRawPhilosophyChapter[];
   cta?: SanityButton;
+  pillars?: Array<{
+    title?: string;
+    description?: string;
+    icon?: string;
+  }>;
 }
 
 export interface SanityRawJourneyStage {
+  number?: string;
   chapter?: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  mood?: string;
+  image?: SanityCloudinaryImage;
+}
+
+export interface SanityRawJourneyStep {
+  stepNumber?: number;
   title?: string;
   description?: string;
   image?: SanityCloudinaryImage;
-  mood?: string;
 }
 
 export interface SanityRawJourney {
+  eyebrow?: string;
+  headline?: string;
   ambientImage?: SanityCloudinaryImage;
   stages?: SanityRawJourneyStage[];
+  steps?: SanityRawJourneyStep[];
 }
 
 export interface SanityRawProductShowcase {
+  eyebrow?: string;
   label?: string;
   headline?: string;
   description?: string;
-  productImage?: SanityCloudinaryImage;
-  floatingAsset?: SanityCloudinaryImage;
+  highlights?: string[];
   primaryCta?: SanityButton;
   secondaryCta?: SanityButton;
+  productImage?: SanityCloudinaryImage;
+  floatingAsset?: SanityCloudinaryImage;
+  image?: SanityCloudinaryImage;
 }
 
 export interface SanityRawPurityStatement {
+  eyebrow?: string;
   label?: string;
+  headline?: string;
+  quote?: string;
   supportingText?: string;
+  subtext?: string;
   statements?: Array<{
+    label?: string;
+    text?: string;
     line?: string;
     delay?: number;
     accent?: boolean;
@@ -105,26 +151,44 @@ export interface SanityRawCraftStep {
 }
 
 export interface SanityRawCraftsmanship {
+  eyebrow?: string;
+  headline?: string;
   heading?: SanityHeadingBlock;
+  description?: string;
   steps?: SanityRawCraftStep[];
+  features?: Array<{
+    title?: string;
+    description?: string;
+    icon?: string;
+  }>;
 }
 
 export interface SanityRawEverydayMoment {
   id?: string;
   label?: string;
   headline?: string;
+  title?: string;
   description?: string;
-  image?: SanityCloudinaryImage;
   accent?: string;
+  image?: SanityCloudinaryImage;
 }
 
 export interface SanityRawEveryday {
+  eyebrow?: string;
+  headline?: string;
   heading?: SanityHeadingBlock;
   headlineAccent?: string;
+  description?: string;
   moments?: SanityRawEverydayMoment[];
+  uses?: Array<{
+    title?: string;
+    description?: string;
+    icon?: string;
+  }>;
 }
 
 export interface SanityRawContactCta {
+  eyebrow?: string;
   label?: string;
   headline?: string;
   accentHeadline?: string;
@@ -147,19 +211,25 @@ export interface SanityRawHomePage {
   contactCta?: SanityRawContactCta;
 }
 
-// ── About Page Raw Shapes ─────────────────────────────────────────────────────
+// ── About Page Raw Shapes ──────────────────────────────────────────────────────
 
 export interface SanityRawAboutHero {
   eyebrow?: string;
   headline?: string;
   subheadline?: string;
   tagline?: string;
+  heroImage?: SanityCloudinaryImage;
 }
 
 export interface SanityRawAboutIntroduction {
   eyebrow?: string;
+  heading?: string;
   headline?: string;
+  leadParagraph?: string;
+  bodyParagraphs?: string[];
   body?: string[];
+  quote?: string;
+  quoteAuthor?: string;
   stat?: {
     value?: string;
     label?: string;
@@ -168,73 +238,142 @@ export interface SanityRawAboutIntroduction {
 
 export interface SanityRawAboutStoryChapter {
   year?: string;
+  title?: string;
   heading?: string;
+  description?: string;
   body?: string;
+  image?: SanityCloudinaryImage;
 }
 
 export interface SanityRawAboutStory {
   eyebrow?: string;
+  heading?: string;
   headline?: string;
+  chapters?: SanityRawAboutStoryChapter[];
   image?: SanityCloudinaryImage;
   imageCaption?: string;
-  chapters?: SanityRawAboutStoryChapter[];
 }
 
 export interface SanityRawMissionVision {
   eyebrow?: string;
+  heading?: string;
   headline?: string;
+  statement?: string;
+  description?: string;
   body?: string;
+  points?: string[];
+}
+
+export interface SanityRawAboutValuePillar {
+  title?: string;
+  description?: string;
+  icon?: string;
 }
 
 export interface SanityRawAboutValueItem {
   number?: string;
   title?: string;
+  description?: string;
   body?: string;
+  icon?: string;
 }
 
 export interface SanityRawAboutValues {
   eyebrow?: string;
+  heading?: string;
   headline?: string;
+  subheading?: string;
+  pillars?: SanityRawAboutValuePillar[];
   items?: SanityRawAboutValueItem[];
 }
 
-export interface SanityRawManufacturingStage {
+export interface SanityRawAboutManufacturingStep {
+  stepNumber?: number;
   step?: string;
   title?: string;
+  subtitle?: string;
+  description?: string;
   body?: string;
+  highlights?: string[];
+  image?: SanityCloudinaryImage;
+}
+
+export interface SanityRawManufacturingStage {
+  stepNumber?: number;
+  step?: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  body?: string;
+  highlights?: string[];
   image?: SanityCloudinaryImage;
 }
 
 export interface SanityRawAboutManufacturing {
   eyebrow?: string;
+  heading?: string;
   headline?: string;
+  subheading?: string;
   subheadline?: string;
+  steps?: SanityRawAboutManufacturingStep[];
   stages?: SanityRawManufacturingStage[];
+}
+
+export interface SanityRawAboutCommitmentPillar {
+  label?: string;
+  headline?: string;
+  title?: string;
+  description?: string;
+  body?: string;
+  metric?: string;
+  metricLabel?: string;
 }
 
 export interface SanityRawCommitmentPillar {
   label?: string;
   headline?: string;
+  title?: string;
+  description?: string;
   body?: string;
+  metric?: string;
+  metricLabel?: string;
 }
 
 export interface SanityRawAboutCommitment {
   eyebrow?: string;
+  heading?: string;
   headline?: string;
+  description?: string;
   body?: string;
   pillars?: SanityRawCommitmentPillar[];
-  seal?: string;
+  seal?: string | {
+    title?: string;
+    subtitle?: string;
+  };
+}
+
+export interface SanityRawAboutWhyHydropsPoint {
+  number?: string;
+  title?: string;
+  description?: string;
+  body?: string;
+  badge?: string;
 }
 
 export interface SanityRawWhyItem {
   number?: string;
   title?: string;
+  description?: string;
   body?: string;
+  badge?: string;
 }
 
 export interface SanityRawAboutWhyHydrops {
   eyebrow?: string;
+  heading?: string;
   headline?: string;
+  description?: string;
+  points?: SanityRawAboutWhyHydropsPoint[];
   items?: SanityRawWhyItem[];
 }
 
@@ -319,44 +458,33 @@ export interface SanityRawBlogSeries {
   coverImage?: SanityCloudinaryImage;
 }
 
-/** Flattened shape returned by the post summary GROQ projection. */
 export interface SanityRawBlogPostSummary {
   _id?: string;
   title?: string;
-  slug?: { current?: string };
+  slug?: string | { current?: string };
   excerpt?: string;
   featuredImage?: SanityCloudinaryImage;
   category?: SanityRawBlogCategory;
-  author?: Pick<SanityRawBlogAuthor, '_id' | 'name' | 'slug' | 'designation' | 'avatar'>;
+  author?: SanityRawBlogAuthor;
   tags?: SanityRawBlogTag[];
   publishDate?: string;
-  content?: string;
+  readingTime?: number;
   estimatedReadTimeOverride?: number | null;
   isFeatured?: boolean;
   isPinned?: boolean;
   editorialStatus?: string;
-  series?: Pick<SanityRawBlogSeries, '_id' | 'title' | 'slug'> | null;
+  series?: SanityRawBlogSeries;
   partNumber?: number | null;
+  content?: string;
 }
 
-/** Full shape returned by the individual post GROQ projection. */
 export interface SanityRawBlogPost extends SanityRawBlogPostSummary {
   featuredQuote?: string;
-  author?: SanityRawBlogAuthor;
-  category?: SanityRawBlogCategory;
-  tags?: SanityRawBlogTag[];
-  series?: SanityRawBlogSeries | null;
   youtubeUrl?: string;
   hideToc?: boolean;
   hideVideo?: boolean;
   hideRelated?: boolean;
-  seo?: {
-    metaTitle?: string;
-    metaDescription?: string;
-    socialImage?: SanityCloudinaryImage;
-    canonicalUrl?: string;
-    noIndex?: boolean;
-  };
+  seo?: SanitySeo;
 }
 
 export interface SanityRawBlogSettings {
@@ -374,4 +502,230 @@ export interface SanityRawBlogSettings {
   journalTitle?: string;
   journalEyebrow?: string;
   journalTagline?: string;
+}
+
+// ── Product Raw Shapes ────────────────────────────────────────────────────────
+
+export interface SanityRawProductHighlight {
+  title?: string;
+  description?: string;
+  icon?: string;
+  accentColor?: string;
+}
+
+export interface SanityRawProductSpecification {
+  title?: string;
+  value?: string;
+  unit?: string;
+}
+
+export interface SanityRawProductStorageCare {
+  temperatureRange?: string;
+  shelfLife?: string;
+  storageTips?: string[];
+  thingsToAvoid?: string[];
+  bestBefore?: string;
+}
+
+export interface SanityRawProductFeature {
+  title?: string;
+  description?: string;
+  icon?: string;
+}
+
+export interface SanityRawProductUsage {
+  title?: string;
+  description?: string;
+  icon?: string;
+  suitabilityTags?: string[];
+}
+
+export interface SanityRawProductNutritionItem {
+  label?: string;
+  amountPer100ml?: string;
+  amountPerServing?: string;
+  dailyValue?: string;
+  isSubNutrient?: boolean;
+}
+
+export interface SanityRawProductProcessStep {
+  stepNumber?: number;
+  title?: string;
+  description?: string;
+  image?: SanityCloudinaryImage;
+  interestingFact?: string;
+  estimatedDuration?: string;
+}
+
+export interface SanityRawProductCertification {
+  name?: string;
+  logo?: SanityCloudinaryImage;
+  description?: string;
+  issuer?: string;
+  verificationUrl?: string;
+  supportingDocuments?: Array<{
+    title?: string;
+    url?: string;
+    format?: string;
+  }>;
+}
+
+export interface SanityRawProductComparisonItem {
+  label?: string;
+  leftValue?: string;
+  rightValue?: string;
+  isHighlight?: boolean;
+}
+
+export interface SanityRawProductDownload {
+  title?: string;
+  description?: string;
+  category?: string;
+  url?: string;
+  format?: string;
+  version?: string;
+  updatedDate?: string;
+}
+
+export interface SanityRawProductQuickFact {
+  question?: string;
+  answer?: string;
+  isPositive?: boolean;
+}
+
+export interface SanityRawProductFaq {
+  question?: string;
+  answer?: string;
+}
+
+export interface SanityRawProductStoryChapter {
+  title?: string;
+  description?: string;
+  image?: SanityCloudinaryImage;
+  quote?: string;
+}
+
+// ── Product Section Raw Shapes ────────────────────────────────────────────────
+
+export interface SanityRawProductHeroSection {
+  eyebrow?: string;
+  headline?: string;
+  subheadline?: string;
+  heroImage?: SanityCloudinaryImage;
+  secondaryImage?: SanityCloudinaryImage;
+  ctaTitle?: string;
+  ctaDescription?: string;
+}
+
+export interface SanityRawProductHighlightsSection {
+  title?: string;
+  highlights?: SanityRawProductHighlight[];
+}
+
+export interface SanityRawProductStorySection {
+  title?: string;
+  description?: string;
+  storyChapters?: SanityRawProductStoryChapter[];
+  quote?: string;
+}
+
+export interface SanityRawProductTechnicalProfileSection {
+  title?: string;
+  specifications?: SanityRawProductSpecification[];
+  storageCare?: SanityRawProductStorageCare;
+}
+
+export interface SanityRawProductBenefitsSection {
+  title?: string;
+  benefits?: SanityRawProductFeature[];
+  uses?: SanityRawProductUsage[];
+}
+
+export interface SanityRawProductManufacturingSection {
+  title?: string;
+  subtitle?: string;
+  timeline?: SanityRawProductProcessStep[];
+  closingNote?: string;
+}
+
+export interface SanityRawProductTrustSection {
+  title?: string;
+  certifications?: SanityRawProductCertification[];
+  downloads?: SanityRawProductDownload[];
+}
+
+export interface SanityRawProductRelatedArticlesSection {
+  enabled?: boolean;
+  title?: string;
+  subtitle?: string;
+}
+
+export interface SanityRawProductCtaSection {
+  title?: string;
+  description?: string;
+  buttonText?: string;
+  buttonLink?: string;
+}
+
+export interface SanityRawProductSummary {
+  _id?: string;
+  name?: string;
+  slug?: string | { current?: string };
+  tagline?: string;
+  editorialStatus?: string;
+  isFeatured?: boolean;
+  primaryFeaturedImage?: SanityCloudinaryImage;
+  highlights?: SanityRawProductHighlight[] | SanityRawProductHighlightsSection;
+}
+
+export interface SanityRawProductDetail extends SanityRawProductSummary {
+  // Section Objects
+  hero?: SanityRawProductHeroSection;
+  highlightsSection?: SanityRawProductHighlightsSection;
+  story?: SanityRawProductStorySection;
+  technicalProfile?: SanityRawProductTechnicalProfileSection;
+  benefitsSection?: SanityRawProductBenefitsSection;
+  manufacturing?: SanityRawProductManufacturingSection;
+  trust?: SanityRawProductTrustSection;
+  relatedArticles?: SanityRawProductRelatedArticlesSection;
+  cta?: SanityRawProductCtaSection;
+
+  // Legacy flat fields (for backward compatibility)
+  eyebrow?: string;
+  headline?: string;
+  subheadline?: string;
+  description?: string;
+  storyChapters?: SanityRawProductStoryChapter[];
+  specifications?: SanityRawProductSpecification[];
+  storageCare?: SanityRawProductStorageCare;
+  benefits?: SanityRawProductFeature[];
+  uses?: SanityRawProductUsage[];
+  nutritionItems?: SanityRawProductNutritionItem[];
+  manufacturingSteps?: SanityRawProductProcessStep[];
+  certifications?: SanityRawProductCertification[];
+  comparisonHeadingLeft?: string;
+  comparisonHeadingRight?: string;
+  comparisonItems?: SanityRawProductComparisonItem[];
+  downloads?: SanityRawProductDownload[];
+  quickFacts?: SanityRawProductQuickFact[];
+  faqs?: SanityRawProductFaq[];
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    socialImage?: SanityCloudinaryImage;
+    canonicalUrl?: string;
+    noIndex?: boolean;
+  };
+}
+
+export interface SanityRawProductSettings {
+  showcaseTitle?: string;
+  showcaseEyebrow?: string;
+  showcaseTagline?: string;
+  ctaHeadline?: string;
+  ctaSubtext?: string;
+  enableSectionNav?: boolean;
+  enableAnimation?: boolean;
+  showRelatedArticles?: boolean;
+  emptyStateText?: string;
 }

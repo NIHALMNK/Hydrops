@@ -9,13 +9,7 @@ interface Props {
 }
 
 export function MasonryCard({ post, variant = 'medium' }: Props) {
-  const formattedDate = post.publishDate
-    ? new Date(post.publishDate).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      })
-    : '';
+  const formattedDate = post.publishDate || '';
 
   // Aspect ratio & typography sizing based on card variant
   const imageHeightClass =

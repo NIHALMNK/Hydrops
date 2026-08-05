@@ -10,13 +10,7 @@ interface Props {
 }
 
 export function ArticleFooterMeta({ author, category, tags, publishDate }: Props) {
-  const formattedDate = publishDate
-    ? new Date(publishDate).toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-      })
-    : '';
+  const formattedDate = publishDate || '';
 
   return (
     <footer className="my-16 pt-10 border-t border-neutral-200/80 space-y-12">

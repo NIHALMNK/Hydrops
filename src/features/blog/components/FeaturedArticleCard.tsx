@@ -7,13 +7,7 @@ interface Props {
 }
 
 export function FeaturedArticleCard({ post }: Props) {
-  const formattedDate = post.publishDate
-    ? new Date(post.publishDate).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      })
-    : '';
+  const formattedDate = post.publishDate || '';
 
   return (
     <article className="group relative w-full overflow-hidden rounded-3xl bg-neutral-900 text-white shadow-xl hover:shadow-2xl mb-16 transition-all duration-500 border border-neutral-800 hover:-translate-y-1">
