@@ -36,9 +36,12 @@ import type {
   SanityRawManufacturingStage,
   SanityRawCommitmentPillar,
   SanityRawWhyItem,
+  SanityRawContactPage,
 } from './sanity.raw.types';
 
 import type { AboutPageData } from '@/features/about/types';
+import type { ContactPageData } from '@/features/contact/types';
+import { fallbackContactPageData } from '@/data/contact/contact-page';
 
 // ── Shared Primitive Mappers ──────────────────────────────────────────────────
 
@@ -357,3 +360,77 @@ export function mapSanityAboutToFrontend(raw: SanityRawAboutPage): AboutPageData
     },
   };
 }
+
+// ── Contact Page Adapter ──────────────────────────────────────────────────────
+
+export function mapSanityContactToFrontend(raw: SanityRawContactPage | undefined | null): ContactPageData {
+  if (!raw) return fallbackContactPageData;
+
+  return {
+    hero: {
+      eyebrow: raw.eyebrow ?? fallbackContactPageData.hero.eyebrow,
+      heading: raw.heading ?? fallbackContactPageData.hero.heading,
+      highlightedWord: raw.highlightedWord ?? fallbackContactPageData.hero.highlightedWord,
+      description: raw.description ?? fallbackContactPageData.hero.description,
+      backgroundImage: raw.backgroundImage ? mapImage(raw.backgroundImage) : undefined,
+    },
+    cards: {
+      phone: {
+        title: raw.phoneTitle ?? fallbackContactPageData.cards.phone.title,
+        phoneNumbers: raw.phoneNumbers && raw.phoneNumbers.length > 0 ? raw.phoneNumbers : fallbackContactPageData.cards.phone.phoneNumbers,
+      },
+      whatsapp: {
+        title: raw.whatsappTitle ?? fallbackContactPageData.cards.whatsapp.title,
+        buttonText: raw.whatsappButtonText ?? fallbackContactPageData.cards.whatsapp.buttonText,
+        whatsappNumber: raw.whatsappNumber ?? fallbackContactPageData.cards.whatsapp.whatsappNumber,
+      },
+      location: {
+        title: raw.locationTitle ?? fallbackContactPageData.cards.location.title,
+        address: raw.locationAddress ?? fallbackContactPageData.cards.location.address,
+        googleMapsUrl: raw.googleMapsUrl ?? fallbackContactPageData.cards.location.googleMapsUrl,
+      },
+      businessHours: {
+        title: raw.hoursTitle ?? fallbackContactPageData.cards.businessHours.title,
+        workingHours: raw.workingHours ?? fallbackContactPageData.cards.businessHours.workingHours,
+      },
+    },
+    formContent: {
+      sectionTitle: raw.formSectionTitle ?? fallbackContactPageData.formContent.sectionTitle,
+      heading: raw.formHeading ?? fallbackContactPageData.formContent.heading,
+      description: raw.formDescription ?? fallbackContactPageData.formContent.description,
+      submitButtonText: raw.submitButtonText ?? fallbackContactPageData.formContent.submitButtonText,
+      successMessage: raw.successMessage ?? fallbackContactPageData.formContent.successMessage,
+      errorMessage: raw.errorMessage ?? fallbackContactPageData.formContent.errorMessage,
+      labels: {
+        fullName: raw.fullNameLabel ?? fallbackContactPageData.formContent.labels.fullName,
+        email: raw.emailLabel ?? fallbackContactPageData.formContent.labels.email,
+        phone: raw.phoneLabel ?? fallbackContactPageData.formContent.labels.phone,
+        subject: raw.subjectLabel ?? fallbackContactPageData.formContent.labels.subject,
+        message: raw.messageLabel ?? fallbackContactPageData.formContent.labels.message,
+      },
+      placeholders: {
+        fullName: raw.fullNamePlaceholder ?? fallbackContactPageData.formContent.placeholders.fullName,
+        email: raw.emailPlaceholder ?? fallbackContactPageData.formContent.placeholders.email,
+        phone: raw.phonePlaceholder ?? fallbackContactPageData.formContent.placeholders.phone,
+        subject: raw.subjectPlaceholder ?? fallbackContactPageData.formContent.placeholders.subject,
+        message: raw.messagePlaceholder ?? fallbackContactPageData.formContent.placeholders.message,
+      },
+    },
+    map: {
+      googleMapsUrl: raw.googleMapsUrl ?? fallbackContactPageData.map.googleMapsUrl,
+      mapEmbedUrl: raw.mapEmbedUrl,
+    },
+    cta: {
+      title: raw.ctaTitle ?? fallbackContactPageData.cta.title,
+      description: raw.ctaDescription ?? fallbackContactPageData.cta.description,
+      buttons: raw.ctaButtons && raw.ctaButtons.length > 0
+        ? raw.ctaButtons.map((b) => ({
+            type: b.type ?? 'call',
+            label: b.label ?? 'Contact Us',
+            url: b.url ?? 'tel:+917012123505',
+          }))
+        : fallbackContactPageData.cta.buttons,
+    },
+  };
+}
+

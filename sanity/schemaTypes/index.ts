@@ -84,6 +84,7 @@ import { blogSettings } from './documents/blog/settings';
 import { brand } from './singletons/brand';
 import { business } from './singletons/business';
 import { contact } from './singletons/contact';
+import { contactPage } from './singletons/contactPage';
 import { social } from './singletons/social';
 import { seoSettings } from './singletons/seoSettings';
 import { navigation } from './singletons/navigation';
@@ -177,6 +178,7 @@ export const schema = {
     brand,
     business,
     contact,
+    contactPage,
     social,
     seoSettings,
     navigation,

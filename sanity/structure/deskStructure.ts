@@ -29,6 +29,7 @@ const SINGLETON_TYPES = [
   'brand',
   'business',
   'contact',
+  'contactPage',
   'social',
   'footer',
   'navigation',
@@ -234,6 +235,17 @@ export const deskStructure: StructureResolver = (S) =>
             ])
         ),
 
+      // 📞 Contact Group
+      S.listItem()
+        .title('Contact')
+        .id('contactPageSettings')
+        .child(
+          S.document()
+            .schemaType('contactPage')
+            .documentId('contact-page')
+            .title('Contact Page')
+        ),
+
       // ⚙️ SEO Group
       S.listItem()
         .title('SEO')
@@ -263,3 +275,4 @@ export const deskStructure: StructureResolver = (S) =>
           ].includes(listItem.getId() as string)
       ),
     ]);
+

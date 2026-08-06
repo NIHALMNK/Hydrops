@@ -164,3 +164,46 @@ export const ABOUT_PAGE_QUERY = `{
     secondaryCta { ${buttonFragment} }
   }
 }`;
+
+export const CONTACT_PAGE_QUERY = `*[_type == "contactPage"][0] {
+  eyebrow,
+  heading,
+  highlightedWord,
+  description,
+  backgroundImage { ${cloudinaryImageFragment} },
+  phoneTitle,
+  phoneNumbers,
+  whatsappTitle,
+  whatsappButtonText,
+  whatsappNumber,
+  locationTitle,
+  locationAddress,
+  googleMapsUrl,
+  hoursTitle,
+  workingHours,
+  formSectionTitle,
+  formHeading,
+  formDescription,
+  submitButtonText,
+  successMessage,
+  errorMessage,
+  fullNameLabel,
+  fullNamePlaceholder,
+  emailLabel,
+  emailPlaceholder,
+  phoneLabel,
+  phonePlaceholder,
+  subjectLabel,
+  subjectPlaceholder,
+  messageLabel,
+  messagePlaceholder,
+  mapEmbedUrl,
+  ctaTitle,
+  ctaDescription,
+  ctaButtons[] {
+    type,
+    label,
+    url
+  }
+}`;
+

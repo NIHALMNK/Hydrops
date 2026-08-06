@@ -1,41 +1,45 @@
+import type { Metadata } from 'next';
 import { Navbar } from '@/components/layout/Navbar';
 import { navigationData } from '@/data/site/navigation';
 import { Footer } from '@/components/layout/Footer';
-import type { Metadata } from 'next';
-import { contactPageData } from '@/data/contact/contact-page';
+import { getContactPage } from '@/lib/sanity/fetch';
+import {
+  ContactHero,
+  ContactCards,
+  ContactForm,
+  ContactMap,
+  ContactCTASection,
+} from '@/features/contact';
 
-export const metadata: Metadata = {
-  title: contactPageData.seo.title,
-  description: contactPageData.seo.description,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const pageData = await getContactPage();
+  return {
+    title: `${pageData.hero.heading} | Hydrops`,
+    description: pageData.hero.description,
+  };
+}
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const contactData = await getContactPage();
+
   return (
     <>
       <Navbar data={navigationData} />
-      <main
-        className="min-h-screen w-full"
-        style={{ backgroundColor: '#F5F2EC', paddingTop: '8rem' }}
-      >
-        {/* Placeholder — Contact page content goes here */}
-        <section className="container mx-auto px-6 md:px-12 lg:px-16 py-24">
-          <h1
-            className="font-light tracking-tight"
-            style={{
-              fontSize: 'clamp(2.5rem, 6vw, 5rem)',
-              color: 'rgba(30,30,30,0.85)',
-              lineHeight: 1.1,
-            }}
-          >
-            {contactPageData.heading}
-          </h1>
-          <p
-            className="mt-6 text-[1.1rem] leading-relaxed max-w-2xl"
-            style={{ color: 'rgba(30,30,30,0.55)' }}
-          >
-            {contactPageData.description}
-          </p>
-        </section>
+      <main className="min-h-screen w-full bg-[#F8F6F1] text-[#1A1A1A]">
+        {/* 01 · Hero Section */}
+        <ContactHero data={contactData.hero} />
+
+        {/* 02 · Contact Cards Section */}
+        <ContactCards data={contactData.cards} />
+
+        {/* 03 · Contact Form Section */}
+        <ContactForm data={contactData.formContent} />
+
+        {/* 04 · Live Google Map Section */}
+        <ContactMap data={contactData.map} />
+
+        {/* 05 · Quick Action CTA Section */}
+        <ContactCTASection data={contactData.cta} />
       </main>
       <Footer />
     </>

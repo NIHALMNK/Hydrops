@@ -729,3 +729,56 @@ export interface SanityRawProductSettings {
   showRelatedArticles?: boolean;
   emptyStateText?: string;
 }
+
+export interface SanityRawCtaButtonItem {
+  type?: 'call' | 'whatsapp' | 'email' | 'custom';
+  label?: string;
+  url?: string;
+}
+
+export interface SanityRawContactPage {
+  eyebrow?: string;
+  heading?: string;
+  highlightedWord?: string;
+  description?: string;
+  backgroundImage?: SanityCloudinaryImage;
+
+  phoneTitle?: string;
+  phoneNumbers?: string[];
+
+  whatsappTitle?: string;
+  whatsappButtonText?: string;
+  whatsappNumber?: string;
+
+  locationTitle?: string;
+  locationAddress?: string;
+  googleMapsUrl?: string;
+
+  hoursTitle?: string;
+  workingHours?: string;
+
+  formSectionTitle?: string;
+  formHeading?: string;
+  formDescription?: string;
+  submitButtonText?: string;
+  successMessage?: string;
+  errorMessage?: string;
+
+  fullNameLabel?: string;
+  fullNamePlaceholder?: string;
+  emailLabel?: string;
+  emailPlaceholder?: string;
+  phoneLabel?: string;
+  phonePlaceholder?: string;
+  subjectLabel?: string;
+  subjectPlaceholder?: string;
+  messageLabel?: string;
+  messagePlaceholder?: string;
+
+  mapEmbedUrl?: string;
+
+  ctaTitle?: string;
+  ctaDescription?: string;
+  ctaButtons?: SanityRawCtaButtonItem[];
+}
+
