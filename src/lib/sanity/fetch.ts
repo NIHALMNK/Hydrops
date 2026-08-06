@@ -1,5 +1,19 @@
 import { client } from './client';
-import { HOME_PAGE_QUERY, ABOUT_PAGE_QUERY, CONTACT_PAGE_QUERY } from './queries';
+import { HOME_PAGE_QUERY, ABOUT_PAGE_QUERY, CONTACT_PAGE_QUERY, GLOBAL_WHATSAPP_QUERY } from './queries';
+
+export async function getGlobalWhatsAppNumber(): Promise<string | null> {
+  try {
+    const rawNumber = await client.fetch<string | null>(GLOBAL_WHATSAPP_QUERY, {}, { next: { revalidate: 60 } });
+    if (rawNumber && rawNumber.trim().length > 0) {
+      return rawNumber.trim();
+    }
+    return '+917012123505';
+  } catch (error) {
+    console.error('Failed to fetch global WhatsApp number from Sanity:', error);
+    return '+917012123505';
+  }
+}
+
 import { mapSanityHomeToFrontend, mapSanityAboutToFrontend, mapSanityContactToFrontend } from './adapters';
 import { homePageData as fallbackHomePageData } from '@/data/home/home';
 import type { HomePageDocument } from '@/data/types';

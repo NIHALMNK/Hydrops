@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { cormorant, dmSans } from "@/lib/fonts";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import { getGlobalWhatsAppNumber } from "@/lib/sanity/fetch";
+import { FloatingWhatsAppButton } from "@/components/global/FloatingWhatsAppButton";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -30,16 +32,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const whatsappNumber = await getGlobalWhatsAppNumber();
+
   return (
     <html lang="en" className={`${cormorant.variable} ${dmSans.variable}`} suppressHydrationWarning>
       <body className="antialiased min-h-screen flex flex-col" suppressHydrationWarning>
         <ThemeProvider>
           {children}
+          <FloatingWhatsAppButton whatsappNumber={whatsappNumber} />
         </ThemeProvider>
       </body>
     </html>

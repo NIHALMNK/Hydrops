@@ -207,3 +207,9 @@ export const CONTACT_PAGE_QUERY = `*[_type == "contactPage"][0] {
   }
 }`;
 
+export const GLOBAL_WHATSAPP_QUERY = `coalesce(
+  *[_type == "contact"][0].contactInfo.whatsapp,
+  *[_type == "contactPage"][0].whatsappNumber
+)`;
+
+
