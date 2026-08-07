@@ -315,7 +315,7 @@ export const contactPage = defineType({
               name: 'url',
               title: 'Target URL / Link',
               type: 'string',
-              description: 'e.g. tel:+917012123505, https://wa.me/..., mailto:official@hydrops.in',
+              description: 'e.g. tel:+917012123505, https://wa.me/..., mailto:hydropsindia@gmail.com',
               validation: (Rule) => Rule.required(),
             }),
           ],
@@ -325,7 +325,7 @@ export const contactPage = defineType({
 
         { type: 'call', label: 'Call Now', url: 'tel:+917012123505' },
         { type: 'whatsapp', label: 'WhatsApp', url: 'https://wa.me/917012123505' },
-        { type: 'email', label: 'Email Us', url: 'mailto:official@hydrops.in' },
+        { type: 'email', label: 'Email Us', url: 'mailto:hydropsindia@gmail.com' },
       ],
     }),
 

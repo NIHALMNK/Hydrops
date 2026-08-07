@@ -21,10 +21,10 @@ export const contactSeo: SeoDocument = {
 export const blogSeo: SeoDocument & { robots?: { index: boolean; follow: boolean } } = {
   _id: 'blog-seo', 
   _type: 'seoPage', 
-  title: 'Blog | Hydrops', 
-  description: 'The Hydrops Journal is coming soon. Discover product stories, wellness articles, recipes, and behind-the-scenes updates.', 
+  title: 'Blog | Hydrops Pure Coconut Oil', 
+  description: 'Discover product stories, wellness articles, recipes, and behind-the-scenes updates from Hydrops.', 
   keywords: siteSeo.keywords, 
   openGraphImage: logo, 
   twitterImage: logo,
-  robots: { index: false, follow: true }
+  robots: { index: true, follow: true }
 };

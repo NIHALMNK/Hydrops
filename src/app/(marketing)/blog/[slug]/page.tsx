@@ -32,26 +32,29 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const description = post.seo.metaDescription || post.excerpt;
   const ogImage = post.seo.socialImage?.src || post.featuredImage?.src;
 
+  const canonicalUrl = post.seo.canonicalUrl || `https://hydropsindia.com/blog/${post.slug}`;
+
   return {
     title,
     description,
     robots: post.seo.noIndex ? 'noindex, nofollow' : 'index, follow',
     alternates: {
-      canonical: post.seo.canonicalUrl || undefined,
+      canonical: canonicalUrl,
     },
     openGraph: {
       title,
       description,
+      url: canonicalUrl,
       type: 'article',
       publishedTime: post.publishDate,
       authors: [post.author.name],
-      images: ogImage ? [{ url: ogImage, alt: post.title }] : undefined,
+      images: ogImage ? [{ url: ogImage, alt: post.title }] : [{ url: 'https://hydropsindia.com/images/brand/logo.png', alt: post.title }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: ogImage ? [ogImage] : undefined,
+      images: ogImage ? [ogImage] : ['https://hydropsindia.com/images/brand/logo.png'],
     },
   };
 }
@@ -65,13 +68,42 @@ export default async function BlogArticlePage({ params }: PageProps) {
     notFound();
   }
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://hydropsindia.com',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: 'https://hydropsindia.com/blog',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: data.post.title,
+        item: `https://hydropsindia.com/blog/${data.post.slug}`,
+      },
+    ],
+  };
+
   // Google SEO JSON-LD Structured Data for Articles
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://hydropsindia.com/blog/${data.post.slug}`,
+    },
     headline: data.post.title,
     description: data.post.excerpt,
-    image: data.post.featuredImage?.src || undefined,
+    image: data.post.featuredImage?.src ? [data.post.featuredImage.src] : ['https://hydropsindia.com/images/brand/logo.png'],
     datePublished: data.post.publishDate,
     author: {
       '@type': 'Person',
@@ -80,17 +112,23 @@ export default async function BlogArticlePage({ params }: PageProps) {
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Hydrops India',
+      name: 'Hydrops',
+      url: 'https://hydropsindia.com',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://hydrops.in/images/logo.png',
+        url: 'https://hydropsindia.com/images/brand/logo.png',
+        width: 1200,
+        height: 630,
       },
     },
   };
 
   return (
     <>
-      {/* JSON-LD Article Schema Injection */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -102,3 +140,4 @@ export default async function BlogArticlePage({ params }: PageProps) {
     </>
   );
 }
+

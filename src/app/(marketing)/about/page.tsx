@@ -2,9 +2,8 @@ import { Navbar } from '@/components/layout/Navbar';
 import { navigationData } from '@/data/site/navigation';
 import { Footer } from '@/components/layout/Footer';
 import type { Metadata } from 'next';
-
-// Data now fetched from Sanity
 import { aboutSeo } from '@/data/site/seo';
+import { generateBreadcrumbSchema } from '@/lib/schema/breadcrumb';
 import {
   AboutHero,
   BrandIntroduction,
@@ -16,22 +15,51 @@ import {
   WhyChooseHydrops,
   CompanyInfo
 } from '@/features/about';
+import { AboutAnimationWrapper } from './AboutClient';
+import { getAboutPage } from '@/lib/sanity/fetch';
 
 export const metadata: Metadata = {
   title: aboutSeo.title,
   description: aboutSeo.description,
-  openGraph: { title: aboutSeo.title, description: aboutSeo.description, images: [aboutSeo.openGraphImage.src] },
+  alternates: {
+    canonical: 'https://hydropsindia.com/about',
+  },
+  openGraph: {
+    title: aboutSeo.title,
+    description: aboutSeo.description,
+    url: 'https://hydropsindia.com/about',
+    type: 'website',
+    images: [
+      {
+        url: 'https://hydropsindia.com/images/brand/philosophy-coconut.png',
+        width: 1200,
+        height: 630,
+        alt: 'About Hydrops',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: aboutSeo.title,
+    description: aboutSeo.description,
+    images: ['https://hydropsindia.com/images/brand/philosophy-coconut.png'],
+  },
 };
-
-import { AboutAnimationWrapper } from './AboutClient';
-
-import { getAboutPage } from '@/lib/sanity/fetch';
 
 export default async function AboutPage() {
   const aboutData = await getAboutPage();
 
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', item: '/' },
+    { name: 'About', item: '/about' },
+  ]);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       {/* 
         The Navbar is globally aware and will automatically adapt its text colour 
         based on the sections it passes over via the canvas probe we built earlier.

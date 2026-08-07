@@ -8,10 +8,10 @@ export const companyData: CompanyDocument = {
   countryLabel: 'Pure Coconut Oil · India',
   legalName: 'Hydrops India Pvt. Ltd.',
   description: 'Hydrops delivers crystal-clear, double-filtered virgin coconut oil crafted with precision in India. Naturally pure. Carefully refined.',
-  url: 'https://hydrops.in',
+  url: 'https://hydropsindia.com',
   foundingYear: 2024,
   contact: {
-    email: 'contact@hydrops.in',
+    email: 'hydropsindia@gmail.com',
     phone: '+91 7012123505',
     address: {
       street: 'Housing Colony Road',
@@ -22,3 +22,4 @@ export const companyData: CompanyDocument = {
     },
   },
 };
+

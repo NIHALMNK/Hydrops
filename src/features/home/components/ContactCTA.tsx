@@ -57,7 +57,7 @@ export function ContactCTA({ data }: Props) {
 
           <div className="cta-buttons flex flex-wrap items-center gap-4 opacity-0">
             <a
-              href="mailto:official@hydrops.in"
+              href="mailto:hydropsindia@gmail.com"
               className="inline-flex items-center justify-center bg-[#FAF8F5] text-[#08180E] hover:bg-white rounded-full px-8 py-4 text-sm font-medium shadow-md transition-all duration-300 hover:scale-105 group"
             >
               <span>{data.primaryCta.label}</span>
@@ -139,8 +139,8 @@ export function ContactCTA({ data }: Props) {
                 </div>
                 <div>
                   <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-white/40 mb-0.5 block">EMAIL US</span>
-                  <a href="mailto:official@hydrops.in" className="text-sm sm:text-base font-light text-[#FAF8F5] hover:text-[#C8A96A] transition-colors break-all">
-                    official@hydrops.in
+                  <a href="mailto:hydropsindia@gmail.com" className="text-sm sm:text-base font-light text-[#FAF8F5] hover:text-[#C8A96A] transition-colors break-all">
+                    hydropsindia@gmail.com
                   </a>
                 </div>
               </div>

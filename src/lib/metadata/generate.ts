@@ -1,25 +1,45 @@
 import { Metadata } from 'next';
 import { defaultMetadata } from './default';
+import { siteConfig } from '@/constants/site';
 
 export function generateMetadata(
   title: string,
   description?: string,
-  path?: string
+  path?: string,
+  image?: string
 ): Metadata {
+  const metaDescription = description || defaultMetadata.description || undefined;
+  const pagePath = path ? (path.startsWith('/') ? path : `/${path}`) : '';
+  const canonicalUrl = `${siteConfig.url}${pagePath}`;
+  const ogImageUrl = image || siteConfig.ogImage;
+
   return {
     ...defaultMetadata,
     title,
-    description: description || defaultMetadata.description || undefined,
+    description: metaDescription,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       ...defaultMetadata.openGraph,
       title,
-      description: description || defaultMetadata.description || undefined,
-      url: path ? `${defaultMetadata.metadataBase}${path}` : defaultMetadata.metadataBase?.toString(),
+      description: metaDescription,
+      url: canonicalUrl,
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
     },
     twitter: {
       ...defaultMetadata.twitter,
       title,
-      description: description || defaultMetadata.description || undefined,
+      description: metaDescription,
+      images: [ogImageUrl],
     },
   };
 }
+

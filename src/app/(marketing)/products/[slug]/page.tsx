@@ -22,28 +22,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!data || !data.product) {
     return {
-      title: 'Product Not Found | Hydrops Water',
+      title: 'Product Not Found | Hydrops Pure Coconut Oil',
     };
   }
 
   const { product } = data;
-  const title = product.seo.metaTitle || `${product.name} | Hydrops Water`;
+  const title = product.seo.metaTitle || `${product.name} | Hydrops Pure Coconut Oil`;
   const description = product.seo.metaDescription || product.tagline;
+  const canonicalUrl = `https://hydropsindia.com/products/${product.slug}`;
+  const ogImage = product.primaryFeaturedImage?.src || 'https://hydropsindia.com/images/brand/logo.png';
 
   return {
     title,
     description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title,
       description,
-      type: 'article',
-      images: product.primaryFeaturedImage?.src ? [product.primaryFeaturedImage.src] : [],
+      url: canonicalUrl,
+      type: 'website',
+      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: product.primaryFeaturedImage?.src ? [product.primaryFeaturedImage.src] : [],
+      images: [ogImage],
     },
     robots: {
       index: !product.seo.noIndex,
@@ -51,6 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
   };
 }
+
 
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;

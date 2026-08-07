@@ -93,8 +93,8 @@ export class ResendProvider implements EmailProvider {
 
   async sendEmail(payload: EmailPayload): Promise<{ success: boolean; messageId?: string; error?: string }> {
     try {
-      const receiver = process.env.CONTACT_RECEIVER_EMAIL || 'official@hydrops.in';
-      const from = process.env.FROM_EMAIL || 'Hydrops Contact <noreply@hydrops.in>';
+      const receiver = process.env.CONTACT_RECEIVER_EMAIL || 'hydropsindia@gmail.com';
+      const from = process.env.FROM_EMAIL || 'Hydrops Contact <noreply@hydropsindia.com>';
 
       const { data, error } = await this.resend.emails.send({
         from,

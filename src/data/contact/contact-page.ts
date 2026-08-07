@@ -63,7 +63,7 @@ export const fallbackContactPageData: ContactPageData = {
     buttons: [
       { type: 'call', label: 'Call Now', url: 'tel:+917012123505' },
       { type: 'whatsapp', label: 'WhatsApp', url: 'https://wa.me/917012123505' },
-      { type: 'email', label: 'Email Us', url: 'mailto:official@hydrops.in' },
+      { type: 'email', label: 'Email Us', url: 'mailto:hydropsindia@gmail.com' },
     ],
   },
 };

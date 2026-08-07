@@ -208,7 +208,7 @@ export const aboutData: AboutPageData = {
     legalName: 'Hydrops India Pvt. Ltd.',
     founded: '2024',
     origin: 'Bangalore, Karnataka, India',
-    email: 'official@hydrops.in',
+    email: 'hydropsindia@gmail.com',
     phone: '+91 70121 23505',
     address: {
       line1: 'Kadungalloor, Aluva',

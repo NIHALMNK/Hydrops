@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { Hero } from '@/features/hero';
 import { SoulStatement } from '@/features/home/components/SoulStatement';
 import { Philosophy } from '@/features/home/components/Philosophy';
@@ -12,6 +13,36 @@ import { navigationData } from '@/data/site/navigation';
 import { Footer } from '@/components/layout/Footer';
 import { getHomePage } from '@/lib/sanity/fetch';
 import { HomeAnimationWrapper } from './HomeClient';
+import { siteSeo } from '@/data/site/seo';
+
+export const metadata: Metadata = {
+  title: siteSeo.title,
+  description: siteSeo.description,
+  alternates: {
+    canonical: 'https://hydropsindia.com',
+  },
+  openGraph: {
+    title: siteSeo.title,
+    description: siteSeo.description,
+    url: 'https://hydropsindia.com',
+    type: 'website',
+    images: [
+      {
+        url: 'https://hydropsindia.com/images/brand/logo.png',
+        width: 1200,
+        height: 630,
+        alt: siteSeo.title,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteSeo.title,
+    description: siteSeo.description,
+    images: ['https://hydropsindia.com/images/brand/logo.png'],
+  },
+};
+
 
 export default async function HomePage() {
   const homePageData = await getHomePage();

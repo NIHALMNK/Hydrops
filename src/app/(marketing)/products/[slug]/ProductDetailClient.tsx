@@ -22,18 +22,21 @@ export function ProductDetailClient({ data }: Props) {
   const containerRef = useProductAnimations();
   const { product, settings, relatedArticles } = data;
 
-  // Educational Product JSON-LD (Zero e-commerce offers/prices)
+  // Educational Product JSON-LD
   const productJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
+    '@id': `https://hydropsindia.com/products/${product.slug}#product`,
+    url: `https://hydropsindia.com/products/${product.slug}`,
     name: product.name,
-    description: product.tagline || product.seo.metaDescription,
-    image: product.primaryFeaturedImage?.src ? [product.primaryFeaturedImage.src] : [],
+    description: product.tagline || product.seo.metaDescription || 'Pure virgin double-filtered coconut oil crafted in India.',
+    image: product.primaryFeaturedImage?.src ? [product.primaryFeaturedImage.src] : ['https://hydropsindia.com/images/brand/logo.png'],
     brand: {
       '@type': 'Brand',
       name: 'Hydrops',
+      logo: 'https://hydropsindia.com/images/brand/logo.png',
     },
-    category: 'Botanical Cold Pressed Oils',
+    category: 'Botanical Cold Pressed Virgin Oils',
   };
 
   // Breadcrumb JSON-LD
@@ -45,22 +48,23 @@ export function ProductDetailClient({ data }: Props) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://hydrops.in',
+        item: 'https://hydropsindia.com',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Products',
-        item: 'https://hydrops.in/products',
+        item: 'https://hydropsindia.com/products',
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: product.name,
-        item: `https://hydrops.in/products/${product.slug}`,
+        item: `https://hydropsindia.com/products/${product.slug}`,
       },
     ],
   };
+
 
   return (
     <div ref={containerRef} className="w-full bg-[#F5F2EC] text-[#1A1A1A] min-h-screen selection:bg-[#C8A96A] selection:text-white">

@@ -3,12 +3,21 @@ import { cormorant, dmSans } from "@/lib/fonts";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { getGlobalWhatsAppNumber } from "@/lib/sanity/fetch";
 import { FloatingWhatsAppButton } from "@/components/global/FloatingWhatsAppButton";
+import { generateOrganizationSchema } from "@/lib/schema/organization";
+import { generateWebsiteSchema } from "@/lib/schema/website";
 import "./globals.css";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+  ? process.env.NEXT_PUBLIC_SITE_URL.startsWith('http')
+    ? process.env.NEXT_PUBLIC_SITE_URL
+    : `https://${process.env.NEXT_PUBLIC_SITE_URL}`
+  : "https://hydropsindia.com";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://hydrops.in"
-  ),
+  metadataBase: new URL(siteUrl),
+  alternates: {
+    canonical: "https://hydropsindia.com",
+  },
   title: {
     default: "Hydrops — Pure Coconut Oil · India",
     template: "%s | Hydrops",
@@ -16,19 +25,40 @@ export const metadata: Metadata = {
   description:
     "Hydrops delivers crystal-clear, double-filtered virgin coconut oil crafted with precision in India. Naturally pure. Carefully refined.",
   keywords: ["coconut oil", "virgin coconut oil", "pure coconut oil", "Hydrops", "India"],
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png" },
+    ],
+    apple: [{ url: "/icon.png", type: "image/png" }],
+  },
+  manifest: "/manifest.webmanifest",
   openGraph: {
     type: "website",
     siteName: "Hydrops",
     title: "Hydrops — Pure Coconut Oil · India",
     description:
       "Crystal-clear, double-filtered virgin coconut oil. Naturally pure. Carefully refined.",
-    images: [{ url: "/images/brand/logo.png", width: 800, height: 600, alt: "Hydrops" }],
+    url: "https://hydropsindia.com",
+    images: [{ url: "https://hydropsindia.com/images/brand/logo.png", width: 1200, height: 630, alt: "Hydrops Pure Coconut Oil" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Hydrops — Pure Coconut Oil · India",
     description: "Crystal-clear, double-filtered virgin coconut oil. Naturally pure.",
-    images: ["/images/brand/logo.png"],
+    images: ["https://hydropsindia.com/images/brand/logo.png"],
+    creator: "@hydropsindia",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -38,9 +68,21 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const whatsappNumber = await getGlobalWhatsAppNumber();
+  const orgSchema = generateOrganizationSchema();
+  const siteSchema = generateWebsiteSchema();
 
   return (
     <html lang="en" className={`${cormorant.variable} ${dmSans.variable}`} suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteSchema) }}
+        />
+      </head>
       <body className="antialiased min-h-screen flex flex-col" suppressHydrationWarning>
         <ThemeProvider>
           {children}
@@ -50,3 +92,4 @@ export default async function RootLayout({
     </html>
   );
 }
+
