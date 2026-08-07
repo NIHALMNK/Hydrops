@@ -15,6 +15,9 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+   verification: {
+    google: "K93WaQlnc5-ZunsXhMCDaHpKGZQ7PG8MORtu_zZ5-pI"
+  },
   alternates: {
     canonical: "https://hydropsindia.com",
   },
