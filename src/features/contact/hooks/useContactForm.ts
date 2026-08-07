@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import type { ContactFormInput, SubmissionResult } from '../types';
 import { sendContactAction } from '../actions/sendContactAction';
@@ -11,20 +11,20 @@ interface UseContactFormProps {
 }
 
 export function useContactForm({ successMessage, errorMessage }: UseContactFormProps = {}) {
-  const [formData, setFormData] = useState<ContactFormInput>({
+  const [formData, setFormData] = useState<Omit<ContactFormInput, 'formLoadedAt'>>({
     name: '',
     email: '',
     phone: '',
     subject: '',
     message: '',
     website: '',
-    formLoadedAt: 0,
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const formLoadedAtRef = useRef<number>(0);
 
   useEffect(() => {
-    setFormData((prev) => ({ ...prev, formLoadedAt: Date.now() }));
+    formLoadedAtRef.current = Date.now();
   }, []);
 
   const handleChange = (
@@ -41,7 +41,12 @@ export function useContactForm({ successMessage, errorMessage }: UseContactFormP
     setIsSubmitting(true);
 
     try {
-      const result: SubmissionResult = await sendContactAction(formData);
+      const submissionData: ContactFormInput = {
+        ...formData,
+        formLoadedAt: formLoadedAtRef.current,
+      };
+
+      const result: SubmissionResult = await sendContactAction(submissionData);
 
       if (result.success) {
         toast.success(successMessage || result.message || 'Message sent successfully!');
@@ -65,8 +70,8 @@ export function useContactForm({ successMessage, errorMessage }: UseContactFormP
           subject: '',
           message: '',
           website: '',
-          formLoadedAt: Date.now(),
         });
+        formLoadedAtRef.current = Date.now();
       } else {
         toast.error(result.error || errorMessage || 'Failed to submit form.');
       }
