@@ -33,7 +33,7 @@ export const metadata: Metadata = {
       { url: "/favicon.ico", sizes: "any" },
       { url: "/icon.png", type: "image/png" },
     ],
-    apple: [{ url: "/icon.png", type: "image/png" }],
+    apple: [{ url: "/icon.png",sizes: "32x32", type: "image/png" }],
   },
   manifest: "/manifest.webmanifest",
   openGraph: {
