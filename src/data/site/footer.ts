@@ -11,5 +11,5 @@ export const footerData: FooterDocument = {
   address: { company: 'Calicut Trading Company', street: 'Housing Colony Road', city: 'Perinthalmanna', state: 'Malappuram, Kerala', postalCode: '629322', country: 'India', mapsUrl: 'https://maps.app.goo.gl/1YmUeEqpdqK7J5sN6' },
   workingHours: { weekdays: 'Monday – Saturday', hours: '7:00 AM – 5:00 PM', closedDay: 'Sunday', closedLabel: 'Closed' },
   legalLinks: [{ label: 'Privacy Policy', href: ROUTES.PRIVACY_POLICY }, { label: 'Terms of Service', href: ROUTES.TERMS }],
-  copyright: `© ${new Date().getFullYear()} Hydrops India. All rights reserved.`,
+  copyright: `© ${new Date().getFullYear()} Hydrops. All rights reserved.`,
 };
